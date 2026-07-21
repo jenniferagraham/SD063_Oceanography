@@ -1,0 +1,172 @@
+clear
+close all
+
+%can look at this during cruise
+%but should wait for temperature calibration before final back-calculation
+%of conductivity offsets
+
+%want to calibrate conductivity rather than salinity, to be robust against
+%any new definition of salinity that may appear
+
+CTDvarn
+load (fullfile(dir_out,'salts','salcals12_tcal.all.mat'))
+condoff1(:,1:47)=NaN;
+%condoff1(:,47:end)=NaN;
+condoff1grad=condoff1-0.5*ctdgradc1;
+condoff2grad=condoff2-0.5*ctdgradc2;
+
+figure
+plot(botpress,condoff1,'b.'); hold on
+plot(botpress,condoff1grad,'r^','MarkerFaceColor','r')
+title('Cond1 offset (\^=gradient corrected')
+xlabel('Pressure')
+
+
+figure
+plot(botpress,condoff2,'g.'); hold on
+plot(botpress,condoff2grad,'k^','MarkerFaceColor','k')
+title('Cond2 offset (\^=gradient corrected')
+xlabel('Pressure')
+
+offest1=0.005;
+offest2=0;  %first estimate off offset, trying to centre filtering
+
+ii=stdt1>0.0025|abs(condoff1-offest1)>0.008;
+condoff1filt=condoff1grad;
+%ctdgradc1filt=ctdgradc1;
+botp1f=botpress;
+condoff1filt(ii)=NaN;
+%ctdgradc1filt(ii)=NaN;
+botp1f(ii)=NaN;
+
+ii=stdt2>0.0025|abs(condoff2-offest1)>0.004;  %given an offset, have to be careful of ranges centred on zero
+condoff2filt=condoff2grad;
+%ctdgradc2filt=ctdgradc2;
+botp2f=botpress;
+condoff2filt(ii)=NaN;
+%ctdgradc2filt(ii)=NaN;
+botp2f(ii)=NaN;
+
+pind=1;
+for pcut=[0 15 125 250:500:6250]
+    jj=find(botpress>=(pcut-500)&botpress<pcut);
+    if isfinite(jj)
+        
+        cdiffav1(pind)=mean(condoff1grad(jj),'omitmissing');
+        botptda1(pind)=mean(botpress(jj),'omitmissing');
+        cdiffav1filt(pind)=mean(condoff1filt(jj),'omitmissing');
+      %  cgradav1filt(pind)=mean(ctdgradc1filt(jj),'omitmissing');
+        botptda1f(pind)=mean(botp1f(jj),'omitmissing');
+        
+        cdiffav2(pind)=mean(condoff2grad(jj),'omitmissing');
+        botptda2(pind)=mean(botpress(jj),'omitmissing');
+        cdiffav2filt(pind)=mean(condoff2filt(jj),'omitmissing'); 
+       % cgradav2filt(pind)=mean(ctdgradc2filt(jj),'omitmissing');
+        botptda2f(pind)=mean(botp2f(jj),'omitmissing');
+        
+        pind=pind+1;
+    end
+end
+
+figure
+plot(botpress,condoff1grad,'b.')
+hold on
+plot(botp1f,condoff1filt,'c.')
+plot(botptda1,cdiffav1,'r.')
+plot(botptda1f,cdiffav1filt,'r.','MarkerSize',25)
+%plot(botptda1f,cdiffav1filt-0.75*cgradav1filt,'r^','MarkerFaceColor','r')
+
+plot(botpress,condoff2grad,'g.')
+plot(botp2f,condoff2filt,'y.')
+plot(botptda2,cdiffav2,'k.')
+plot(botptda2f,cdiffav2filt,'k.','MarkerSize',25)
+%plot(botptda2f,cdiffav2filt-0.75*cgradav2filt,'k^','MarkerFaceColor','k')
+%plot([0 5000],[0.0010 -0.0020],'k')
+% plot([0 1000 5000],[-0.0008 -0.0025 -0.0055],'r')
+%plot([0 1000 5000],[-0.00175 -0.0025 -0.0055],'r')
+xlabel('Pressure (dbar)');
+ylabel('Bottle - CTD cond (mS cm^{-1})');
+title('c/b/r = primary; y/g/k = secondary;');
+
+% figure
+% plot(botptda1f,cdiffav1filt,'r.','MarkerSize',25)
+% hold on
+% plot(botptda2f,cdiffav2filt,'k.','MarkerSize',25)
+% %plot([0 5000],[0.0010 -0.0020],'k')
+% % plot([0 1000 5000],[-0.0008 -0.0025 -0.0055],'r')
+% %plot([0 1000 5000],[-0.00175 -0.0025 -0.0055],'r')
+
+figure
+plot(botptda1f,cdiffav1filt,'r^','MarkerFaceColor','r')
+hold on
+plot(botptda2f,cdiffav2filt,'k^','MarkerFaceColor','k')
+title('Average cond offsets (r=1,k=2), gradient correction applied')
+xlabel('Pressure')
+
+
+x1=[0 6200];    %SD046 cond 1 to station 50
+y1=[0.005 -0.0003];
+%y1=[-0.00025 -0.0005];
+plot(x1,y1,'m')
+
+
+x1=[0 3000 6200];    %SD046 cond 1 cast 51:56
+y1=[0.0019 -0.0012 -0.0021];
+%y1=[-0.00025 -0.0005];
+plot(x1,y1,'m')
+
+x1=[0 3000 6200];    %SD046 cond 1 cast 51:56
+y1=[0.0019 -0.0012 -0.0021];
+%y1=[-0.00025 -0.0005];
+plot(x1,y1,'m')
+
+x2=[0 2750 5000 6200];  %SD046 cond 2
+y2=[0.0008 -0.0009 -0.0009 -0.0003];
+plot(x2,y2,'g')
+
+% pressure=0:6200; %to test plotting, need to apply equation directly for 24hz files
+% ccalib1=NaN*pressure;
+% for ip=1:(length(x1)-1)
+%     ii=pressure>x1(ip)&pressure<=x1(ip+1);
+%     ccalib1(ii)=y1(ip)+((y1(ip+1)-y1(ip))/x1(ip+1))*pressure(ii); 
+% end 
+ccalib1int=interp1(x1,y1,botpress);
+plot(botpress,ccalib1int,'k.')   %check this matches the simple plotting
+
+% ccalib2=NaN*pressure;
+% for ip=1:(length(x2)-1)
+%     ii=pressure>x2(ip)&pressure<=x2(ip+1);
+%     ccalib2(ii)=y2(ip)+((y2(ip+1)-y2(ip))/x2(ip+1))*pressure(ii); 
+% end
+ccalib2int=interp1(x2,y2,botpress);
+plot(botpress,ccalib2int,'k.')
+
+ccalibdiff=ccalib1int-ccalib2int;
+
+ssco=size(condoff1);
+stno=repmat(stn,[ssco(1) 1]);
+
+figure
+plot(stno,ccalib1int-condoff1grad,'k.'); hold on
+ii=botpress>700;
+plot(stno(ii),ccalib1int(ii)-condoff1grad(ii),'r.'); 
+plot([0 max(stn)],[0 0],'m')
+xlabel('CTD station')
+ylabel('Residual from calibration fit. 1')
+
+figure
+plot(stno,ccalib2int-condoff2grad,'k.'); hold on
+ii=botpress>700;
+plot(stno(ii),ccalib2int(ii)-condoff2grad(ii),'g.'); 
+plot([0 max(stn)],[0 0],'m')
+xlabel('CTD station')
+ylabel('Residual from calibration fit, 2')
+
+%the two offsets should sum to the initial cond1-cond2 difference 
+%(could throw a lot more data at this)
+figure
+plot(botpress,condoff1grad-condoff2grad,'k.') ;hold on
+title('Diff between primary and secondary offsets')
+
+ccalibdiff=ccalib1int-ccalib2int;
+plot(botpress,ccalibdiff,'r.')
