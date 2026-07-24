@@ -41,18 +41,18 @@ if ismac
 
     %    dir_oxy='/Users/epab/Povl/SD033/CTD/oxy';
 elseif ispc
-    dir_sb='L:\work\scientific_work_areas\ctd\SBEproc';
+    dir_sb='L:\work\scientific_work_areas\oceanography\CTD\SBEproc';
     dir_raw='L:\system\ctd_seabird_sbe911plus\acquisition\data\SD046\CTD\raw';
     dir_SBE35='L:\system\ctd_seabird_sbe911plus\acquisition\data\SD046\CTD\raw';
-    dir_out='L:\work\scientific_work_areas\ctd\BASproc'; % 'L:/work/scientific_work_areas/CTD/CTD_processed' ;
-    dir_plots='L:\work\scientific_work_areas\ctd\BASproc\plots';
-    %dir_salts='L:\work\scientific_work_areas\ctd\salts'; % 
-    dir_salts='L:/work/scientific_work_areas/ctd/Salinometry/salinities';
+    dir_out='L:\work\scientific_work_areas\oceanography\CTD\BASproc'; % 'L:/work/scientific_work_areas/CTD/CTD_processed' ;
+    dir_plots='L:\work\scientific_work_areas\oceanography\CTD\BASproc\plots';
+    %dir_salts='L:\work\scientific_work_areas\oceanography\CTD\salts'; % 
+    dir_salts='L:\work\scientific_work_areas\oceanography\CTD\Salinometry\salinities';
     dir_und='L:\work\scientific_work_areas\physics\Underway\ocl'; %underway data (for comparison with 7m CTD values)
 
-    dir_oxy='L:\work\scientific_work_areas\ctd\Oxygen_CSV_format';  %may need to edit readoxyGEN for filename pattern
-    addpath('L:\work\scientific_work_areas\ctd\GSWscripts\gsw_matlab_v3_06_16\library')
-addpath('L:\work\scientific_work_areas\ctd\GSWscripts\gsw_matlab_v3_06_16')
+    dir_oxy='L:\work\scientific_work_areas\oceanography\CTD\Oxygen_CSV_format';  %may need to edit readoxyGEN for filename pattern
+    addpath('L:\work\scientific_work_areas\oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\library')
+addpath('L:\work\scientific_work_areas\oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16')
 
 elseif isunix
     dir_sb='/mnt/leg/work/scientific_work_areas/ctd/SBEproc';
@@ -90,7 +90,7 @@ end
 
 % If only using one type of CTD, CTDvarn can live in main code directory
 
-cruise='SD046';
+cruise='SD063';
 
 frame_fileadd='_SS'; % suffix for the rosette: _SS, _Ti or '' (last if want it omitted)
 
