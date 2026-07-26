@@ -1,0 +1,4 @@
+Datcnv /pL:\work\scientific_work_areas\oceanography\CTD\SBEproc\DatCnv.psa /cL:\system\ctd_seabird_sbe911plus\acquisition\data\SD063\CTD\raw\SD063_%1_SS.xmlcon /iL:\system\ctd_seabird_sbe911plus\acquisition\data\SD063\CTD\raw\SD063_%1_SS.hex /oL:\work\scientific_work_areas\oceanography\CTD\SBEproc /fSD063_%1_SS.cnv
+Alignctd /pL:\work\scientific_work_areas\oceanography\CTD\SBEproc\AlignCTD.psa /iL:\work\scientific_work_areas\oceanography\CTD\SBEproc\SD063_%1_SS.cnv /oL:\work\scientific_work_areas\oceanography\CTD\SBEproc /fSD063_%1_SS.cnv /a_a
+Celltm /pL:\work\scientific_work_areas\oceanography\CTD\SBEproc\CellTM.psa /iL:\work\scientific_work_areas\oceanography\CTD\SBEproc\SD063_%1_SS_a.cnv /oL:\work\scientific_work_areas\oceanography\CTD\SBEproc /fSD063_%1_SS_a.cnv /actm
+
