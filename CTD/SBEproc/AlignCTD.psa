@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Align_CTD >
+  <Version value="7.26.7.129" />
+  <ServerName value="Align CTD" />
+  <InputDir value="L:\work\scientific_work_areas\ctd\SBEproc" />
+  <InputFileArray size="1" GrowBy="-1" >
+    <ArrayItem index="0" value="SD046_007_SS.cnv" />
+  </InputFileArray>
+  <OutputDir value="L:\work\scientific_work_areas\ctd\SBEproc" />
+  <NameAppend value="_a" />
+  <OutputFile value="SD046_007_SS" />
+  <LastProcessed value="0" />
+  <CalcArray Size="12" >
+    <CalcArrayItem index="0" CalcID="81" >
+      <Calc UnitID="6" Ordinal="0" >
+        <FullName value="Temperature [ITS-90, deg C]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="1" CalcID="81" >
+      <Calc UnitID="6" Ordinal="1" >
+        <FullName value="Temperature, 2 [ITS-90, deg C]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="2" CalcID="12" >
+      <Calc UnitID="41" Ordinal="0" >
+        <FullName value="Conductivity [mS/cm]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="3" CalcID="12" >
+      <Calc UnitID="41" Ordinal="1" >
+        <FullName value="Conductivity, 2 [mS/cm]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="4" CalcID="55" >
+      <Calc UnitID="61" Ordinal="0" >
+        <FullName value="Oxygen, SBE 43 [umol/kg]" />
+        <WindowSize value="2.000000" />
+        <ApplyHysteresisCorrection value="1" />
+        <ApplyTauCorrection value="1" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="5" CalcID="55" >
+      <Calc UnitID="61" Ordinal="1" >
+        <FullName value="Oxygen, SBE 43, 2 [umol/kg]" />
+        <WindowSize value="2.000000" />
+        <ApplyHysteresisCorrection value="1" />
+        <ApplyTauCorrection value="1" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="6" CalcID="179" >
+      <Calc UnitID="46" Ordinal="0" >
+        <FullName value="Beam Transmission, WET Labs C-Star [%]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="7" CalcID="1" >
+      <Calc UnitID="29" Ordinal="0" >
+        <FullName value="Altimeter [m]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="8" CalcID="24" >
+      <Calc UnitID="60" Ordinal="0" >
+        <FullName value="Fluorescence, Chelsea Aqua 3 Chl Con [ug/l]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="9" CalcID="59" >
+      <Calc UnitID="-1" Ordinal="0" >
+        <FullName value="PAR/Irradiance, Biospherical/Licor" />
+        <PAR_Units value="0" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="10" CalcID="39" >
+      <Calc UnitID="4" Ordinal="0" >
+        <FullName value="Latitude [deg]" />
+      </Calc>
+    </CalcArrayItem>
+    <CalcArrayItem index="11" CalcID="40" >
+      <Calc UnitID="4" Ordinal="0" >
+        <FullName value="Longitude [deg]" />
+      </Calc>
+    </CalcArrayItem>
+  </CalcArray>
+  <ValArray size="12" >
+    <ValArrayItem index="0" value="0.000000" variable_name="Temperature" />
+    <ValArrayItem index="1" value="0.000000" variable_name="Temperature" />
+    <ValArrayItem index="2" value="0.000000" variable_name="Conductivity" />
+    <ValArrayItem index="3" value="0.000000" variable_name="Conductivity" />
+    <ValArrayItem index="4" value="5.000000" variable_name="Oxygen, SBE 43" />
+    <ValArrayItem index="5" value="5.000000" variable_name="Oxygen, SBE 43" />
+    <ValArrayItem index="6" value="0.000000" variable_name="Beam Transmission, WET Labs C-Star" />
+    <ValArrayItem index="7" value="0.000000" variable_name="Altimeter" />
+    <ValArrayItem index="8" value="0.000000" variable_name="Fluorescence, Chelsea Aqua 3 Chl Con" />
+    <ValArrayItem index="9" value="0.000000" variable_name="PAR/Irradiance, Biospherical/Licor" />
+    <ValArrayItem index="10" value="0.000000" variable_name="Latitude" />
+    <ValArrayItem index="11" value="0.000000" variable_name="Longitude" />
+  </ValArray>
+</Align_CTD>
