@@ -2,7 +2,7 @@
 cast = input('Enter cast number: ');
 
 % Build input filename
-filename = sprintf('L:\work\scientific_work_areas\oceanography\CTD\BASproc\SD063_ctd_%03d_SS_012_2db.mat', cast);
+filename = sprintf('L:\work\scientific_work_areas\oceanography\CTD\BASproc\SD063_ctd_%03d_*2db.mat', cast);
 
 % Find matching file
 files = dir(filename);
