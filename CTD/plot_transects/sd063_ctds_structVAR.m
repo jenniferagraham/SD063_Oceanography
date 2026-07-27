@@ -5,7 +5,7 @@ close all; clear all;
 savename = 'sd063_ctd.mat'; 
 
 %%
-mac=1; % 1 mac or 0 windows
+mac=0; % 1 mac or 0 windows
 here=pwd;
 if mac==0
     disk = ['L:\work\scientific_work_areas\oceanography\CTD\'];
