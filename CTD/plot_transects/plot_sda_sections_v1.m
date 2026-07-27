@@ -92,13 +92,20 @@ maxy=1000; % depth
 % [X,Y] = worldGrid(R);
 % % Convert UTM (x,y) to lat/lon
 % [lat,lon] = projinv(R.ProjectedCRS,X,Y);
+
+opts = detectImportOptions("CruiseTrackDepth.csv", 'delimiter', ',');
+CruiseTrack=readtable('CruiseTrackDepth.csv',opts);
+CruiseTrack.time = datetime(CruiseTrack.time, ...
+    'InputFormat', 'yyyy-MM-dd HH:mm:ssXXX', 'TimeZone', 'UTC');
+CruiseTrack.depth_EM124_m_ = str2double(CruiseTrack.depth_EM124_m_);
+
 %% plot the sections
 thefig=figure; thefig.WindowState = 'maximized'; set(thefig,'Visible','off')
 thefig.Position(3)=thefig.Position(4).*16./9; % change the aspect ratio
 %%
 for m=1:length(sectionlists)
 clf
-grid_options={}; % use default bathymetry with no options
+grid_options={'sdatrack'}; % use default bathymetry as bottom CTD 
 fjord=0;
 % specifics for each section, depth, caxis, etc
         vcaxis = [-0.2 0.2];

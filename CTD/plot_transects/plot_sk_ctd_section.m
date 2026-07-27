@@ -61,6 +61,7 @@ while length(varargin)>m
             xvar=lower(varargin{m+1});
         case 'grdfile'
             grdfile=varargin{m+1};
+            disp(grdfile)
         case {'type','plottype'}
             plottype=varargin{m+1};
         case {'chartlet','make_chartlet'}
@@ -290,13 +291,28 @@ bot_lon=interp1(plot_x,lon,bot_dist,'linear','extrap');
 bot_lat=interp1(plot_x,lat,bot_dist,'linear','extrap');
 
 if ~isempty(grdfile)
-    [mb.lon,mb.lat,mb.z]=load_grd(grdfile);
-    bot_depth=interp2(mb.lon,mb.lat,-mb.z,bot_lon,bot_lat,'linear');
+    %[mb.lon,mb.lat,mb.z]=load_grd(grdfile);
+    %bot_depth=interp2(mb.lon,mb.lat,-mb.z,bot_lon,bot_lat,'linear');
 else
-    load mb_all_20250512.mat
-    [bot_x,bot_y]=m_ll2xy(bot_lon,bot_lat,'clip','off');
-    bot_depth=interp2(mb.x,mb.y,-mb.z,bot_x,bot_y,'linear');
+    %load mb_all_20250512.mat
+    %[bot_x,bot_y]=m_ll2xy(bot_lon,bot_lat,'clip','off');
+    %bot_depth=interp2(mb.x,mb.y,-mb.z,bot_x,bot_y,'linear');
 end
+
+% Test option to use SDA track
+disp('sdatrack')
+opts = detectImportOptions("CruiseTrackDepth.csv", 'delimiter', ',');
+CruiseTrack=readtable('CruiseTrackDepth.csv',opts);
+trackdepth = str2double(CruiseTrack.depth_EM124_m_);
+bot_x = CruiseTrack.longitude_decimalDegrees_;
+bot_y = CruiseTrack.latitude_decimalDegrees_;
+good = isfinite(bot_x) & isfinite(bot_y) & isfinite(trackdepth);
+bot_x = bot_x(good);
+bot_y = bot_y(good);
+trackdepth = trackdepth(good);
+F = scatteredInterpolant(bot_x, bot_y, trackdepth, 'nearest');
+bot_depth=F(bot_lon,bot_lat);
+
 bot_ind=[1,find(~isnan(bot_depth),1):find(~isnan(bot_depth),1,'last'),length(bot_depth)];
 bot_dist=bot_dist(bot_ind);
 % bot_x=bot_x(bot_ind);
