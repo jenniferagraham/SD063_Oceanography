@@ -4,9 +4,8 @@ clear all
 clc
 %% add paths for GSW and where to save figures 
 
-mac=0; % 1 mac or 0 windows
 here=pwd;
-if mac==0
+if ispc
     disk = ['L:\work\scientific_work_areas\oceanography\'];
     figPb   = [disk,'\CTD\plot_transects\Figures\'];
     ctddata = [disk,'CTD\BASproc\'];
@@ -18,7 +17,7 @@ if mac==0
     addpath([disk,'CTD\GSWscripts\gsw_matlab_v3_06_16\library\'])
     addpath([disk,'CTD\GSWscripts\gsw_matlab_v3_06_16\thermodynamics_from_t\'])
     FZ=12;
-elseif mac==1
+elseif ismac
     disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
     figPb   = [disk,'CTD/plot_transects/Figures/'];
     ctddata = [disk,'CTD/BASproc/'];
@@ -135,7 +134,7 @@ fjord=0;
         mLON   = [-33.4 -30]; % related to map projections
         mLAT   = [67.4 69]; % related to map projections
     elseif m==4 % 'Magic Trough'
-        maxy=700;
+        maxy=400;
         vcaxis = [-0.4 0.4];
         tcaxis = [-2 3];
         scaxis = [29 35];
