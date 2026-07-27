@@ -61,7 +61,7 @@ maxy=1000; % depth
 % definition of colours you may need to fix 
     ercolor = [.5 1 1]; % bright blue
     skcolor2025 = [.5 .5 1]; % purple
-    sdcolor = [1 .5 .5]; % pinkish
+    sdcolor = [.5 .5 .5]; % grey
     %sdcolor2026 = [1 .5 .5]; % grey
     seccolor= [1 .0 .0]; % red
 %% load CTDs
@@ -106,33 +106,33 @@ fjord=0;
         scaxis  = [27 35.5];
         mLON = [-33.4 -28]; % related to map projections
         mLAT = [67.4 69]; % related to map projections
-    if  m==1
+    if  m==1 % 'S-mooring section'
         maxy=1000;
-        tcaxis = [-2 14];
-        scaxis = [27 35.5];
+        tcaxis = [-2 5];
+        scaxis = [30 35.5];
         vcaxis = [-0.5 0.5];
-        mLON   = [-33.4 -27]; % related to map projections
-        mLAT   = [64.8 69]; % related to map projections
-    elseif m==2
-        maxy=550;
+        mLON   = [-33.4 -30]; % related to map projections
+        mLAT   = [66.8 69]; % related to map projections
+    elseif m==2 % 'Melange Trough along'
+        maxy=700;
         vcaxis = [-0.2 0.2];
-        tcaxis = [-2 2];
-        scaxis = [28.5 35];
-        mLON   = [-33.4 -28]; % related to map projections
+        tcaxis = [-2 3];
+        scaxis = [29 35];
+        mLON   = [-33.4 -30]; % related to map projections
         mLAT   = [67.4 69]; % related to map projections
-    elseif m==3
-        maxy=550;
+    elseif m==3 % 'Melange Trough entrance'
+        maxy=700;
         vcaxis = [-0.5 0.5];
         tcaxis = [-2 3];
         scaxis = [29 35];
-        mLON   = [-33.4 -28]; % related to map projections
+        mLON   = [-33.4 -30]; % related to map projections
         mLAT   = [67.4 69]; % related to map projections
-    elseif m==4
-        maxy=1000;
+    elseif m==4 % 'Magic Trough'
+        maxy=700;
         vcaxis = [-0.4 0.4];
-        tcaxis = [-2 4];
-        scaxis = [29 35.5];
-        mLON   = [-33.4 -28]; % related to map projections
+        tcaxis = [-2 3];
+        scaxis = [29 35];
+        mLON   = [-33.4 -30]; % related to map projections
         mLAT   = [67.2 69]; % related to map projections
     elseif m==5 || m==8 || m==9 % mippugut
         fjord=1;
@@ -212,13 +212,13 @@ fjord=0;
     end
     
     plot(vertcat(sd_ctds.asal),vertcat(sd_ctds.ct),'.','markersize',2,'color',sdcolor);
-    % hold on;
+    hold on;
     % plot(vertcat(er_ctds.asal),vertcat(er_ctds.ct),'.','markersize',2,'color',ercolor);
     % plot(vertcat(sk_ctds.asal),vertcat(sk_ctds.ct),'.','markersize',2,'color',skcolor); 
     plot(vertcat(sd_ctds(ind).asal),vertcat(sd_ctds(ind).ct),'r.','markersize',2);
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % add density contours 
-    thetaTS=[-2:0.2:14];
+    thetaTS=[-2:0.2:10];
     s=[24:0.5:36];
 
     smin=min(s)-0.01.*min(s);
@@ -240,8 +240,8 @@ fjord=0;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
 
-    xlim([27 35.5]);
-    ylim([-2 14]);
+    xlim([28 35.5]);
+    ylim([-2 5]);
     xlabel('S_A (‰)');
     ylabel('CT \circC');%ylabel('\Theta (^oC)');
     
