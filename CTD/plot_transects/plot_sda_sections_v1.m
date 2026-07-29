@@ -46,19 +46,10 @@ set(0, 'DefaultAxesFontSize', FZ);
 %     '3miippugut_cross_mid','3miippugut_cross_outer','kivioq_cross','kivioq_east_cross'};
 
 
-sectionlists={[5,6,7,8,9],... % S section - mooring towards Kang trough
-    [13, 11,10],... % Melange Trough entrance  along section 
-    [14, 15, 16, 17, 18],... % Melange Trough entrance
-    [13, 12, 22],... % Melange Trough North
-    [19, 20, 21],... % Magic Trough
-    [23,24,25,26,27],... % Kangerlussuaq trough
-    [30,31,35,32,33,34]}; % 3-M sill
-
-sectionnames={'S-mooring section','Melange Trough along', 'Melange Trough entrance',...
-    'Melange Trough North','Magic Trough','Kangerlussuaq Trough','3-M Sill'};
-sectionfilenames={'Ssection','melangetroughalong','melangetroughentrance',...
-    'melangetroughnorth','magictrough','kgtrough','3msill'};
-
+sectionfilenames={'Ssection',...
+    'melangetroughalong','melangetroughentrance','melangetroughnorth',...
+    'magictrough','kgtrough',...
+    '3msill'};
 
 maxy=1000; % depth 
 % definition of colours you may need to fix 
@@ -104,97 +95,24 @@ CruiseTrack.depth_EM124_m_ = str2double(CruiseTrack.depth_EM124_m_);
 thefig=figure; thefig.WindowState = 'maximized'; set(thefig,'Visible','on')
 thefig.Position(3)=thefig.Position(4).*16./9; % change the aspect ratio
 %%
-for m=7 %1:length(sectionlists)
+for m=1:length(sectionfilenames)
 clf
 % use SDA track from Underway. Still tricky with interpolation.
 %grid_options={'sdatrack'}; % use default bathymetry as bottom CTD 
 % switch to using bottle depths:
 grid_options={'botdepth'};
-fjord=0;
 % specifics for each section, depth, caxis, etc
-        vcaxis = [-0.2 0.2];
-        tcaxis  = [-2 14];
-        scaxis  = [27 35.5];
-        mLON = [-33.4 -28]; % related to map projections
-        mLAT = [67.4 69]; % related to map projections
-    if  m==1 % 'S-mooring section'
-        maxy=1000;
-        tcaxis = [-2 5];
-        scaxis = [30 35.5];
-        vcaxis = [-0.5 0.5];
-        mLON   = [-33.4 -30]; % related to map projections
-        mLAT   = [66.8 69]; % related to map projections
-    elseif m==2 % 'Melange Trough along'
-        maxy=700;
-        vcaxis = [-0.2 0.2];
-        tcaxis = [-2 3];
-        scaxis = [29 35];
-        mLON   = [-33.4 -30]; % related to map projections
-        mLAT   = [67.4 69]; % related to map projections
-    elseif m==3 % 'Melange Trough entrance'
-        maxy=700;
-        vcaxis = [-0.5 0.5];
-        tcaxis = [-2 3];
-        scaxis = [29 35];
-        mLON   = [-33.4 -30]; % related to map projections
-        mLAT   = [67.4 69]; % related to map projections
-    elseif m==4 % 'Magic Trough'
-        maxy=400;
-        vcaxis = [-0.4 0.4];
-        tcaxis = [-2 3];
-        scaxis = [29 35];
-        mLON   = [-33.4 -30]; % related to map projections
-        mLAT   = [67.2 69]; % related to map projections
-    elseif m==5 % 'Melange Trough North'
-        maxy=500;
-        vcaxis = [-0.5 0.5];
-        tcaxis = [-2 3];
-        scaxis = [29 35];
-        mLON   = [-33.4 -30]; % related to map projections
-        mLAT   = [67.4 69]; % related to map projections
-    elseif m==6 % KG trough
-        maxy=600;
-        tcaxis = [-2 5];
-        scaxis = [29 35.5];
-        vcaxis = [-0.5 0.5];
-        mLON   = [-33.4 -30]; % related to map projections
-        mLAT   = [66.8 69]; % related to map projections
-    elseif m==7 || m==8 || m==9 % mippugut
-        fjord=1;
-        mLON   = [-31 -30]; % related to map projections
-        mLAT   = [68 68.5]; % related to map projections
-        vcaxis = [-0.3 0.3]; 
-        tcaxis = [-2 1]; 
-        scaxis = [26.5 34.5];
-        if m==7; maxy=200; elseif m==8; maxy=200; elseif m==9; maxy=500; end
-    elseif  m==77 || m==11
-       maxy=450; 
-       mLON   = [-29.8 -28.5]; % related to map projections
-       mLAT   = [68 68.5]; % related to map projections
-       vcaxis = [-0.4 0.4]; 
-       tcaxis = [-2 2.5]; 
-       scaxis = [29 33];
-    elseif m==66 || m==10 %kivioq    
-        fjord=1;
-       if m==6; maxy=250; elseif m==10; maxy=150; end 
-       grid_options={'grdfile','kivioq_proc_20m_interp.grd'};
-       mLON   = [-29.8 -28.5]; % related to map projections
-       mLAT   = [68 68.5]; % related to map projections
-       vcaxis = [-0.3 0.3]; 
-       tcaxis = [-2 1]; 
-       scaxis = [26.5 34.5];
-    end
-
+    P = sdaSectionParams(sectionfilenames{m});
   
     % conservative temperature
     subplot(3,5,3:5);
-    plot_sk_ctd_section(sectionlists{m},ctds,'ct','xvar','dist','type','pcolor_interp',...
+    plot_sk_ctd_section(P.sectionlist,ctds,'ct','xvar','dist','type','pcolor_interp',...
         'station_labels','true',grid_options{:});
    % plot_sda_ctd_section(sectionlists{m},ctds,'ct','xvar','dist','type','pcolor_interp',...
    %     'station_labels','true',grid_options{:});
 
-    ylim([0 maxy]);
-    clim([tcaxis]);
+    ylim([0 P.maxy]);
+    clim([P.tcaxis]);
     cmocean('thermal')
     ylabel('Depth (m)');
     hcb=colorbar;
@@ -203,10 +121,10 @@ fjord=0;
     
     % absolute salinity
     subplot(3,5,8:10);
-    plot_sk_ctd_section(sectionlists{m},ctds,'asal','xvar','dist','type','pcolor_interp',...
+    plot_sk_ctd_section(P.sectionlist,ctds,'asal','xvar','dist','type','pcolor_interp',...
         grid_options{:});
-    ylim([0 maxy]);
-    clim([scaxis]);
+    ylim([0 P.maxy]);
+    clim([P.scaxis]);
     cmocean('haline')
     ylabel('Depth (m)');
     hcb=colorbar;
@@ -214,10 +132,10 @@ fjord=0;
     
     % ocean currents
     subplot(3,5,13:15);
-    plot_sk_ctd_section(sectionlists{m},ctds,'ladcp_perp','xvar','dist',...
+    plot_sk_ctd_section(P.sectionlist,ctds,'ladcp_perp','xvar','dist',...
         'type','pcolor_interp','chartlet',false,grid_options{:});
-    ylim([0 maxy]);
-    clim([vcaxis]);
+    ylim([0 P.maxy]);
+    clim([P.vcaxis]);
     xlabel('Distance (km)');
     ylabel('Depth (m)');
     cmocean('balance')
@@ -227,10 +145,10 @@ fjord=0;
     % T-S plot (will add density later)
     subplot(2,5,6:7) % top right - t/s
     allstations=[sd_ctds.station];
-    ind=zeros(size(sectionlists{m}));
-    for n=1:length(sectionlists{m})
+    ind=zeros(size(P.sectionlist));
+    for n=1:length(P.sectionlist)
         try
-            ind(n)=find(allstations==sectionlists{m}(n));
+            ind(n)=find(allstations==P.sectionlist(n));
         catch
             error('Cannot find %s station %d',cruise,stns(n));
         end
@@ -271,7 +189,7 @@ fjord=0;
     ylabel('CT \circC');%ylabel('\Theta (^oC)');
     
     % Map for section location
-    if fjord==1
+    if P.fjord==1
         subplot(2,5,1) % region - map
         % set our projection to UTM zone 25 north
         m_proj('utm','lon',[-34 -28],'lat',[66 68.7],'zone',25,'hem',0,'ell','wgs84');
@@ -300,7 +218,7 @@ fjord=0;
 
     subplot(2,5,1:2) % bottom right - map
     % set our projection to UTM zone 25 north
-    m_proj('utm','lon',mLON,'lat',mLAT,'zone',25,'hem',0,'ell','wgs84');
+    m_proj('utm','lon',P.mLON,'lat',P.mLAT,'zone',25,'hem',0,'ell','wgs84');
   
     pcolor(bedmachine.x-50,bedmachine.y-50,bedmachine.z);
     hold on;
@@ -327,7 +245,7 @@ fjord=0;
     m_grid;
     % add ruler to the map
     
-    title(sectionnames{m});
+    title(P.sectionname);
      figname=sprintf('_ctd_section_%s.png',sectionfilenames{m});
 %    print(thefig,'-dpng','-r200',figname);
     exportgraphics(gcf,[figPb,cruise,figname],'Resolution',300)
