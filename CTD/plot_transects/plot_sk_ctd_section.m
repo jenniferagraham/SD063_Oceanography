@@ -214,6 +214,9 @@ switch plottype
             [c,h]=contour(plot_x,press(:,1),plot_var,levels,'k');
             clabel(c,h);
         end
+    case 'imagesc' % case test by Laura C 28/07/2026
+        imagesc()
+        hold on 
     case 'pcolor_interp'
 %         if strcmp(variable,'gamma_n')
 %             %extend temperature and salinity, recalculate gamma_n
@@ -300,7 +303,9 @@ else
 end
 
 % Test option to use SDA track
-disp('sdatrack')
+if strcmp(grdfile,'sda')
+            grdfile=varargin{m+1};
+            disp(grdfile)
 opts = detectImportOptions("CruiseTrackDepth.csv", 'delimiter', ',');
 CruiseTrack=readtable('CruiseTrackDepth.csv',opts);
 trackdepth = str2double(CruiseTrack.depth_EM124_m_);
@@ -329,11 +334,27 @@ bot_press_fills(~isnan(bot_press))=nan;
 
 patch(bot_dist([1:end,end,1,1]),[bot_press_filled,maxP,maxP,bot_press(1)],'k');
 plot(bot_dist,bot_press_fills,'r--');
+elseif  isempty(grdfile)
+%x_points=[0 0 1 2 2];
+%y_points=[0 4000 5000 4000 0];
+x_points=[0 plot_x.' plot_x(end)];
+
+y_points=[maxP];
+
+for n=1:length(stns)
+
+y_points=[y_points max(ctds(n).press)];
+
+end
+
+y_points=[y_points maxP];
+patch(x_points,y_points,'k');
+end
 
 % xlim(plot_x([1,end]));
 xlim(bot_dist([1,end]));
 set(gca,'ydir','reverse');
-% ylim([0 200]);
+ ylim([0 700]);
 
 
 if make_chartlet
