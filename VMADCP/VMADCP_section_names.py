@@ -1,0 +1,32 @@
+from collections import OrderedDict
+
+
+dict_sections = OrderedDict([
+    ('inner stump 29.07. am',
+     {'start_time': '2026-07-29 04:35:00',
+      'end_time': '2026-07-29 05:05:00',
+      'adcp': 'os150bb',
+      'bin_size': 10,
+      'max_depth_plot': 200,
+      'extent_map': [-30.9, -30.3, 68.05, 68.4]}),
+    ('sill 28/29.07.',
+     {'start_time': '2026-07-28 22:10:00',
+      'end_time': '2026-07-29 02:00:00',
+      'adcp': 'os150bb',
+      'bin_size': 10,
+      'max_depth_plot': 200,
+      'extent_map': [-30.9, -30.3, 68.05, 68.4]}),
+    ('iceface 28.07. pm',
+     {'start_time': '2026-07-28 16:55:00',
+      'end_time': '2026-07-28 17:20:00',
+      'adcp': 'os150bb',
+      'bin_size': 10,
+      'max_depth_plot': 200,
+      'extent_map': [-30.9, -30.3, 68.05, 68.4]}),
+    ('Kangerlussuaq Trough',
+     {'start_time': '2026-07-27 20:00:00',
+      'end_time': '2026-07-28 06:00:00',
+      'adcp': 'os150nb',
+      'bin_size': 100,
+      'max_depth_plot': 450}),
+])
