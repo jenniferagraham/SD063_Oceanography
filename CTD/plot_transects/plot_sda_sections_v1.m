@@ -1,6 +1,6 @@
 %% created by Laura C (SAMS) uses an updated of Povl's original plot sd sections that were used for the cruise report 
 %% modified by CTD team SD 063
-clear all
+clear all; close all;
 clc
 %% add paths for GSW and where to save figures 
 
@@ -48,12 +48,16 @@ set(0, 'DefaultAxesFontSize', FZ);
 
 sectionlists={[5,6,7,8,9],... % S section - mooring towards Kang trough
     [13, 11,10],... % Melange Trough entrance  along section 
-    [14, 15, 16, 17, 18],... % Melange Trough North
-    [19, 20, 21]}; % Magic Trough 
+    [14, 15, 16, 17, 18],... % Melange Trough entrance
+    [13, 12, 22],... % Melange Trough North
+    [19, 20, 21],... % Magic Trough
+    [23,24,25,26,27],... % Kangerlussuaq trough
+    [30,31,35,32,33,34]}; % 3-M sill
+
 sectionnames={'S-mooring section','Melange Trough along', 'Melange Trough entrance',...
-    'Magic Trough'};
+    'Melange Trough North','Magic Trough','Kangerlussuaq Trough','3-M Sill'};
 sectionfilenames={'Ssection','melangetroughalong','melangetroughentrance',...
-    'magictrough'};
+    'melangetroughnorth','magictrough','kgtrough','3msill'};
 
 
 maxy=1000; % depth 
@@ -64,8 +68,6 @@ maxy=1000; % depth
     %sdcolor2026 = [1 .5 .5]; % grey
     seccolor= [1 .0 .0]; % red
 %% load CTDs
-
-
     cruise='SD063';
     load([ctddata,cruise,'_ctd.mat']);
     
@@ -99,12 +101,15 @@ CruiseTrack.time = datetime(CruiseTrack.time, ...
 CruiseTrack.depth_EM124_m_ = str2double(CruiseTrack.depth_EM124_m_);
 
 %% plot the sections
-thefig=figure; thefig.WindowState = 'maximized'; set(thefig,'Visible','off')
+thefig=figure; thefig.WindowState = 'maximized'; set(thefig,'Visible','on')
 thefig.Position(3)=thefig.Position(4).*16./9; % change the aspect ratio
 %%
-for m=1:length(sectionlists)
+for m=7 %1:length(sectionlists)
 clf
-grid_options={'sdatrack'}; % use default bathymetry as bottom CTD 
+% use SDA track from Underway. Still tricky with interpolation.
+%grid_options={'sdatrack'}; % use default bathymetry as bottom CTD 
+% switch to using bottle depths:
+grid_options={'botdepth'};
 fjord=0;
 % specifics for each section, depth, caxis, etc
         vcaxis = [-0.2 0.2];
@@ -140,22 +145,36 @@ fjord=0;
         scaxis = [29 35];
         mLON   = [-33.4 -30]; % related to map projections
         mLAT   = [67.2 69]; % related to map projections
-    elseif m==5 || m==8 || m==9 % mippugut
+    elseif m==5 % 'Melange Trough North'
+        maxy=500;
+        vcaxis = [-0.5 0.5];
+        tcaxis = [-2 3];
+        scaxis = [29 35];
+        mLON   = [-33.4 -30]; % related to map projections
+        mLAT   = [67.4 69]; % related to map projections
+    elseif m==6 % KG trough
+        maxy=600;
+        tcaxis = [-2 5];
+        scaxis = [29 35.5];
+        vcaxis = [-0.5 0.5];
+        mLON   = [-33.4 -30]; % related to map projections
+        mLAT   = [66.8 69]; % related to map projections
+    elseif m==7 || m==8 || m==9 % mippugut
         fjord=1;
         mLON   = [-31 -30]; % related to map projections
         mLAT   = [68 68.5]; % related to map projections
         vcaxis = [-0.3 0.3]; 
         tcaxis = [-2 1]; 
         scaxis = [26.5 34.5];
-        if m==5; maxy=500; elseif m==8; maxy=200; elseif m==9; maxy=500; end
-    elseif  m==7 || m==11
+        if m==7; maxy=200; elseif m==8; maxy=200; elseif m==9; maxy=500; end
+    elseif  m==77 || m==11
        maxy=450; 
        mLON   = [-29.8 -28.5]; % related to map projections
        mLAT   = [68 68.5]; % related to map projections
        vcaxis = [-0.4 0.4]; 
        tcaxis = [-2 2.5]; 
        scaxis = [29 33];
-    elseif m==6 || m==10 %kivioq    
+    elseif m==66 || m==10 %kivioq    
         fjord=1;
        if m==6; maxy=250; elseif m==10; maxy=150; end 
        grid_options={'grdfile','kivioq_proc_20m_interp.grd'};
