@@ -2,6 +2,14 @@ function P = sdaSectionParams(sectionName)
 % Define SD063 sections for plotting
 % For each new section populate below. 
 %
+% P.sectionlist = [5,6,7,8,9];
+% P.sectionname = 'S-mooring section';
+% P.maxy   = 1000;
+% P.tcaxis = [-2 5];
+% P.scaxis = [30 35.5];
+% P.vcaxis = [-0.5 0.5];
+% P.mLON, mLAT : axes limits for map
+%
 % Created by JGraham
 % 2025-07-28
 
@@ -64,7 +72,7 @@ switch lower(sectionName)
 
     case 'kgtrough'
         P.sectionlist = [23,24,25,26,27];
-        P.sectionname = 'Kangerlussuaq Trough'
+        P.sectionname = 'Kangerlussuaq Trough';
         P.maxy   = 600;
         P.tcaxis = [-2 5];
         P.scaxis = [29 35.5];
