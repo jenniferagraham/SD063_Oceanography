@@ -92,6 +92,18 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
+    case '3mhead'
+        P.fjord = 1;
+        P.sectionlist = [40,41,42,39,38,37];
+        P.sectionname = '3-M Head';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
     otherwise
         error('Unknown section name: %s',sectionName)
 
