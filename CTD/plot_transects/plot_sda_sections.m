@@ -31,12 +31,12 @@ elseif ismac
 end
 set(0, 'DefaultAxesFontSize', FZ);
 
-sectionfilenames={'3mhead'};
+sectionfilenames={'3mhead', '3mtransect', '3mdoubletrough'};
 
 %sectionfilenames={'Ssection',...
 %    'melangetroughalong','melangetroughentrance','melangetroughnorth',...
 %    'magictrough','kgtrough',...
-%    '3msill', '3mhead'};
+%    '3msill', '3mhead','3mtransect', '3mdoubletrough'};
 
 maxy=1000; % depth 
 % definition of colours you may need to fix 
