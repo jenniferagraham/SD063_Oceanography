@@ -24,11 +24,37 @@ P.mLAT   = [67.4 69];
 
 switch lower(sectionName)
 
+    case '3minner'
+        P.sectionlist = [30,31,32,33,34,35,36,...
+            37,38,39,40,41,42,43,44,45,46,47,48,49,...
+            ];
+        P.sectionname = '3-M Inner';
+        P.maxy   = 400; 
+
+    case '3mouter'
+        P.sectionlist = [28, 29, ...
+            50, 51];
+        P.sectionname = '3-M Outer';
+        P.maxy   = 400; 
+
+    case 'all3m'
+        P.sectionlist = [28,29,30,31,32,33,34,35,36,...
+            37,38,39,40,41,42,43,44,45,46,47,48,49,...
+            50,51];
+        P.sectionname = '3-M All';
+        P.maxy   = 400; 
+
+    case 'allmelange'
+        P.sectionlist = [10, 11, 12, 13, 22,...
+            14, 15, 16, 17, 18];
+        P.sectionname = 'Melange All';
+        P.maxy   = 500; 
+
     case '3mtransect'
         P.fjord = 1;
-        P.sectionlist = [43,42,49,35,51,50];
+        P.sectionlist = [43,42,49,35,51,50,29,28];
         P.sectionname = '3-M Transect';
-        P.maxy   = 300; 
+        P.maxy   = 500; 
         P.vcaxis = [-0.3 0.3];
         P.tcaxis = [-2 1];
         P.scaxis = [26.5 34.5];
@@ -84,8 +110,8 @@ switch lower(sectionName)
     case 'kgtrough'
         P.sectionlist = [23,24,25,26,27];
         P.sectionname = 'Kangerlussuaq Trough';
-        P.maxy   = 600;
-        P.tcaxis = [-2 5];
+        P.maxy   = 550;
+        P.tcaxis = [-2 2];
         P.scaxis = [29 35.5];
         P.vcaxis = [-0.5 0.5];
         P.mLON   = [-33.4 -30];
@@ -119,6 +145,54 @@ switch lower(sectionName)
         P.fjord = 1;
         P.sectionlist = [44,49,48,47,46,45];
         P.sectionname = '3-M double trough';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3mmouthsection'
+        P.fjord = 1;
+        P.sectionlist = [52 55 53 54];
+        P.sectionname = '3-M mouth section';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3mbeak'
+        P.fjord = 1;
+        P.sectionlist = [61 60 59 58 57 56];
+        P.sectionname = '3-M beak section';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3moutermouthrepeats'
+        P.fjord = 1;
+        P.sectionlist = [28 58];
+        P.sectionname = '3-M outer section repeats';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3minnermouthrepeats'
+        P.fjord = 1;
+        P.sectionlist = [29 55];
+        P.sectionname = '3-M inner section repeats';
         P.maxy   = 300; 
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
