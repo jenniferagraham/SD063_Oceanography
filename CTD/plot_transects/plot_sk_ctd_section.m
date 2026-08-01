@@ -1,6 +1,6 @@
-function plot_sk2514_ctd_section(stns,ctds,variable,varargin)
+function plot_sk_ctd_section(stns,ctds,variable,varargin)
 
-% PLOT_SD041_CTD_SECTION (stns,ctdsstructure,variable,[property_name,property_value])
+% PLOT_SK_CTD_SECTION (stns,ctdsstructure,variable,[property_name,property_value])
 % by Povl Abrahamsen (August 2024)
 % plots a basic CTD section from a cruise (with casts in a Matlab file
 % named "[cruise]_ctd.mat", variable name "ctds" containing an array of
@@ -202,7 +202,6 @@ switch(variable)
         plot_var=newvar;
 end
 
-
 switch plottype
     case 'pcolor'
         plot_x=plot_x(:)';
@@ -250,6 +249,8 @@ switch plottype
             [ladcp_dir_interp,ladcp_spd_interp]=cart2pol(ladcp_v_interp,ladcp_u_interp);
             [plot_var_interp,~]=pol2cart(ladcp_dir_interp+repmat(section_dirs_interp,size(press,1),1),ladcp_spd_interp);
         else
+% Paul Holland: in my opinion these 4 lines should be commented out, as
+% they are falsely extrapolating the casts downwards
             for n=1:length(stns)
                 lastind=find(~isnan(plot_var(:,n)),1,'last');
                 plot_var((lastind+1):end,n)=plot_var(lastind,n);
