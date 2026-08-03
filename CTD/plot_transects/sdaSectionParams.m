@@ -177,7 +177,19 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
-    case '3moutermouthrepeats'
+    case '3macrosssill'
+        P.fjord = 1;
+        P.sectionlist = [76:-1:71];
+        P.sectionname = '3-M across sill section';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'repeat_3moutermouth'
         P.fjord = 1;
         P.sectionlist = [28 58];
         P.sectionname = '3-M outer section repeats';
@@ -189,10 +201,34 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
-    case '3minnermouthrepeats'
+    case 'repeat_3minnermouth'
         P.fjord = 1;
         P.sectionlist = [29 55];
-        P.sectionname = '3-M inner section repeats';
+        P.sectionname = '3-M inner station repeats';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'repeat_3m_3msillpeak'
+        P.fjord = 1;
+        P.sectionlist = [35 62];
+        P.sectionname = '3-M sill peak repeats';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'repeat_3m_icefront'
+        P.fjord = 1;
+        P.sectionlist = [43 63 65];
+        P.sectionname = '3-M ice front front repeats';
         P.maxy   = 300; 
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
