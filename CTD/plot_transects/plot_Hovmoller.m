@@ -4,6 +4,8 @@ close all; clear all;
 addpath('../../matlabF/')
 
 disk = ['L:\work\scientific_work_areas\oceanography\'];
+Tdisk = ['P:\SD063\']; % JG T-drive
+%Tdisk = ['T:\SD063\'];
 ctddata = [disk,'CTD\BASproc\'];
 cruise='SD063';
 load([ctddata,cruise,'_ctd.mat']);
@@ -18,7 +20,7 @@ else
  figure('Position', [10, 100, 1250, 600])
 end
 
-sectionfilename='repeat_3m_icefront';
+sectionfilename='repeat_3m_icefront'; % repeat_3msill[n or peak]
 P = sdaSectionParams(sectionfilename);
 
 ncasts = length(P.sectionlist);
@@ -52,13 +54,13 @@ ha=tight_subplot(3,1,[0.015 0.01], [0.11 0.05], [0.08 0.05]);
 %subplot(3,1,3)
 axes(ha(3))
 %plot tidal cycle:
-addpath T:/SD063/TMD3.0
+addpath(fullfile(Tdisk,'TMD3.0')) 
 
 yyaxis left
 
 %ax1 = subplot(3,1,3);
 t = datetime('15-Jul-2026'):hours(1):datetime('22-Aug-2026');
-z = tmd_predict('T:/SD063/Gr1kmTM/data/Gr1kmTM_v1.nc',68.2796,-30.7665,t);
+z = tmd_predict(fullfile(Tdisk,'Gr1kmTM/data/Gr1kmTM_v1.nc'),68.2796,-30.7665,t);
 plot(datenum(t), z);
 ylabel('tide height (m)')
 %take derivative of z:
@@ -212,7 +214,7 @@ end
 
  set(gcf, 'Color', 'w')
 
- if yy_zoom
+ if yoyo_zoom
 name = sprintf('_Hovmoller_anomolies_%s_full.png', sectionfilename);
  else
      name = sprintf('_Hovmoller_anomolies_%s.png', sectionfilename);
