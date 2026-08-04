@@ -5,8 +5,6 @@ ctddata = [disk,'CTD\BASproc\'];
 cruise='SD063';
 load([ctddata,cruise,'_ctd.mat']);
 
-
-
 ctds=ctds(aaa);
 
     ax=gobjects(1,2);
@@ -22,7 +20,9 @@ ctds=ctds(aaa);
         grid on
         set(ax(1),'XTick',-5:0.5:5.0);   
         h=plot(ctds.Ctemp,ctds.press,'Color',color_set,'LineWidth',2);
-        
+
+       % legend(string(datetime(ctds.gtime)),'Location','SouthEast')
+
         ax(2)=subplot(1,4,2);
         set(ax(2),'XTick',-10:1:100);   
         set(gca,'ydir','reverse','xaxislocation','top')
@@ -31,6 +31,8 @@ ctds=ctds(aaa);
         xlabel('Salinity')
         h=plot(ctds.asalin,ctds.press,'Color',color_set,'LineWidth',2);
         grid on
+
+
         if i==1
           %  TITLE=['CTD ',ctds_title,''];
            % h=suptitle(TITLE);
