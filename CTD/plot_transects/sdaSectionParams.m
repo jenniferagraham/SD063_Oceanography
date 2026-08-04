@@ -28,6 +28,14 @@ switch lower(sectionName)
         P.sectionlist = [30,31,32,33,34,35,36,...
             37,38,39,40,41,42,43,44,45,46,47,48,49,...
             ];
+        P.msslist = [44:55];
+        P.sectionname = '3-M Inner';
+        P.maxy   = 400; 
+        
+   case '3minnerMSS'
+        P.sectionlist=[];
+        P.mssstationlist = [3 3 3 4 4 4 5 6 6 6]; % station list 
+        P.msslist = [7:16]; % cast list 
         P.sectionname = '3-M Inner';
         P.maxy   = 400; 
 
@@ -41,6 +49,7 @@ switch lower(sectionName)
         P.sectionlist = [28,29,30,31,32,33,34,35,36,...
             37,38,39,40,41,42,43,44,45,46,47,48,49,...
             50,51];
+        P.msslist = [1:55];
         P.sectionname = '3-M All';
         P.maxy   = 400; 
 
@@ -50,9 +59,22 @@ switch lower(sectionName)
         P.sectionname = 'Melange All';
         P.maxy   = 500; 
 
-    case '3mtransect'
+    case '3mtransect' % along fjord transect 
         P.fjord = 1;
         P.sectionlist = [43,42,49,35,51,50,29,28];
+        P.msslist = []
+        P.sectionname = '3-M Transect';
+        P.maxy   = 500; 
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3mtransectMSS' % along fjord transect 
+        P.fjord = 1;
+        P.sectionlist = [43,42,49,35,51,50,29,28];
+        P.msslist = []
         P.sectionname = '3-M Transect';
         P.maxy   = 500; 
         P.vcaxis = [-0.3 0.3];
@@ -72,7 +94,7 @@ switch lower(sectionName)
         P.mLAT   = [66.8 69];
 
     case 'melangetroughalong'
-        P.sectionlist = [13, 11,10];
+        P.sectionlist = [13,11,10];
         P.sectionname = 'Melange Trough along';
         P.maxy   = 700;
         P.vcaxis = [-0.2 0.2];
@@ -81,7 +103,7 @@ switch lower(sectionName)
         P.mLON   = [-33.4 -30];
 
     case 'melangetroughentrance'
-        P.sectionlist = [14, 15, 16, 17, 18];
+        P.sectionlist = [14,15,16,17,18];
         P.sectionname = 'Melange Trough entrance';
         P.maxy   = 700;
         P.vcaxis = [-0.5 0.5];
@@ -90,7 +112,7 @@ switch lower(sectionName)
         P.mLON   = [-33.4 -30];
 
     case 'melangetroughnorth'
-        P.sectionlist = [13, 12, 22];
+        P.sectionlist = [13,12,22];
         P.sectionname = 'Melange Trough North';
         P.maxy   = 500;
         P.vcaxis = [-0.5 0.5];
@@ -99,7 +121,7 @@ switch lower(sectionName)
         P.mLON   = [-33.4 -30];
 
     case 'magictrough'
-        P.sectionlist = [14, 15, 16, 17, 18];
+        P.sectionlist = [14,15,16,17,18];
         P.sectionname = 'Magic Trough';
         P.maxy   = 400;
         P.vcaxis = [-0.4 0.4];
@@ -129,9 +151,22 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
+    case '3minnersill'
+        P.fjord = 1;
+        P.msslist = [13 14 15 16 17 18 19 20 21 22 23 24];
+        P.sectionname = '3-M Sill';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
     case '3mhead'
         P.fjord = 1;
         P.sectionlist = [40,41,42,39,38,37];
+        P.msslist = [];
         P.sectionname = '3-M Head';
         P.maxy   = 300; 
         P.fjord  = 1;
@@ -144,6 +179,7 @@ switch lower(sectionName)
     case '3mdoubletrough'
         P.fjord = 1;
         P.sectionlist = [44,49,48,47,46,45];
+        P.msslist = [];
         P.sectionname = '3-M double trough';
         P.maxy   = 300; 
         P.fjord  = 1;
@@ -177,10 +213,24 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
-    case '3macrosssill'
+    case '3macrosssill-1'
         P.fjord = 1;
         P.sectionlist = [76:-1:71];
-        P.sectionname = '3-M across sill section';
+        P.msslist = [];
+        P.sectionname = '3-M across sill section 1';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3macrosssill-2'
+        P.fjord = 1;
+        P.sectionlist = [85:1:90];
+        P.msslist = [];
+        P.sectionname = '3-M across sill section 2';
         P.maxy   = 300; 
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
@@ -192,6 +242,7 @@ switch lower(sectionName)
     case 'repeat_3moutermouth'
         P.fjord = 1;
         P.sectionlist = [28 58];
+        P.msslist = [];
         P.sectionname = '3-M outer section repeats';
         P.maxy   = 300; 
         P.fjord  = 1;
@@ -204,6 +255,7 @@ switch lower(sectionName)
     case 'repeat_3minnermouth'
         P.fjord = 1;
         P.sectionlist = [29 55];
+        P.msslist = [];
         P.sectionname = '3-M inner station repeats';
         P.maxy   = 300; 
         P.fjord  = 1;
@@ -213,9 +265,10 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
-    case 'repeat_3m_3msillpeak'
+    case 'repeat_3msillpeak'
         P.fjord = 1;
-        P.sectionlist = [35 62];
+        P.sectionlist = [35 62 92];
+        P.msslist = [];
         P.sectionname = '3-M sill peak repeats';
         P.maxy   = 300; 
         P.fjord  = 1;
@@ -227,8 +280,10 @@ switch lower(sectionName)
 
     case 'repeat_3m_icefront'
         P.fjord = 1;
-        P.sectionlist = [43 63 65];
-        P.sectionname = '3-M ice front front repeats';
+        P.sectionlist = [43 63 65 ...
+            77 78 79 80 81 82 83 84 95];
+        P.msslist = [];
+        P.sectionname = '3-M ice front repeats';
         P.maxy   = 300; 
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
