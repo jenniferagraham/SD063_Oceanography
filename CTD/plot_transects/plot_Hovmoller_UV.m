@@ -11,7 +11,7 @@ cruise='SD063';
 load([ctddata,cruise,'_ctd.mat']);
 
 %Option to zoom axes in on the ice front section yoyo:
-yoyo_zoom=1;
+yoyo_zoom=0;
 
 %figure;
 if yoyo_zoom
@@ -20,6 +20,7 @@ else
  figure('Position', [10, 100, 1250, 600])
 end
 
+%sectionfilename='repeat_3msillN' %[N or peak]
 sectionfilename='repeat_3m_icefront'; % repeat_3msill[n or peak]
 P = sdaSectionParams(sectionfilename);
 
@@ -194,7 +195,7 @@ linkaxes(findall(gcf,'Type','axes'),'x');
 %linkaxes([ha],'x')
 
 % Put ticks at every CTD cast time
-ha(3).XTick = x;
+ha(3).XTick = [x, datenum(datetime('now'))+1/24];
 datetick(ha(3),'x','dd-mmm HH:MM','keepticks');
 xtickangle(ha(3),45);
 ha(3).FontSize=8;
