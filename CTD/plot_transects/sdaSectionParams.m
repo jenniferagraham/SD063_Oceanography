@@ -35,9 +35,9 @@ switch lower(sectionName)
    case '3minnerMSS'
         P.sectionlist=[];
         P.mssstationlist = [3 3 3 4 4 4 5 6 6 6]; % station list 
-        P.msslist = [7:16]; % cast list 
+        P.msslist = [7:16]; % cast list
         P.sectionname = '3-M Inner';
-        P.maxy   = 400; 
+        P.maxy   = 400;
 
     case '3mouter'
         P.sectionlist = [28, 29, ...
@@ -278,10 +278,25 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
+    case 'repeat_3msilln'
+        P.fjord = 1;
+        P.sectionlist = [33 73 88];
+        P.msslist = [];
+        P.sectionname = '3-M sill North repeats';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+
     case 'repeat_3m_icefront'
         P.fjord = 1;
         P.sectionlist = [43 63 65 ...
-            77 78 79 80 81 82 83 84 95];
+            77 78 79 80 81 82 83 84 ...
+            95 96];
         P.msslist = [];
         P.sectionname = '3-M ice front repeats';
         P.maxy   = 300; 
