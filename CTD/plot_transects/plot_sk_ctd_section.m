@@ -74,7 +74,6 @@ while length(varargin)>m
     m=m+2;
 end
 
-
 allstations=[ctds.station];
 ind=zeros(size(stns));
 for n=1:length(stns)
@@ -107,8 +106,10 @@ for n=1:length(stns)
     press(dest_ind,n)=ctds(n).press;
     temp(dest_ind,n)=ctds(n).temp;
     salin(dest_ind,n)=ctds(n).salin;
-    % ladcp_u(dest_ind,n)=ctds(n).ladcp_u;
-    % ladcp_v(dest_ind,n)=ctds(n).ladcp_v;
+    if isfield(ctds(n), 'ladcp_u')
+        ladcp_u(dest_ind,n)=ctds(n).ladcp_u;
+        ladcp_v(dest_ind,n)=ctds(n).ladcp_v;
+    end
     if ~ismember(variable,{'temp','salin','ct','asal','press','gamma_n','ladcp_u','ladcp_v','ladcp_perp'})
         newvar(dest_ind,n)=ctds(n).(variable);
     end
@@ -232,6 +233,15 @@ switch plottype
             % end
 %         end
         plot_dist=linspace(plot_x(1),plot_x(end),500);
+
+        % PH: create mask to find out where bottom triangles of plot field 
+        % are interpolated using data from below the bottom of a cast
+        bot_tri_mask=griddata(repmat(plot_x(:)',size(press,1),1),press,plot_var,plot_dist,press(:,1));
+        bot_tri_mask(isfinite(bot_tri_mask))=0;
+        bot_tri_mask(isnan(bot_tri_mask))=1;
+        bot_tri_surf_blank=10; % this many cells at the surface can't be bottom triangles
+        bot_tri_mask(1:bot_tri_surf_blank,:)=0;        
+
         if strcmp(variable,'ladcp_perp')
             segment_x=[plot_x-1e-9;plot_x+1e-9]';
             segment_no=[1,1:nseg,1:nseg,nseg];
@@ -249,17 +259,56 @@ switch plottype
             [ladcp_dir_interp,ladcp_spd_interp]=cart2pol(ladcp_v_interp,ladcp_u_interp);
             [plot_var_interp,~]=pol2cart(ladcp_dir_interp+repmat(section_dirs_interp,size(press,1),1),ladcp_spd_interp);
         else
-% Paul Holland: in my opinion these 4 lines should be commented out, as
-% they are falsely extrapolating the casts downwards
+
+            % PH option A: fill all casts down to max depth using bottom value
+            % before interpolation (leads to questionable bottom triangles)
             for n=1:length(stns)
                 lastind=find(~isnan(plot_var(:,n)),1,'last');
                 plot_var((lastind+1):end,n)=plot_var(lastind,n);
             end
             plot_var_interp=griddata(repmat(plot_x(:)',size(press,1),1),press,plot_var,plot_dist,press(:,1));
+
+            % % PH option B: duplicate all casts, fill with the appropriate neighbours below
+            % % valid depths (so that griddata will produce extrapolation to
+            % % land on both sides of cast location)
+            % % make a copy of the casts, 1 metre cell further along the section
+            % deltax=0.001; 
+            % plot_x_dup=zeros(2*size(plot_x,1),1);
+            % press_dup=zeros(size(press,1),2*size(press,2));
+            % plot_var_dup=zeros(size(plot_var,1),2*size(plot_var,2));
+            % for cast=1:size(plot_var,2)
+            %     plot_x_dup(2*cast-1)=plot_x(cast);
+            %     plot_x_dup(2*cast  )=plot_x(cast)+deltax;
+            %     press_dup(:,2*cast-1)=press(:,cast);
+            %     press_dup(:,2*cast  )=press(:,cast);
+            %     plot_var_dup(:,2*cast-1)=plot_var(:,cast);
+            %     plot_var_dup(:,2*cast  )=plot_var(:,cast);
+            % end
+            % % where there is no data, set each cast pair to have the values
+            % % of their preceding and subsequent casts (so that
+            % % interpolation happens horizontally into the seabed)
+            % cast=1;
+            % valid=find(isnan(plot_var_dup(:,2*cast-1)));
+            % plot_var_dup(valid,2*cast  )=plot_var_dup(valid,2*cast+1);          
+            % for cast=2:size(plot_var,2)-1
+            %     valid=find(isnan(plot_var_dup(:,2*cast-1)));
+            %     plot_var_dup(valid,2*cast-1)=plot_var_dup(valid,2*cast-2);
+            %     plot_var_dup(valid,2*cast  )=plot_var_dup(valid,2*cast+1);
+            % end            
+            % cast=size(plot_var,2);
+            % valid=find(isnan(plot_var_dup(:,2*cast-1)));
+            % plot_var_dup(valid,2*cast-1)=plot_var_dup(valid,2*cast-2);
+            % plot_var_interp=griddata(repmat(plot_x_dup(:)',size(press_dup,1),1),press_dup,plot_var_dup,plot_dist,press(:,1));
+
         end
         pcolor(plot_dist-median(diff(plot_dist))./2,press(:,1),plot_var_interp);
         shading flat;
         hold on;
+
+        % PH: plot contour showing areas where bottom triangles
+        % are questionably interpolated
+        contour(plot_dist-median(diff(plot_dist))./2,press(:,1),bot_tri_mask,[0.5 0.5],'m','LineWidth',1);
+
         if ~isempty(levels)
             [c,h]=contour(plot_x,press(:,1),plot_var,levels,'k');
             clabel(c,h);
