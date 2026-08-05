@@ -2,7 +2,7 @@ function plot_sk_ctd_section(stns,ctds,variable,varargin)
 
 % PLOT_SK_CTD_SECTION (stns,ctdsstructure,variable,[property_name,property_value])
 % by Povl Abrahamsen (August 2024)
-% edited on SDA063 by Rosie Williams, Paul Holland, Laura Castro
+% edited on SDA063 by Rosie Williams, Paul Holland, Laura Castro & Jennifer Graham
 % plots a basic CTD section from a cruise (with casts in a Matlab file
 % named "[cruise]_ctd.mat", variable name "ctds" containing an array of
 % Matlab structures with the data.
@@ -87,7 +87,7 @@ for n=1:length(stns)
 end
 ctds=ctds(ind);
 
-if ~isfield(ctds(1),variable) && ~ismember(variable,{'gamma_n','ladcp_perp','ct','asal'})
+if ~isfield(ctds(1),variable) && ~ismember(variable,{'gamma_n','ladcp_perp','ladcp_along','ct','asal'})
     error('Cannot find variable %s in cruise %s',variable,cruise);
 end
 
@@ -112,7 +112,8 @@ for n=1:length(stns)
         ladcp_u(dest_ind,n)=ctds(n).ladcp_u;
         ladcp_v(dest_ind,n)=ctds(n).ladcp_v;
     end
-    if ~ismember(variable,{'temp','salin','ct','asal','press','gamma_n','ladcp_u','ladcp_v','ladcp_perp'})
+    if ~ismember(variable,{'temp','salin','ct','asal','press','gamma_n',...
+            'ladcp_u','ladcp_v','ladcp_perp','ladcp_along'})
         newvar(dest_ind,n)=ctds(n).(variable);
     end
 end
@@ -128,7 +129,7 @@ temp=[temp(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 salin=[salin(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 ladcp_u=[ladcp_u(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 ladcp_v=[ladcp_v(1:lastind,:);nan(length(press)-lastind,length(ctds))];
-if ~ismember(variable,{'temp','salin','ct','asal','press','gamma_n','ladcp_u','ladcp_v','ladcp_perp'})
+if ~ismember(variable,{'temp','salin','ct','asal','press','gamma_n','ladcp_u','ladcp_v','ladcp_perp','ladcp_along'})
     newvar=[newvar(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 end
 
@@ -188,11 +189,15 @@ end
 
 
 switch(variable)
-    case 'ladcp_perp'
+    case 'ladcp_perp' || 'ladcp_along'
         [ladcp_dir,ladcp_spd]=cart2pol(ladcp_v,ladcp_u);
         nseg=length(lat)-1;
         section_dir_avg=mean(section_dirs([1,1:nseg;1:nseg,nseg]));
-        [plot_var,~]=pol2cart(ladcp_dir+repmat(section_dir_avg,size(press,1),1),ladcp_spd);
+        if strcmp('ladcp_perp')
+            [plot_var,~]=pol2cart(ladcp_dir+repmat(section_dir_avg,size(press,1),1),ladcp_spd);
+        else
+            [plot_var,~]=pol2cart(ladcp_dir+repmat(section_dir_avg,size(press,1),1)-pi/2,ladcp_spd);
+        end
     case 'gamma_n'
         plot_var=gamma_n(salin,temp,press,lon,lat);
     case 'asal'
@@ -247,7 +252,7 @@ switch plottype
         bot_tri_surf_blank=10; % this many cells at the surface can't be bottom triangles
         bot_tri_mask(1:bot_tri_surf_blank,:)=0;        
 
-        if strcmp(variable,'ladcp_perp')
+        if strcmp(variable,'ladcp_perp') || strcmp(variable,'ladcp_along')
             segment_x=[plot_x-1e-9;plot_x+1e-9]';
             segment_no=[1,1:nseg,1:nseg,nseg];
             [segment_x,segment_ind]=sort(segment_x);
@@ -261,10 +266,15 @@ switch plottype
             end
             ladcp_u_interp=griddata(repmat(plot_x(:)',size(press,1),1),press,ladcp_u,plot_dist,press(:,1));
             ladcp_v_interp=griddata(repmat(plot_x(:)',size(press,1),1),press,ladcp_v,plot_dist,press(:,1));
-            [ladcp_dir_interp,ladcp_spd_interp]=cart2pol(ladcp_v_interp,ladcp_u_interp);
-            [plot_var_interp,~]=pol2cart(ladcp_dir_interp+repmat(section_dirs_interp,size(press,1),1),ladcp_spd_interp);
+            if strcmp(variable,'ladcp_perp')
+                [ladcp_dir_interp,ladcp_spd_interp]=cart2pol(ladcp_v_interp,ladcp_u_interp);
+                [plot_var_interp,~]=pol2cart(ladcp_dir_interp+repmat(section_dirs_interp,size(press,1),1),ladcp_spd_interp);
+            elseif strcmp(variable,'ladcp_along')
+                [ladcp_dir_interp,ladcp_spd_interp]=cart2pol(ladcp_v_interp,ladcp_u_interp);
+                [plot_var_interp,~]=pol2cart(ladcp_dir_interp+repmat(section_dirs_interp,size(press,1),1)-pi/2,...
+                    ladcp_spd_interp);
+            end
         else
-
             % % PH option A: fill all casts down to max depth using bottom value
             % % before interpolation (leads to questionable bottom triangles)
             % for n=1:length(stns)
