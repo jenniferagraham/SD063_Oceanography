@@ -3,72 +3,88 @@
 %Created 3.8.2026 by Ellie Fisher
 % Rewrite as a function?
 
-addpath 'L:\work\scientific_work_areas\oceanography\MSS34\'
 close all; clear all;
 
-disk = ['L:\work\scientific_work_areas\oceanography\'];
-mssdata = [disk,'MSS34\DATA\fasteps\'];
-cruise='SD63';
+%% define paths
+mac = 0; % laura uses mac,
+
+if mac==0 % ellie you should be able to run it using mac=0 you may need to adjust some of the paths
+    addpath 'L:\work\scientific_work_areas\oceanography\MSS34\'
+    disk = ['L:\work\scientific_work_areas\']; %
+    msslogbook = [disk,'oceanography\MSS34\MSS_logbook_4matlab.csv'];
+    mssdataP = [disk,'oceanography\MSS34\DATA\'];
+    figpath = [disk,'oceanography\MSS34\Processing\Figures\'];
+    gridpath= [disk,'\gis\bathymetry_grids\'];
+    addpath([disk,'oceanography\matlabF\']) % theta_sdiag function
+    addpath([disk,'oceanography\matlabF\m_map\'])
+    addpath([disk,'oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\'])
+    addpath([disk,'oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\library\'])
+    addpath([disk,'oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\thermodynamics_from_t\'])
+    addpath([disk,'oceanography\CTD\plot_transects\']) % directory with section parameter function
+
+elseif mac==1
+    slash='/';
+    disk = ['/Volumes/legwork/scientific_work_areas/'];
+    mssdataP = [disk,'oceanography/MSS34/DATA/'];
+    figpath = [disk,'oceanography/MSS34/Processing/Figures/'];
+    msslogbook = [disk,'oceanography/MSS34/MSS_logbook_4matlab.csv']; % Laura C created a new logbook easier for matlab use
+    addpath([disk,'oceanography/matlabF/']) % theta_sdiag function
+    addpath([disk,'oceanography/matlabF/m_map/'])
+    addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/'])
+    addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/library/'])
+    addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/thermodynamics_from_t/'])
+    % addpath([disk,'oceanography/CTD/plot_transects/']) % create a similar one for MSS
+end
+
+cruise='SD063';
 
 % load mss eventlog
-msss = readtable(fullfile(disk,"MSS34\MicroStructure_Shear_(MSS)_logbook.csv"));
-msss = renamevars(msss, ...
-    ["Latitude_dd__sd_gnss_kongsberg_seapath_320_port1_ingga_Latitude_" ...
-    "Longitude_dd__sd_gnss_kongsberg_seapath_320_port1_ingga_Longitude_", ...
-    "MSSStation_BuiltIn_String_", ...
-    "EventNumber_BuiltIn_String_", ...
-    "MSSCastNumber_BuiltIn_String_", ...
-    "EventAction_BuiltIn_String_"], ...
-    ["lat", ...
-    "lon", ...
-    "station", ...
-    "event", ...
-    "cast", ...
-    "action"]);
-
-gridpath= 'L:\work\scientific_work_areas\gis\bathymetry_grids\';
-
-addpath([disk,'matlabF\']) % theta_sdiag function
-addpath([disk,'matlabF\m_map\'])
-addpath([disk,'CTD\GSWscripts\gsw_matlab_v3_06_16\'])
-addpath([disk,'CTD\GSWscripts\gsw_matlab_v3_06_16\library\'])
-addpath([disk,'CTD\GSWscripts\gsw_matlab_v3_06_16\thermodynamics_from_t\'])
-addpath(['L:\work\scientific_work_areas\oceanography\CTD\plot_transects\']) % directory with section parameter function
+msslog = readtable(fullfile(disk,'MSS34\MicroStructure_Shear_(MSS)_logbook.csv'));
+msslog = renamevars(msslog, ...
+    ['Latitude_dd__sd_gnss_kongsberg_seapath_320_port1_ingga_Latitude_' ...
+    'Longitude_dd__sd_gnss_kongsberg_seapath_320_port1_ingga_Longitude_', ...
+    'MSSStation_BuiltIn_String_', ...
+    'EventNumber_BuiltIn_String_', ...
+    'MSSCastNumber_BuiltIn_String_', ...
+    'EventAction_BuiltIn_String_'], ...
+    ['lat', ...
+    'lon', ...
+    'station', ...
+    'event', ...
+    'cast', ...
+    'action']);
 
 FZ=12;
 set(0, 'DefaultAxesFontSize', FZ);
 
 %% Create parameter object 
-params = sdaSectionParamsMSS("3minner_towyo");
+params = sdaSectionParamsMSS('3minner_towyo');
 
 %% for loop to load data
 for ii=1:length(params.castlist) % select range of casts for this section
     
     cast = params.castlist(ii);
 
-    mssname= [sprintf('SD6300%02d_eps.mat',cast)]; % string formatting to pad 1 digit cast numbers
-    load ([disk,'MSS34\DATA\fasteps\',mssname]);
+    mssname = [cruise,sprintf('_mss_%03d_struct.mat',cast)]; % string formatting to pad 1 digit cast numbers
+    load ([disk,'oceanography\MSS34\DATA\',mssname]);
   
-    myPress = [data.press];
-    myT     = [data.temp];
-    myS     = [data.sal];
-    myEPS   = [data.epsilon];
+    myPress = [mss.data.press];
+    myT     = [mss.data.temp];
+    myS     = [mss.data.sal];
+    myEPS   = [mss.data.epsilon];
 
     %% Retrieving absolute salinity and conservative temperature for location of cast
-    % stepping through the event log in intervals of 2 (capturing only inWater entries)
-    % msss_idx = ~1:2:height(msss);
-    % Should be able to use this to index with cast numbers?
     
     % Calculate midpoint lat-lon value for each cast
-    lat = mean(msss(msss.cast==cast,"lat")); % midpoint (mean) of latitude during cast
-    lon = mean(msss(msss.cast==cast,"lon")); % midpoint (mean) of longitude during cast
+    lat = mean(msslog(msslog.cast==cast,'lat')); % midpoint (mean) of latitude during cast
+    lon = mean(msslog(msslog.cast==cast,'lon')); % midpoint (mean) of longitude during cast
 
     %% Populating array the same size as other cast variables with midpoint lat-lon
-    rows = length(data.press); % Adjusts the size of the lat/lon array to agree with other variables
+    rows = length(mss.data.press); % Adjusts the size of the lat/lon array to agree with other variables
     lat_arr = zeros(rows,1);
     lat_arr(:,:) = table2array(lat);
     lon_arr = zeros(rows,1);
-    lon_arr(:,:) = table2array(lat);
+    lon_arr(:,:) = table2array(lon);
 
     asal=gsw_SA_from_SP(myS,myPress,lat_arr,lon_arr);
     ct=gsw_CT_from_t(asal,myT,myPress);

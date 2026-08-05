@@ -26,7 +26,6 @@ switch lower(sectionName)
         P.sectionname = '3-M All';
         P.maxy   = 400;
         P.tcaxis = [-2 2];
-        
     case '3minner_towyo'
         P.castlist = flip([44:55]);
         P.stationlist = flip([24:34]); % left to right facing the ice

@@ -4,27 +4,27 @@
 % ctd cast 42
 %% define variables 
 clear all ; clc; close all 
+
 profile=1; 
 scatterplot=1;
-diffProfile=0;
+diffProfile=1;
 TSplot=1;
-mac=1;
+
+mac=0;
 %% define the paths
 
 % paths
-if mac==0
+if mac==0 % for Windows
     disk = ['L:\work\scientific_work_areas\oceanography\'];
-    MSSdataP = 'C:\Users\sa07lc\OneDrive - SAMS\Desktop\MSS\DATA_sd034\fasteps\upcast\';
-    %CTDdataP = '';
-        mssdataP = [disk,'MSS34\DATA\fasteps\'];
-else
+    MSSdataP = 'C:\Users\sa07lc\OneDrive - SAMS\Desktop\MSS\DATA_sd034\fasteps\';
+    CTDdataP = [disk,'CTD/BASproc/'];
+    mssdataP = [disk,'MSS34\DATA\fasteps\'];
+else % for Mac
     disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
     MSSdataP = [disk,'MSS34/DATA/fasteps/'];
     CTDdataP = [disk,'CTD/BASproc/'];
-    mssdataP = [disk,'MSS34/DATA/fasteps/'];
 
 end    
-
 
 %% to plot in a raw
 
@@ -92,7 +92,6 @@ if profile==1
     figure
 %hold on
 % Temp plot
-% Does this need to be converted to theta?
 subplot(1,2,1); hold on
 plot(ctdT,ctdPress,'--k','linewidth',2)
 plot(tMean,pressMean,'--r','linewidth',2)
@@ -136,6 +135,7 @@ legend({"CTD042","MSS004-006 mean","MSS004","MSS005","MSS006"})
 sgtitle('MSS-CTD cross-calibration - mean cast'); 
 
 end
+
 %% Downsample the MSS data to match resolution of CTD
 % Interpolation to CTD pressure grid
 
@@ -158,6 +158,7 @@ for ii=2:length(pressRef)
     nn3 = find(clean1(:,1)<=pressRef(ii));
     
 end
+
 %% Difference plot (using down-sampled MSS data)
 
 Tdiff1 = ctdT-mssInterp1(:,2);
@@ -167,9 +168,10 @@ Tdiff3 = ctdT-mssInterp3(:,2);
 Sdiff1 = ctdS-mssInterp1(:,3);
 Sdiff2 = ctdS-mssInterp2(:,3);
 Sdiff3 = ctdS-mssInterp3(:,3);
+
 % get the mean bias and RMSE from the deep section. This is the part of the
 % profile with well mixed water and hence the best for the calibration 
-meandiffS = nanmean([Sdiff2,Sdiff3,Sdiff1],2);
+meandiffS = nanmean([Sdiff2,Sdiff3,Sdiff1],2); % should we adjust this to exclude Sdiff1?
 deepindx = find(ctdPress>=170);
 bias = nanmean(meandiffS(deepindx)); % the mean of the bottom 150m of the profile (see below the plot to look at dZdz)
 mssInterall = nanmean([mssInterp1(:,3), mssInterp2(:,3),mssInterp3(:,3)],2);
@@ -183,7 +185,6 @@ figure
 
 %hold on
 % Temp plot
-% Does this need to be converted to theta?
 subplot(1,2,1); hold on
 plot(Tdiff1,ctdPress,color="r") % col 2 is T, col 1 is Press
 plot(Tdiff2,ctdPress,color="g")
@@ -242,6 +243,7 @@ plot(clean3(:,3)+bias,clean3(:,2),'-b')
 
 legend('CTD42','MSS004','MSS005', 'MSS006','corrMSS004','corrMSS005', 'corrMSS006')
 end
+
 %% Scatter plot 
 if scatterplot==1
 figure
@@ -280,11 +282,11 @@ legend({"MSS004","MSS005","MSS006"})
 
 sgtitle('MSS-CTD cross-calibration - correlation plot'); 
 end
+
 %% calibration thoughts
 % if slope is close to 1 an offset is sufficient, but if slope is greater
-% than one a regression is better for correction 
-% dropping the profile 3 because it seems to be off by a lot relative to the second and third profiles.
-mssS = nanmean([mssInterp2(:,3),mssInterp3(:,3)],2);
+% than one a regression is better for correction
+mssS = nanmean([mssInterp2(:,3),mssInterp3(:,3)],2); % this doesn't seem to be used?
 
 % Because the MSS casts and CTD where not done at the same time, it may be
 % best to focus on parts of the profile that are well mixed. Areas with
@@ -296,4 +298,4 @@ dTdz = diff(ctdT);
 meandTdz = nanmean(dTdz);
 stdTdz = nanstd(dTdz);
 
-displ('Correction of MSS salinity add ',num2str(bias))
+display(['Correction of MSS salinity add ',num2str(bias)])

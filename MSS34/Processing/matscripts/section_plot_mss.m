@@ -14,8 +14,8 @@ if mac==0 % ellie you should be able to run it using mac=0 you may need to adjus
     addpath 'L:\work\scientific_work_areas\oceanography\MSS34\'
     disk = ['L:\work\scientific_work_areas\']; %
     msslogbook = [disk,'oceanography\MSS34\MSS_logbook_4matlab.csv'];
-    mssdataP = [disk,'oceanography\MSS34\DATA\fasteps\'];
-    figpath = [disk,'oceanography\MSS34\Processing\Figure\'];
+    mssdataP = [disk,'oceanography\MSS34\DATA\'];
+    figpath = [disk,'oceanography\MSS34\Processing\Figures\'];
     gridpath= [disk,'\gis\bathymetry_grids\'];
     addpath([disk,'oceanography\matlabF\']) % theta_sdiag function
     addpath([disk,'oceanography\matlabF\m_map\'])
@@ -27,8 +27,8 @@ if mac==0 % ellie you should be able to run it using mac=0 you may need to adjus
 elseif mac==1
     slash='/';
     disk = ['/Volumes/legwork/scientific_work_areas/'];
-    mssdataP = [disk,'oceanography/MSS34/DATA/fasteps/'];
-    figpath = [disk,'oceanography/MSS34/Processing/Figure/'];
+    mssdataP = [disk,'oceanography/MSS34/DATA\'];
+    figpath = [disk,'oceanography/MSS34/Processing/Figures/'];
     msslogbook = [disk,'oceanography/MSS34/MSS_logbook_4matlab.csv']; % Laura C created a new logbook easier for matlab use
     gridpath= [disk,'gis/bathymetry_grids/'];
     addpath([disk,'oceanography/matlabF/']) % theta_sdiag function
@@ -41,7 +41,7 @@ end
 
 %% load mss eventlog
 mssLog = importMSSlogbook4matlab(msslogbook); % use =1 means event action 'inWater'
-VariableNames = ["Time", "Latitude_dd", "Longitude_dd", "DepthEA640_m", "MSSstation", "EventNumber", "MSScast", "TargetDepth_m", "Comment", "Use"];
+%VariableNames = ["Time", "Latitude_dd", "Longitude_dd", "DepthEA640_m", "MSSstation", "EventNumber", "MSScast", "TargetDepth_m", "Comment", "Use"];
 indxRow = find(mssLog.Use==1); % inWater rows only
 % create work table
 msslogLon = mssLog.Longitude_dd(indxRow);
@@ -77,20 +77,20 @@ if length(repeated)==length(nstn) % this is one cast per station
     for ii=1:length(P.castlist) % select range of casts for this section
         % load this cast data
         cast = P.castlist(ii);
-        mssname= ['SD63',sprintf('%04d', cast),'_eps.mat'];
+        mssname= [cruise,sprintf('_mss_%03d_struct.mat',cast)];
         load ([mssdataP,mssname]); % loads data, sensors
 
-        tmpPress = [data.press];
+        tmpPress = [mss.data.press];
         % cut the profiles at 5m
         minD=5;
         minDidx = find([tmpPress-minD] == min(abs(tmpPress-minD)));
         clear tmpPress
         % keep the cast data for the desire depth range
-        castPress = [data.press(minDidx:end)];
-        castT     = [data.temp(minDidx:end)];
-        castS     = [data.sal(minDidx:end)];
-        castEPS   = [data.epsilon(minDidx:end)];   % in fasteps I do not think it is so good.
-        castsigt  = [data.sig_t(minDidx:end)];
+        castPress = [mss.data.press(minDidx:end)];
+        castT     = [mss.data.temp(minDidx:end)];
+        castS     = [mss.data.sal(minDidx:end)];
+        castEPS   = [mss.data.epsilon(minDidx:end)];   % in fasteps I do not think it is so good.
+        castsigt  = [mss.data.sig_t(minDidx:end)];
         % add the lat-lon value for each cast
         castidx = find(mssLogMSScast==cast);
         castlat = msslogLat(castidx); % using inwater -probe would have gone straight down
@@ -130,17 +130,17 @@ else % must averaged all the casts at those stations
        for ri=1:length(castlist)
           load ([mssdataP,mssname]); % loads data, sensors
 
-        tmpPress = [data.press];
+        tmpPress = [mss.data.press];
         % cut the profiles at 5m
         minD=5;
         minDidx = find([tmpPress-minD] == min(abs(tmpPress-minD)));
         clear tmpPress
         % keep the cast data for the desire depth range
-        castPress = [data.press(minDidx:end)];
-        castT     = [data.temp(minDidx:end)];
-        castS     = [data.sal(minDidx:end)];
-        castEPS   = [data.epsilon(minDidx:end)];   % in fasteps I do not think it is so good.
-        castsigt  = [data.sig_t(minDidx:end)];
+        castPress = [mss.data.press(minDidx:end)];
+        castT     = [mss.data.temp(minDidx:end)];
+        castS     = [mss.data.sal(minDidx:end)];
+        castEPS   = [mss.data.epsilon(minDidx:end)];   % in fasteps I do not think it is so good.
+        castsigt  = [mss.data.sig_t(minDidx:end)];
         % add the lat-lon value for each cast
         castidx = find(mssLogMSScast==cast);
         castlat = msslogLat(castidx); % using inwater -probe would have gone straight down

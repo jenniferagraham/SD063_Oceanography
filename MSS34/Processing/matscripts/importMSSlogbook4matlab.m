@@ -30,7 +30,7 @@ opts.DataLines = dataLines;
 opts.Delimiter = ",";
 
 % Specify column names and types
-opts.VariableNames = ["Time", "Latitude_dd", "Longitude_dd", "DepthEA640_m", "MSSstation", "EventNumber", "MSScast", "TargetDepth_m", "Event action(Built In - String)", "Comment", "Use"];
+opts.VariableNames = ["Time", "Latitude_dd", "Longitude_dd", "DepthEA640_m", "MSSstation", "EventNumber", "MSScast", "TargetDepth_m", "EventActionBuiltInString", "Comment", "Use"];
 opts.VariableTypes = ["datetime", "double", "double", "double", "double", "double", "double", "double", "categorical", "char", "double"];
 
 % Specify file level properties
