@@ -42,6 +42,7 @@ stationlist = dir(fullfile(sd063_CTD, 'SD063_ctd_*_struct.mat'));
 
 %filenames = readlines(sd063_CTDlist); 
 filenames = stationlist.name;
+
 for ii = 1:length(stationlist)
     
     currentName = stationlist(ii).name;
@@ -65,7 +66,7 @@ for ii = 1:length(stationlist)
         ctd.ladcp_v = nan;
 
     end
-    ctds(ii) = ctd; % should I change the names?
+    ctds(ctd.station) = ctd; % should I change the names?
 
 end
 save(fullfile(sd063_CTD, 'SD063_ctd.mat'),'ctds')
