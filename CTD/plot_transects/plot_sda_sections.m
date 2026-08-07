@@ -31,16 +31,15 @@ elseif ismac
 end
 set(0, 'DefaultAxesFontSize', FZ);
 
-%sectionfilenames={'3msill','kgtrough'} % '3mhead', '3mtransect', '3mdoubletrough'};
-
 sectionfilenames={'Ssection',...
-    'melangetroughalong','melangetroughentrance','melangetroughnorth',...
+    'melangetroughentrance','melangetroughalong','melangetroughnorth',...
     'magictrough','kgtrough',...
-    '3msill', '3mhead','3mtransect', '3mdoubletrough','3mmouthsection',...
-    '3mbeak','3macrosssill-1','3macrosssill-2', ...
+    '3mtransect','3micefronttowyo','3mhead','3mdoubletrough','3msill','3mthroat','3mmouthsection',...
+    '3mbeak-1','3mbeak-2','3mbeaksouth-1','3mbeaksouth-2','3macrosssill-1','3macrosssill-2','3macrosssillsouthdogleg' ...
     };
 
-%sectionfilenames={'3mdoubletrough'};
+anomalyplot=0;
+%anomalyplot=1;
 
 maxy=1000; % depth 
 % definition of colours you may need to fix 
@@ -97,14 +96,24 @@ grid_options={'botdepth'};
   
     % conservative temperature
     subplot(3,5,3:5);
-    plot_sk_ctd_section(P.sectionlist,ctds,'ct','xvar','dist','type','pcolor_interp',...
-        'station_labels','true',grid_options{:});
-   % plot_sda_ctd_section(sectionlists{m},ctds,'ct','xvar','dist','type','pcolor_interp',...
-   %     'station_labels','true',grid_options{:});
+
+    if (anomalyplot==0)
+        % this snippet plots absolute fields
+        plot_sk_ctd_section(P.sectionlist,ctds,'ct','xvar','dist','type','pcolor_interp',...
+           'levels',[-2.0:0.5:7],'station_labels','true',grid_options{:});
+        clim([P.tcaxis]);
+        cmocean('thermal')
+        fignameappend='';
+    else
+        % this snippet plots anomalies (beware reference cast is hard wired)
+        plot_sk_ctd_section(P.sectionlist,ctds,'ct_anom','xvar','dist','type','pcolor_interp',...
+            'levels',[-1.0:0.5:1.0],'station_labels','true',grid_options{:});    
+        clim([-1 1]);
+        cmocean('balance')
+        fignameappend='_anom';
+    end
 
     ylim([0 P.maxy]);
-    clim([P.tcaxis]);
-    cmocean('thermal')
     ylabel('Depth (m)');
     hcb=colorbar;
     hcb.Label.String= 'CT (\circC)'; %'\Theta (^oC)';
@@ -112,11 +121,23 @@ grid_options={'botdepth'};
     
     % absolute salinity
     subplot(3,5,8:10);
-    plot_sk_ctd_section(P.sectionlist,ctds,'asal','xvar','dist','type','pcolor_interp',...
-        grid_options{:});
+
+    if (anomalyplot==0)
+        % this snippet plots absolute fields
+        plot_sk_ctd_section(P.sectionlist,ctds,'asal','xvar','dist','type','pcolor_interp',...
+            'levels',[33:0.5:35],grid_options{:});
+        clim([P.scaxis]);
+        cmocean('haline')
+    else
+        % this snippet plots anomalies (beware reference cast is hard wired)
+        plot_sk_ctd_section(P.sectionlist,ctds,'asal_anom','xvar','dist','type','pcolor_interp',...
+            'levels',[-1.0:0.5:1.0],'station_labels','true',grid_options{:});
+        clim([-0.5 0.5]);
+        cmocean('balance')
+        fignameappend='_anom';
+    end
+
     ylim([0 P.maxy]);
-    clim([P.scaxis]);
-    cmocean('haline')
     ylabel('Depth (m)');
     hcb=colorbar;
     hcb.Label.String='SA (‰)';
@@ -237,7 +258,7 @@ grid_options={'botdepth'};
     % add ruler to the map
     
     title(P.sectionname);
-     figname=sprintf('_ctd_section_%s.png',sectionfilenames{m});
+    figname=sprintf('_ctd_section_%s.png',strcat(sectionfilenames{m},fignameappend));
 %    print(thefig,'-dpng','-r200',figname);
     exportgraphics(gcf,[figPb,cruise,figname],'Resolution',300)
 end
