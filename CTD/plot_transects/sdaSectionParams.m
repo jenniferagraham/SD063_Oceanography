@@ -384,7 +384,7 @@ case '3mtransectbio' % along fjord transect on biology stations
         P.fjord = 1;
         P.sectionlist = [43 63 65 ...
             77:84 ...
-            95 96 111 117 127 128 129];
+            95 96 111 117 127 128 129 134];
         P.msslist = [];
         P.sectionname = '3-M ice front repeats';
         P.maxy   = 300; 
