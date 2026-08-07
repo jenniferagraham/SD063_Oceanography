@@ -11,7 +11,7 @@ cruise='SD063';
 load([ctddata,cruise,'_ctd.mat']);
 
 %Option to zoom axes in on the ice front section yoyo:
-yoyo_zoom=1;
+yoyo_zoom=0;
 
 %figure;
 if yoyo_zoom
@@ -20,7 +20,7 @@ else
  figure('Position', [10, 100, 1250, 600])
 end
 
-sectionfilename='repeat_3m_icefront'; % repeat_3msill[n or peak]
+sectionfilename='repeat_3msillpeak'; % repeat_3msill[n or peak]
 P = sdaSectionParams(sectionfilename);
 
 ncasts = length(P.sectionlist);
@@ -134,7 +134,7 @@ ylabel('Depth (m)');
 hcb=colorbar;
 caxis([-1.5 1.5]);
 hcb.Label.String= 'CT (\circC)'; 
-hcb.Location='west'
+hcb.Location='east'
 title(P.sectionname)
 
 %Now plot anomolies
@@ -187,14 +187,14 @@ cmax = max(abs(CTemp_anom(:)), [], 'omitnan');
 clim([-cmax cmax]);
 caxis([-1.0 1.0]);
 hcb.Label.String= 'CT (\circC)'; 
-hcb.Location='west'
+hcb.Location='east'
 %title(P.sectionname);
 
 linkaxes(findall(gcf,'Type','axes'),'x');
 %linkaxes([ha],'x')
 
 % Put ticks at every CTD cast time
-ha(3).XTick = x;
+ha(3).XTick = [x, datenum(datetime('now'))+1/24];
 datetick(ha(3),'x','dd-mmm HH:MM','keepticks');
 xtickangle(ha(3),45);
 ha(3).FontSize=8;
@@ -206,9 +206,9 @@ for n=1:3
     % Set x limits to CTD cast time range
 
     if yoyo_zoom
-    xlim([datenum(ctd_time_start(4)-minutes(60)) datenum(ctd_time_end(end)+minutes(60))]);
+    xlim([datenum(ctd_time_start(4)-minutes(60)) datenum(ctd_time_end(end)+minutes(1440))]);
     else
-    xlim([datenum(ctd_time_start(1)-minutes(500)) datenum(ctd_time_end(end)+minutes(60))]);
+    xlim([datenum(ctd_time_start(1)-minutes(500)) datenum(ctd_time_end(end)+minutes(1440))]);
     end
 end
 
