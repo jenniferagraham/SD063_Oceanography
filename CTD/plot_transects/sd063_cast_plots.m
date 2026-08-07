@@ -1,11 +1,9 @@
-function break_loop=sd063_cast_plots(aaa,color_set)
+function break_loop=sd063_cast_plots(ctds,color_set,ref_station,plot_envelope)
 
-disk = ['L:\work\scientific_work_areas\oceanography\'];
-ctddata = [disk,'CTD\BASproc\'];
-cruise='SD063';
-load([ctddata,cruise,'_ctd.mat']);
 
-ctds=ctds(aaa);
+if nargin<4
+    ref_station=[];
+end
 
     ax=gobjects(1,2);
     for i=1
@@ -17,9 +15,19 @@ ctds=ctds(aaa);
         hold on
         ylabel(gca,'Pressure (dbar)')
         xlabel('\theta (^oC)')
+        xlim([-1.5 2.0])
         grid on
         set(ax(1),'XTick',-5:0.5:5.0);   
+
+        %if it has a ref_station, it plots anomalies instead of
+        %temps/salins...
+        if ~isempty(ref_station)
+        h=plot(ctds.Ctemp-ctds_ref.Ctemp,ctds.press,'Color',color_set,'LineWidth',2);
+        elseif plot_envelope
+        h=plot(ctds.Ctemp_mean,ctds.pressS,'Color',color_set,'LineWidth',2);
+        else
         h=plot(ctds.Ctemp,ctds.press,'Color',color_set,'LineWidth',2);
+        end
 
        % legend(string(datetime(ctds.gtime)),'Location','SouthEast')
 
@@ -29,7 +37,15 @@ ctds=ctds(aaa);
         box on
         hold on
         xlabel('Salinity')
+         xlim([28 36])
+        if ~isempty(ref_station)
+       h=plot(ctds.asalin-ctds_ref.asalin,ctds.press,'Color',color_set,'LineWidth',2);
+        elseif plot_envelope
+              h=plot(ctds.asalin_mean,ctds.pressS,'Color',color_set,'LineWidth',2);
+        else
         h=plot(ctds.asalin,ctds.press,'Color',color_set,'LineWidth',2);
+        end
+       % h=plot(ctds.asalin,ctds.press,'Color',color_set,'LineWidth',2);
         grid on
 
 
@@ -75,6 +91,8 @@ ctds=ctds(aaa);
     
     colorsequence='kgm';
 
+    if plot_envelope
+    else
     ax(3)=subplot(1,4,3:4);
     h=plot(ctds.asalin,ctds.Ctemp,'Color',color_set,'LineStyle', ':','LineWidth',2);
     hold on
@@ -88,7 +106,7 @@ ctds=ctds(aaa);
     % print('-dpng','-r300',file)
     
     %  close all
-    
+    end
 if nargout>0
     break_loop=false;
 end
