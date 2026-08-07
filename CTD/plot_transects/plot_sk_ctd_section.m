@@ -76,6 +76,25 @@ while length(varargin)>m
     m=m+2;
 end
 
+% station choice for section anomaly plots
+% hard wired for now
+% if you choose a list of stations it will average over them
+% currently can only work with stations that are in the section of interest
+%anomrefstns=58; % deep station in beak
+%anomrefstns=[28,29]; % deep station in mouth
+anomrefstns=stns; % all stations
+
+% allstations=[ctds.station];
+% ind=zeros(size(anomrefstns));
+% for n=1:length(anomrefstns)
+%     try
+%         ind(n)=find(allstations==anomrefstns(n));
+%     catch
+%         error('Cannot find %s anomaly reference station %d',cruise,stns(n));
+%     end
+% end
+% anomctds=ctds(ind);
+
 allstations=[ctds.station];
 ind=zeros(size(stns));
 for n=1:length(stns)
@@ -87,7 +106,7 @@ for n=1:length(stns)
 end
 ctds=ctds(ind);
 
-if ~isfield(ctds(1),variable) && ~ismember(variable,{'gamma_n','ladcp_perp','ladcp_along','ct','asal'})
+if ~isfield(ctds(1),variable) && ~ismember(variable,{'gamma_n','ladcp_perp','ladcp_along','ct','ct_anom','asal','asal_anom'})
     error('Cannot find variable %s in cruise %s',variable,cruise);
 end
 
@@ -112,7 +131,7 @@ for n=1:length(stns)
         ladcp_u(dest_ind,n)=ctds(n).ladcp_u;
         ladcp_v(dest_ind,n)=ctds(n).ladcp_v;
     end
-    if ~ismember(variable,{'temp','salin','ct','asal','press','gamma_n',...
+    if ~ismember(variable,{'temp','salin','ct','ct_anom','asal','asal_anom','press','gamma_n',...
             'ladcp_u','ladcp_v','ladcp_perp','ladcp_along'})
         newvar(dest_ind,n)=ctds(n).(variable);
     end
@@ -129,7 +148,7 @@ temp=[temp(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 salin=[salin(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 ladcp_u=[ladcp_u(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 ladcp_v=[ladcp_v(1:lastind,:);nan(length(press)-lastind,length(ctds))];
-if ~ismember(variable,{'temp','salin','ct','asal','press','gamma_n','ladcp_u','ladcp_v','ladcp_perp','ladcp_along'})
+if ~ismember(variable,{'temp','salin','ct','ct_anom','asal','asal_anom','press','gamma_n','ladcp_u','ladcp_v','ladcp_perp','ladcp_along'})
     newvar=[newvar(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 end
 
@@ -189,11 +208,13 @@ end
 
 
 switch(variable)
-    case 'ladcp_perp' || 'ladcp_along'
+    %PH: commented this out for now as it was syntax error
+    %case 'ladcp_perp' || 'ladcp_along'
+    case 'ladcp_perp'
         [ladcp_dir,ladcp_spd]=cart2pol(ladcp_v,ladcp_u);
         nseg=length(lat)-1;
         section_dir_avg=mean(section_dirs([1,1:nseg;1:nseg,nseg]));
-        if strcmp('ladcp_perp')
+        if strcmp(variable,'ladcp_perp')
             [plot_var,~]=pol2cart(ladcp_dir+repmat(section_dir_avg,size(press,1),1),ladcp_spd);
         else
             [plot_var,~]=pol2cart(ladcp_dir+repmat(section_dir_avg,size(press,1),1)-pi/2,ladcp_spd);
@@ -202,11 +223,22 @@ switch(variable)
         plot_var=gamma_n(salin,temp,press,lon,lat);
     case 'asal'
         plot_var=gsw_SA_from_SP(salin,press,lon,lat);
+    case 'asal_anom'
+        plot_var=gsw_SA_from_SP(salin,press,lon,lat);
+        refindices=zeros(size(anomrefstns));
+        for a=1:length(anomrefstns)
+            refindices(a)=find(stns==anomrefstns(a));
+        end
+        plot_var=plot_var-nanmean(plot_var(:,refindices),2);
     case 'ct'
+        plot_var=gsw_CT_from_t(gsw_SA_from_SP(salin,press,lon,lat),temp,press);   
+    case 'ct_anom'
         plot_var=gsw_CT_from_t(gsw_SA_from_SP(salin,press,lon,lat),temp,press);
-        % % rhubarb
-        % plot_var=plot_var-plot_var(:,14);
-        % P.tcaxis = [-0.2 0.2];
+        refindices=zeros(size(anomrefstns));
+        for a=1:length(anomrefstns)
+            refindices(a)=find(stns==anomrefstns(a));
+        end
+        plot_var=plot_var-nanmean(plot_var(:,refindices),2);
     case {'temp','salin','press','ladcp_u','ladcp_v'}
         plot_var=eval(variable);
     otherwise
@@ -325,7 +357,8 @@ switch plottype
         contour(plot_dist-median(diff(plot_dist))./2,press(:,1),bot_tri_mask,[0.5 0.5],'m','LineWidth',1);
 
         if ~isempty(levels)
-            [c,h]=contour(plot_x,press(:,1),plot_var,levels,'k');
+            [c,h]=contour(plot_dist-median(diff(plot_dist))./2,press(:,1),plot_var_interp,levels,'k');
+            %[c,h]=contour(plot_x,press(:,1),plot_var,levels,'k');
             clabel(c,h);
         end
     case 'contour'
@@ -413,7 +446,7 @@ y_points=[y_points max(ctds(n).press)];
 end
 
 y_points=[y_points maxP];
-patch(x_points,y_points,'k');
+patch(x_points,y_points,0.8*[1 1 1]);
 end
 
 % xlim(plot_x([1,end]));
