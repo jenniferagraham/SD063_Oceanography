@@ -2,9 +2,6 @@
 %% add path 
 close all; clear all;
 
-%Need to specify mac or not
-mac=0; % macusers use mac=1;window users use mac=0
-
 %if reF_station=[], it plots casts. If you give it a ref station, it plots
 %anomolies.
 ref_station=[];
@@ -12,13 +9,13 @@ ref_station=[];
 %turn off here as this is only used to plot envelope (using means and stds)
 plot_envelope=0;
 
-if mac==0
+if ispc 
     addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
     disk = ['L:\work\scientific_work_areas\oceanography\'];
     ctddata = [disk,'CTD\BASproc\'];
    
-elseif mac==1
-     addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
+else
+    addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
     disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
     ctddata = [disk,'CTD/BASproc/'];
 end
@@ -28,7 +25,7 @@ load([ctddata,cruise,'_ctd.mat']);
 
 %% select the sections 
 %sectionfilename='repeat_3m_icefront';%'repeat_3m_icefront';
- sectionfilename={'repeat_3moutermouth'};
+%sectionfilename={'repeat_3moutermouth'};
  sectionfilename={'repeat_3mmmouthsectionrepeats'};
 
 %sectionfilename={'3mbeaksouth-1','3mbeaksouth-2'};
