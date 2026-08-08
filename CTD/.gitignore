@@ -5,3 +5,5 @@
 # Matlab
 *.asv
 
+# Figures
+*.png
