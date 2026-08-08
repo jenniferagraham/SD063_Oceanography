@@ -31,40 +31,45 @@ elseif ismac
 end
 set(0, 'DefaultAxesFontSize', FZ);
 
-sectionfilenames={'Ssection',...
+sectionfilenames={'Ssection','Ssectionwarm',...
     'melangetroughentrance','melangetroughalong','melangetroughnorth',...
-    'magictrough','kgtrough',...
+    'magictrough','kgtrough-1',...
     '3mtransect','3micefronttowyo','3mhead','3mdoubletrough','3msill','3mthroat','3mmouthsection',...
     '3mbeak-1','3mbeak-2','3mbeaksouth-1','3mbeaksouth-2','3macrosssill-1','3macrosssill-2','3macrosssillsouthdogleg' ...
     };
+
+sectionfilenames={'kgtrough-1','kgtrough-2'};
 
 anomalyplot=0;
 %anomalyplot=1;
 
 maxy=1000; % depth 
 % definition of colours you may need to fix 
-    ercolor = [.5 1 1]; % bright blue
-    skcolor2025 = [.5 .5 1]; % purple
-    sdcolor = [.5 .5 .5]; % grey
-    %sdcolor2026 = [1 .5 .5]; % grey
-    seccolor= [1 .0 .0]; % red
-%% load CTDs
-    cruise='SD063';
-    load([ctddata,cruise,'_ctd.mat']);
-    
-    for n=1:length(ctds)
-        ctds(n).asal=gsw_SA_from_SP(ctds(n).salin,ctds(n).press,ctds(n).lon,ctds(n).lat);
-        ctds(n).ct=gsw_CT_from_t(ctds(n).asal,ctds(n).temp,ctds(n).press);
-    end
-    sd_ctds=ctds;
+ercolor = [.5 1 1]; % bright blue
+skcolor2025 = [.5 .5 1]; % purple
+sdcolor = [.5 .5 .5]; % grey
+%sdcolor2026 = [1 .5 .5]; % grey
+seccolor= [1 .0 .0]; % red
 
+%PH: I am in the middle of hacking this code
+fname='L:\work\scientific_work_areas\oceanography\Notes\PreviousDataProcessing\KANGGLAC_CTD_data\sd041_ctd.mat'
+load(fname)
+
+% load CTDs
+cruise='SD063';
+load([ctddata,cruise,'_ctd.mat']);
+for n=1:length(ctds)
+    ctds(n).asal=gsw_SA_from_SP(ctds(n).salin,ctds(n).press,ctds(n).lon,ctds(n).lat);
+    ctds(n).ct=gsw_CT_from_t(ctds(n).asal,ctds(n).temp,ctds(n).press);
+end
+sd_ctds=ctds;
 
 %% load bathymetry
- load mb_all_20250512.mat
- bedmachine.z = ncread('BedMachine-v5_crop.nc', 'z');
- y = ncread('BedMachine-v5_crop.nc', 'y');
- x = ncread('BedMachine-v5_crop.nc', 'x');
- [bedmachine.y, bedmachine.x] = meshgrid(y,x);
+load mb_all_20250512.mat
+bedmachine.z = ncread('BedMachine-v5_crop.nc', 'z');
+y = ncread('BedMachine-v5_crop.nc', 'y');
+x = ncread('BedMachine-v5_crop.nc', 'x');
+[bedmachine.y, bedmachine.x] = meshgrid(y,x);
 % [bedmachine.x,bedmachine.y,bedmachine.z]=load_grd('BedMachine-v5_crop.nc');
 % gdalwarp -t_srs EPSG:32625 -te 455485.319 7375979.375 655685.319 7658379.375 -tr 100 100 BedMachineGreenland-v5_bed.tif BedMachine-v5_crop.nc
 % ncrename -v Band1,z BedMachine-v5_crop.nc
@@ -199,6 +204,33 @@ grid_options={'botdepth'};
     ylim([-2 5]);
     xlabel('S_A (‰)');
     ylabel('CT \circC');%ylabel('\Theta (^oC)');
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % add the water masses LC
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % I follow Rudels 2001 for all the definition, but I have made modifications to the density.
+    % Reduce it because on the shelf watermasses seem lighter
+    mysig0AWmin = 27.3; % adjusted from below 27.7 is Surface PW above it Arctic Atlantic Water
+    mysig0PW    = 26.5;      % adjusted from 27.7 to create an intermediate water mass between PW and AAW
+    mysig0AWmax = 29;   % adjusted from 27.97 above that likely Polar intermediate water
+    % Mark the density contour at water masses boundaries
+    [C,h] = contour(si,thetai,dens,[mysig0AWmin mysig0AWmin],'k', 'LineWidth', 2); % denser is AW and less dense MAW
+    clabel(c,h,'LabelSpacing',90);
+    [C,h] = contour(si,thetai,dens,[mysig0PW mysig0PW],'color',[0.1 0.1 0.1], 'LineWidth', 2); % less dense is PW
+    clabel(c,h,'LabelSpacing',90);
+    [C,h] = contour(si,thetai,dens,[mysig0AWmax mysig0AWmax],'color',[0.6 0.6 0.6], 'LineWidth', 2); % less dense is PW
+    clabel(c,h,'LabelSpacing',90);
+     % plot water masses
+     PWt1    = [-1.1];  PWs1 = [32]; %
+     AWt1    = [2.5];  AWs1 = [34.8]; %
+     AWit1   = [-1.5];  AWis1 = [33.5]; % based on CTD16 this is AW modified by ice (sits exactly along the gade line) 
+     msize=20;
+     plot(AWs1, AWt1,'sk','markersize',msize,'MarkerEdgeColor','k','MarkerFaceColor','none')
+     plot(PWs1 , PWt1, 'sk','markersize',msize,'MarkerEdgeColor','k','MarkerFaceColor','none')
+     plot(AWis1 , AWit1, 'sk','markersize',msize,'MarkerEdgeColor','k','MarkerFaceColor','none')
+     text (AWs1+0.3, AWt1,'AW','FontSize',FZ)
+        text (AWis1-0.4,AWit1-0.4,'MAW','FontSize',FZ-1)
+        text (PWs1-0.5, PWt1+.8,'PW','FontSize',FZ)
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Map for section location
     if P.fjord==1
