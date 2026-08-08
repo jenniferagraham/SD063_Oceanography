@@ -83,9 +83,16 @@ save (eventsave, 'CastEvent')
 elseif (isempty(iia)||isempty(iie))|(iia~=iie)
     warning('Something awry with values entered or *cruise*_ctd_CastEventList')
     warning('Check current values or edit CastEventList')
-     disp('See you later')  %stop
+    crow=input('Are you sure you want to proceed? y/n \n','s');
+    if crow=='y'
+        disp('Output file will be written...')
+        CastEvent(end+1,1:2)=[str2num(aaa),str2num(eee(2:4))];
+        save (eventsave, 'CastEvent')
+    else
+        disp('See you later')  %stop
             break_loop=true;
             return
+    end
 elseif iia==iie
       crow=input('File has already been read (or at least attempted), proceed? y/n \n','s');
      if crow=='y'
