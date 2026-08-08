@@ -119,6 +119,16 @@ case '3mtransectbio' % along fjord transect on biology stations
         P.mLON   = [-33.4 -30];
         P.mLAT   = [66.8 69];
 
+    case 'ssectionwarm'
+        P.sectionlist = [5,6,7,8,10,9];
+        P.sectionname = 'S-mooring section warm';
+        P.maxy   = 1000;
+        P.tcaxis = [-2.5 2.5];
+        P.scaxis = [30 35];
+        P.vcaxis = [-0.5 0.5];
+        P.mLON   = [-33.4 -30];
+        P.mLAT   = [66.8 69];
+
     case 'melangetroughalong'
         P.sectionlist = [15,13,11,10,9];
         P.sectionname = 'Melange Trough along';
@@ -155,11 +165,21 @@ case '3mtransectbio' % along fjord transect on biology stations
         P.scaxis = [30 35];
         P.mLON   = [-33.4 -30];
 
-    case 'kgtrough'
+    case 'kgtrough-1'
         P.sectionlist = [23,24,25,26,27];
-        P.sectionname = 'Kangerlussuaq Trough';
+        P.sectionname = 'Kangerlussuaq Trough-1';
         P.maxy   = 550;
-        P.tcaxis = [-2 2];
+        P.tcaxis = [-2 4];
+        P.scaxis = [30 35];
+        P.vcaxis = [-0.5 0.5];
+        P.mLON   = [-33.4 -30];
+        P.mLAT   = [66.8 69];
+
+    case 'kgtrough-2'
+        P.sectionlist = [140,139,138,137,136];
+        P.sectionname = 'Kangerlussuaq Trough-2';
+        P.maxy   = 550;
+        P.tcaxis = [-2 4];
         P.scaxis = [30 35];
         P.vcaxis = [-0.5 0.5];
         P.mLON   = [-33.4 -30];
