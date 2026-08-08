@@ -2,10 +2,11 @@
 
 close all; clear all;
 addpath('../../matlabF/')
+addpath T:/SD063/TMD3.0
 
 disk = ['L:\work\scientific_work_areas\oceanography\'];
-Tdisk = ['P:\SD063\']; % JG T-drive
-%Tdisk = ['T:\SD063\'];
+%Tdisk = ['P:\SD063\']; % JG T-drive
+Tdisk = ['T:\SD063\'];
 ctddata = [disk,'CTD\BASproc\'];
 cruise='SD063';
 load([ctddata,cruise,'_ctd.mat']);
@@ -20,7 +21,8 @@ else
  figure('Position', [10, 100, 1250, 600])
 end
 
-sectionfilename='repeat_3msillpeak'; % repeat_3msill[n or peak]
+sectionfilename='repeat_3m_icefront'; % repeat_3msill[n or peak]
+
 P = sdaSectionParams(sectionfilename);
 
 ncasts = length(P.sectionlist);
@@ -37,11 +39,27 @@ asalinS=NaN(size(grid,2),ncasts);
 pressS=NaN(size(grid,2),ncasts);
 
 
+%%%JENNY CHECK here - this is what I added to deal with the missing CTDs
+%%%issue.
+allstations=[ctds.station];
+ind=zeros(size(P.sectionlist));
+for n=1:length(P.sectionlist)
+    try
+        ind(n)=find(allstations==P.sectionlist(n));
+    catch
+        error('Cannot find %s station %d',cruise,P.sectionlist(n));
+    end
+end
+%Then make ctds_stns that just contains the selected stations:
+ctds_stns=ctds(ind);
+
+%So now it's not calling ones from the ctds structure by index, it's
+%calling via the list above.
 for ii=1:ncasts
-    ctd_time(ii)=datetime(ctds(P.sectionlist(ii)).gtime);
-    CTempS(:,ii)=ctds(P.sectionlist(ii)).Ctemp;
-    asalinS(:,ii)=ctds(P.sectionlist(ii)).asalin;
-    pressS(:,ii)=ctds(P.sectionlist(ii)).press;
+    ctd_time(ii)=datetime(ctds_stns(ii).gtime);
+    CTempS(:,ii)=ctds_stns(ii).Ctemp;
+    asalinS(:,ii)=ctds_stns(ii).asalin;
+    pressS(:,ii)=ctds_stns(ii).press;
 end
 
 x = 1:ncasts;

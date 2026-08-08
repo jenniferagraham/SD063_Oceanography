@@ -66,7 +66,18 @@ for ii = 1:length(stationlist)
         ctd.ladcp_v = nan;
 
     end
-    ctds(ctd.station) = ctd; % should I change the names?
+    if ii==123
+        1;
+    end
+    %%Day team needed this commented out line:
+    %ctds(ctd.station) = ctd; % should I change the names?
+   
+    %Night team needed to use this one so that the structure of structures worked
+    %with our plotting scripts when they use the "allstations" list to search
+    %for the right station number....
+    ctds(ii) = ctd; % should I change the names?
+
+
 
 end
 save(fullfile(sd063_CTD, 'SD063_ctd.mat'),'ctds')
