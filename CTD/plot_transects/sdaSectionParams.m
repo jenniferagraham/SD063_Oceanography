@@ -24,6 +24,128 @@ P.mLAT   = [67.4 69];
 
 switch lower(sectionName)
 
+    case 'quick_comp'
+        P.fjord = 1;
+        P.sectionlist = [5 7 151 152];% 13 142 17 143 146];
+        P.msslist = [];
+        P.sectionname = 'Quick comparison';
+        P.maxy   = 600;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'aw_comp'
+        % NB. stns 3 and 4 are from the shelf break
+        P.fjord = 1;
+        P.sectionlist = [3 4 9 137 153 154];
+        P.msslist = [];
+        P.sectionname = 'Quick comparison with AW';
+        P.maxy   = 800;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 8];
+        P.scaxis = [31 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'deception_trough'
+        P.fjord = 1;
+        P.sectionlist = [149 148 146 145 144 143 142];
+        P.msslist = [];
+        P.sectionname = 'Deception Trough';
+        P.maxy   = 800;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 2.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-33.4 -30];
+        P.mLAT   = [66.8 69];
+
+    case 'deceptionloop'
+        P.fjord = 1;
+        P.sectionlist = [7 6 5 148 146 149 145 144 143 142 141];
+        P.msslist = [];
+        P.sectionname = 'Deception Loop';
+        P.maxy   = 800;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 2.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-34 -32];
+        P.mLAT   = [67 68];
+
+    case 'kangglac_deceptionloop'
+        P.fjord = 1;
+        %P.sectionlist = [78,72,73,4,5,6,71,79,68,69,70,74,75,63];
+        P.sectionlist = [78,72,73,71,79,68,70,74,75,63];
+        P.msslist = [];
+        P.sectionname = 'Kang-Glac Deception Loop';
+        P.maxy   = 800;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 2.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-34 -32];
+        P.mLAT   = [67 68];
+
+    case 'kangglac_alongtrough'
+        P.fjord = 1;
+        P.sectionlist = [89,90,88,87,86,84,8,57,7,12,16,20];
+        P.msslist = [];
+        P.sectionname = 'Kang-Glac Main Trough Along';
+        P.maxy   = 800;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 7];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-34 -28];
+        P.mLAT   = [65 68];
+
+    case 'kangglac_kgtrough'
+        P.fjord = 1;
+        P.sectionlist = [18:23];
+        P.msslist = [];
+        P.sectionname = 'Kang-Glac Kangerlussuaq Trough';
+        P.maxy   = 550;
+        P.tcaxis = [-2 2];
+        P.scaxis = [30 35];
+        P.vcaxis = [-0.5 0.5];
+        P.mLON   = [-33.4 -30];
+        P.mLAT   = [66.8 69];
+
+    case 'kangglac_kgtroughouter'
+        P.fjord = 1;
+        P.sectionlist = [9:15];
+        P.msslist = [];
+        P.sectionname = 'Kang-Glac Kangerlussuaq Trough Outer';
+        P.maxy   = 550;
+        P.tcaxis = [-2 4];
+        P.scaxis = [30 35];
+        P.vcaxis = [-0.5 0.5];
+        P.mLON   = [-33.4 -30];
+        P.mLAT   = [66.8 69];
+
+    case 'skag_kgtrough-1'
+        P.fjord = 1;
+        P.sectionlist = [5:11];
+        P.msslist = [];
+        P.sectionname = 'Skag Kangerlussuaq Trough 1';
+        P.maxy   = 550;
+        P.tcaxis = [-2 2];
+        P.scaxis = [30 35];
+        P.vcaxis = [-0.5 0.5];
+        P.mLON   = [-33.4 -30];
+        P.mLAT   = [66.8 69];
+
+    case 'skag_kgtrough-2'
+        P.fjord = 1;
+        P.sectionlist = [47:-1:41];
+        P.msslist = [];
+        P.sectionname = 'Skag Kangerlussuaq Trough 2';
+        P.maxy   = 550;
+        P.tcaxis = [-2 2];
+        P.scaxis = [30 35];
+        P.vcaxis = [-0.5 0.5];
+        P.mLON   = [-33.4 -30];
+        P.mLAT   = [66.8 69];
+
     case '3minner' % needs updating!
         P.sectionlist = [30,31,32,33,34,35,36,...
             37,38,39,40,41,42,43,44,45,46,47,48,49,...
@@ -85,7 +207,7 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
-case '3mtransectbio' % along fjord transect on biology stations
+    case '3mtransectbio' % along fjord transect on biology stations
         P.fjord = 1;
         P.sectionlist = [81,43,42,49,36,35,51,50,64,29,28]; % for mini section at the ice front look at 43 is 81, for repeat bio see 43 and 63 are 
         P.msslist = [];
@@ -169,7 +291,7 @@ case '3mtransectbio' % along fjord transect on biology stations
         P.sectionlist = [23,24,25,26,27];
         P.sectionname = 'Kangerlussuaq Trough-1';
         P.maxy   = 550;
-        P.tcaxis = [-2 4];
+        P.tcaxis = [-2 2];
         P.scaxis = [30 35];
         P.vcaxis = [-0.5 0.5];
         P.mLON   = [-33.4 -30];
@@ -179,7 +301,7 @@ case '3mtransectbio' % along fjord transect on biology stations
         P.sectionlist = [140,139,138,137,136];
         P.sectionname = 'Kangerlussuaq Trough-2';
         P.maxy   = 550;
-        P.tcaxis = [-2 4];
+        P.tcaxis = [-2 2];
         P.scaxis = [30 35];
         P.vcaxis = [-0.5 0.5];
         P.mLON   = [-33.4 -30];
@@ -349,7 +471,7 @@ case '3mtransectbio' % along fjord transect on biology stations
 
     case '3micefronttowyo'
         P.fjord = 1;
-        P.sectionlist = [118:123 127:129];
+        P.sectionlist = [118:125 127:129];
         P.msslist = [];
         P.sectionname = ['3-M ice front tow yo'];
         P.maxy   = 300; 
@@ -453,6 +575,21 @@ case '3mtransectbio' % along fjord transect on biology stations
         P.scaxis = [30 35.0];
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
+
+    case 'repeat_3mmelangetrough'
+        P.fjord = 1;
+        P.sectionlist = [13 142];
+        P.msslist = [];
+        P.sectionname = '3-M mouth sections repeat';
+        P.maxy   = 600;
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+
 
 
     otherwise
