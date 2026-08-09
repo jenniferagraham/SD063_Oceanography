@@ -9,6 +9,7 @@ if ispc
     disk = ['L:\work\scientific_work_areas\oceanography\'];
     figPb   = [disk,'\CTD\plot_transects\Figures\'];
     ctddata = [disk,'CTD\BASproc\'];
+     ctddata_old = [disk,'\Notes\PreviousDataProcessing\KANGGLAC_CTD_data\'];
     gridpath= 'L:\work\scientific_work_areas\gis\bathymetry_grids\';
 
     addpath([disk,'matlabF\']) % theta_sdiag function
@@ -33,12 +34,34 @@ set(0, 'DefaultAxesFontSize', FZ);
 
 sectionfilenames={'Ssection','Ssectionwarm',...
     'melangetroughentrance','melangetroughalong','melangetroughnorth',...
-    'magictrough','kgtrough-1',...
+    'magictrough','kgtrough-1','kgtrough-2',...
+    'deception_trough','deceptionloop',...
+    'kangglac_deceptionloop','kangglac_alongtrough','kangglac_kgtrough',...
+    'skag_kgtrough-1','skag_kgtrough-2',...
     '3mtransect','3micefronttowyo','3mhead','3mdoubletrough','3msill','3mthroat','3mmouthsection',...
     '3mbeak-1','3mbeak-2','3mbeaksouth-1','3mbeaksouth-2','3macrosssill-1','3macrosssill-2','3macrosssillsouthdogleg' ...
     };
 
-sectionfilenames={'kgtrough-1','kgtrough-2'};
+%sectionfilenames={'kangglac_kgtrough'};
+%sectionfilenames={'skag_kgtrough-1','skag_kgtrough-2'};
+%sectionfilenames={'kgtrough-1','kgtrough-2'};
+
+sectionfilenames={'deceptionloop'};
+%sectionfilenames={'kangglac_kgtroughouter'};
+
+%cruise='SD041';
+%cruise='SK2514';
+cruise='SD063';
+
+if strcmp(cruise,'SD063')
+   load([ctddata,cruise,'_ctd.mat']);
+elseif strcmp(cruise,'SK2514')
+   load([ctddata_old,cruise,'_edited_ctd.mat']);
+elseif strcmp(cruise,'SD041')
+   load([ctddata_old,cruise,'_edited_ctd.mat']);
+else
+   error("no section lists for that cruise, sorry!")
+end
 
 anomalyplot=0;
 %anomalyplot=1;
@@ -51,13 +74,8 @@ sdcolor = [.5 .5 .5]; % grey
 %sdcolor2026 = [1 .5 .5]; % grey
 seccolor= [1 .0 .0]; % red
 
-%PH: I am in the middle of hacking this code
-fname='L:\work\scientific_work_areas\oceanography\Notes\PreviousDataProcessing\KANGGLAC_CTD_data\sd041_ctd.mat'
-load(fname)
-
 % load CTDs
-cruise='SD063';
-load([ctddata,cruise,'_ctd.mat']);
+% load([ctddata,cruise,'_ctd.mat']);
 for n=1:length(ctds)
     ctds(n).asal=gsw_SA_from_SP(ctds(n).salin,ctds(n).press,ctds(n).lon,ctds(n).lat);
     ctds(n).ct=gsw_CT_from_t(ctds(n).asal,ctds(n).temp,ctds(n).press);
@@ -130,7 +148,7 @@ grid_options={'botdepth'};
     if (anomalyplot==0)
         % this snippet plots absolute fields
         plot_sk_ctd_section(P.sectionlist,ctds,'asal','xvar','dist','type','pcolor_interp',...
-            'levels',[33:0.5:35],grid_options{:});
+            'levels',[33:0.5:34.5 34.6:0.1:35.6],grid_options{:});
         clim([P.scaxis]);
         cmocean('haline')
     else
@@ -159,6 +177,20 @@ grid_options={'botdepth'};
     hcb=colorbar;
     hcb.Label.String={'LADCP current'; 'across section (m/s)'};
     
+    % % Oxygen concentrations 
+    % ax2=subplot(3,5,13:15);
+    % % % 'oxygen_umol_kg'
+    % plot_sk_ctd_section(P.sectionlist,ctds,'oxygen_umol_kg','xvar','dist',...
+    %     'type','pcolor_interp','levels',[],'station_labels','true',grid_options{:});
+    % ylim([0 P.maxy]);
+    % clim([320 370]);
+    % xlabel('Distance (km)');
+    % ylabel('Depth (m)');
+    % colormap(ax2,'jet')
+    % hcb=colorbar;
+    % hcb.Label.String={'Oxygen'; 'umol kg^{-1}'};
+    % sectionlength=max(xlim);
+ 
     % T-S plot (will add density later)
     subplot(2,5,6:7) % top right - t/s
     allstations=[sd_ctds.station];
@@ -250,12 +282,12 @@ grid_options={'botdepth'};
         % m_usercoast('greenland_coast.mat','patch',[.8 .8 .8],'edgecolor','k');
 
         % plot all CTDs
+        m_plot(mean(vertcat(sd_ctds(ind).lon)),mean(vertcat(sd_ctds(ind).lat)),...
+            'ro','markersize',10,'linewidth',2); % if using zoomed out map
         m_plot(vertcat(sd_ctds.lon),vertcat(sd_ctds.lat),'+','color',sdcolor,'markersize',6);
         %m_plot(vertcat(er_ctds.lon),vertcat(er_ctds.lat),'+','color',ercolor,'markersize',5);
         %m_plot(vertcat(sk_ctds.lon),vertcat(sk_ctds.lat),'+','color',skcolor,'markersize',4);
         % m_plot(vertcat(er_ctds(ind).lon),vertcat(er_ctds(ind).lat),'r+-','linewidth',2); % if using zoom in map
-        m_plot(mean(vertcat(sd_ctds(ind).lon)),mean(vertcat(sd_ctds(ind).lat)),...
-            'ro','markersize',10,'linewidth',2); % if using zoomed out map
         % add a graticule
         m_grid;
      end
@@ -276,10 +308,10 @@ grid_options={'botdepth'};
     % m_usercoast('greenland_coast.mat','patch',[.8 .8 .8],'edgecolor','k');
 
     % plot all CTDs
+    m_plot(vertcat(sd_ctds(ind).lon),vertcat(sd_ctds(ind).lat),'r+-','linewidth',2);
     m_plot(vertcat(sd_ctds.lon),vertcat(sd_ctds.lat),'+','color',sdcolor,'markersize',6);
     %m_plot(vertcat(er_ctds.lon),vertcat(er_ctds.lat),'+','color',ercolor,'markersize',5);
     %m_plot(vertcat(sk_ctds.lon),vertcat(sk_ctds.lat),'+','color',skcolor,'markersize',4);
-    m_plot(vertcat(sd_ctds(ind).lon),vertcat(sd_ctds(ind).lat),'r+-','linewidth',2);
     % if sectionlength<10 % circle short sections
     %     m_plot(mean(vertcat(sd_ctds(ind).lon)),mean(vertcat(sd_ctds(ind).lat)),...
     %         'ro','markersize',20,'linewidth',2);
