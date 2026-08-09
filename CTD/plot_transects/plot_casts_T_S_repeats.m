@@ -52,6 +52,7 @@ sectionfilename={'kangglac_kgtrough'};
 sectionfilename={'skag_kgtrough-1'};
 
 sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','repeat_3moutermouth'};
+sectionfilename={'quick_comp'};
 
 grey  = [0.55 0.55 0.55];
 
@@ -105,10 +106,10 @@ ctds_plot=ctds(ind);
 for ii=1:ncasts
  %   for ii=4
     if m==1
-     %   if ii<6
-        %    cols=orangeScale(ii,:);  
-      %  else
-        cols=RosieScale(m,:);
+        if ii<6
+            cols=RosieScale(ii,:);  
+        end
+        %cols=RosieScale(m,:);
         line_style='-';
     elseif m==2
              cols=RosieScale(m,:);
@@ -130,8 +131,12 @@ subplot(1,4,3:4)
 labels = string(ctds_times) + " (" + string(cast_number) + ")";
 legend(labels,'Location','northeast','FontSize',8);
 
-subplot(1,4,1)
-xlim=[P.tcaxis]; 
+ax1 = subplot(1,4,1);
+xlim(ax1, [P.tcaxis]); 
+ylim(ax1, [0, P.maxy]); 
+
+ax2 = subplot(1,4,2);
+ylim(ax2, [0, P.maxy]); 
 
 %lgd=legend([string(ctds_times),(cast_number)],'Location','SouthWest','FontSize',8);
 %,string(ctds_times(3)),string(ctds_times(4)),string(ctds_times(5)),string(ctds_times(6)),string(ctds_times(7)),'Location','SouthWest','FontSize',8)
