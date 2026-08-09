@@ -6,6 +6,8 @@
 %% modified by CTD team SD 063
 clear all; close all;
 clc
+anomalyplot=0; % =
+oxyplots=0; % =1 plots oxygen saturation, oxygen concentration and oxygen utilizations, otherwise it plots CT, S, and oxygen concentration 
 %% add paths for GSW and where to save figures 
 
 here=pwd;
@@ -90,7 +92,7 @@ thefig=figure; set(thefig,'Visible','off')
 thefig.Position=[1 1 513 540];%thefig.Position(4).*16./9; % change the aspect ratio
 %thefig.WindowState = 'maximized';
 %%
-for m=1:length(sectionfilenames)
+for m=7%:length(sectionfilenames)
 clf
 % use SDA track from Underway. Still tricky with interpolation.
 %grid_options={'sdatrack'}; % use default bathymetry as bottom CTD 
@@ -99,7 +101,7 @@ grid_options={'botdepth'};
 % specifics for each section, depth, caxis, etc
     P = sdaSectionParams(sectionfilenames{m});
 
-
+if oxyplots==1
      % OSAT
      myvar='o2sat';
      ax1=subplot(3,5,3:5);
@@ -120,7 +122,7 @@ grid_options={'botdepth'};
      plot_sk_ctd_section(P.sectionlist,ctds,myvar,'xvar','dist',...
         'type','pcolor_interp','levels',[],'station_labels','true',grid_options{:});
     ylim([0 P.maxy]);
-    clim([300 370]);
+    clim([250 370]);
     xlabel('Distance (km)');
     ylabel('Depth (m)');
      colormap(ax2,'jet')
@@ -143,12 +145,83 @@ grid_options={'botdepth'};
     hcb=colorbar;
     hcb.Label.String={'AOU'; 'umol kg^{-1}'};
 
-   if strcmp(myvar,'aou')
+   
          fignameappend='OXY';
-   else
+else
+     % conservative temperature
+    subplot(3,5,3:5);
+
+    if (anomalyplot==0)
+        % this snippet plots absolute fields
+        plot_sk_ctd_section(P.sectionlist,ctds,'ct','xvar','dist','type','pcolor_interp',...
+           'levels',[-2.0:0.5:7],'station_labels','true',grid_options{:});
+        clim([P.tcaxis]);
+        cmocean('thermal')
+        fignameappend='';
+    else
+        % this snippet plots anomalies (beware reference cast is hard wired)
+        plot_sk_ctd_section(P.sectionlist,ctds,'ct_anom','xvar','dist','type','pcolor_interp',...
+            'levels',[-1.0:0.5:1.0],'station_labels','true',grid_options{:});    
+        clim([-1 1]);
+        cmocean('balance')
+        fignameappend='_anom';
+    end
+
+    ylim([0 P.maxy]);
+    ylabel('Depth (m)');
+    hcb=colorbar;
+    hcb.Label.String= 'CT (\circC)'; %'\Theta (^oC)';
+    sectionlength=max(xlim);
+    
+    % absolute salinity
+    subplot(3,5,8:10);
+
+    if (anomalyplot==0)
+        % this snippet plots absolute fields
+        plot_sk_ctd_section(P.sectionlist,ctds,'asal','xvar','dist','type','pcolor_interp',...
+            'levels',[33:0.5:35],grid_options{:});
+        clim([P.scaxis]);
+        cmocean('haline')
+    else
+        % this snippet plots anomalies (beware reference cast is hard wired)
+        plot_sk_ctd_section(P.sectionlist,ctds,'asal_anom','xvar','dist','type','pcolor_interp',...
+            'levels',[-1.0:0.5:1.0],'station_labels','true',grid_options{:});
+        clim([-0.5 0.5]);
+        cmocean('balance')
+        fignameappend='_anom';
+    end
+
+    ylim([0 P.maxy]);
+    ylabel('Depth (m)');
+    hcb=colorbar;
+    hcb.Label.String='SA (‰)';
+    
+  
          fignameappend='';
    end
     
+% Oxygen concentrations 
+     %myvar='oxygen_umol_kg';
+     myvar='aou';
+        ax2=subplot(3,5,13:15);
+     % % 'oxygen_umol_kg'
+     plot_sk_ctd_section(P.sectionlist,ctds,myvar,'xvar','dist',...
+        'type','pcolor_interp','levels',[],'station_labels','true',grid_options{:});
+    ylim([0 P.maxy]);
+    xlabel('Distance (km)');
+    ylabel('Depth (m)');
+     colormap(ax2,'jet')
+    hcb=colorbar;
+   
+    if strcmp(myvar,'aou')
+         clim([0 60]);
+          hcb.Label.String={'AOU'; 'umol kg^{-1}'};
+    else
+        clim([300 370]);
+        hcb.Label.String={'Oxygen'; 'umol kg^{-1}'};
+    end
+    sectionlength=max(xlim);
+
     % T-S plot (will add density later)
     subplot(2,5,6:7) % top right - t/s
     allstations=[sd_ctds.station];
