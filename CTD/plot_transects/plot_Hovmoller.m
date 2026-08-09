@@ -1,13 +1,29 @@
 %Hovmoller plots
 
 close all; clear all;
+
+
+%% add paths
+if ispc
+addpath('../../matlabF/')
+
+disk = ['L:\work\scientific_work_areas\oceanography\'];
+Tdisk = ['P:\SD063\']; % JG T-drive
+%Tdisk = ['T:\SD063\'];
+ctddata = [disk,'CTD\BASproc\'];
 addpath('../../matlabF/')
 addpath T:/SD063/TMD3.0
 
-disk = ['L:\work\scientific_work_areas\oceanography\'];
-%Tdisk = ['P:\SD063\']; % JG T-drive
-Tdisk = ['T:\SD063\'];
-ctddata = [disk,'CTD\BASproc\'];
+elseif ismac
+    disk = '/Volumes/legwork/scientific_work_areas/oceanography/';
+    addpath('/Volumes/legwork/scientific_work_areas/oceanography/matlabF/')
+
+    Tdisk = ['/Volumes/Scratch/SD063/']; % JG T-drive
+    ctddata = [disk,'CTD/BASproc/'];
+
+end
+%%
+
 cruise='SD063';
 load([ctddata,cruise,'_ctd.mat']);
 
@@ -21,7 +37,7 @@ else
  figure('Position', [10, 100, 1250, 600])
 end
 
-sectionfilename='repeat_3m_icefront'; % repeat_3msill[n or peak]
+sectionfilename='3micefronttowyo'; % repeat_3msill[n or peak]
 
 P = sdaSectionParams(sectionfilename);
 
