@@ -43,7 +43,7 @@ function plot_sk_ctd_section(stns,ctds,variable,varargin)
 % "ctdstructure" %lc 05/2026
 %   - added the variable into the function - do not need to re-load it
 % Commented out LADCP variable (skagerak did not have one)
-cruise='SD063';
+%cruise='SD063';
 m=1;
 xvar='dist';
 levels={};
@@ -95,6 +95,7 @@ anomrefstns=stns; % all stations
 % end
 % anomctds=ctds(ind);
 
+%allstations=[1:ctds(end).station];
 allstations=[ctds.station];
 ind=zeros(size(stns));
 for n=1:length(stns)
@@ -106,7 +107,7 @@ for n=1:length(stns)
 end
 ctds=ctds(ind);
 
-if ~isfield(ctds(1),variable) && ~ismember(variable,{'gamma_n','ladcp_perp','ladcp_along','ct','ct_anom','asal','asal_anom'})
+if ~isfield(ctds(1),variable) && ~ismember(variable,{'gamma_n','ladcp_perp','ladcp_along','ct','ct_anom','asal','asal_anom','o2sat','aou'})
     error('Cannot find variable %s in cruise %s',variable,cruise);
 end
 
@@ -121,18 +122,21 @@ press=temp;
 ladcp_u=temp;
 ladcp_v=temp;
 newvar=temp;
-
+oxy=temp; % lc
 for n=1:length(stns)
     dest_ind=[1:length(ctds(n).press)]+round((ctds(n).press(1)-start_off)/dp);
     press(dest_ind,n)=ctds(n).press;
     temp(dest_ind,n)=ctds(n).temp;
     salin(dest_ind,n)=ctds(n).salin;
+    if strcmp(variable,'oxygen_umol_kg')||strcmp(variable,'aou')||strcmp(variable,'o2sat') 
+       oxy(dest_ind,n)=ctds(n).oxygen_umol_kg; %lc
+    end
     if isfield(ctds(n), 'ladcp_u')
         ladcp_u(dest_ind,n)=ctds(n).ladcp_u;
         ladcp_v(dest_ind,n)=ctds(n).ladcp_v;
     end
     if ~ismember(variable,{'temp','salin','ct','ct_anom','asal','asal_anom','press','gamma_n',...
-            'ladcp_u','ladcp_v','ladcp_perp','ladcp_along'})
+            'ladcp_u','ladcp_v','ladcp_perp','ladcp_along','o2sat','aou'})
         newvar(dest_ind,n)=ctds(n).(variable);
     end
 end
@@ -145,10 +149,11 @@ if isnan(press(1))
 end
 press=repmat([press(1:lastind);newpress'],1,length(ctds));
 temp=[temp(1:lastind,:);nan(length(press)-lastind,length(ctds))];
+oxy=[oxy(1:lastind,:);nan(length(press)-lastind,length(ctds))]; % lc
 salin=[salin(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 ladcp_u=[ladcp_u(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 ladcp_v=[ladcp_v(1:lastind,:);nan(length(press)-lastind,length(ctds))];
-if ~ismember(variable,{'temp','salin','ct','ct_anom','asal','asal_anom','press','gamma_n','ladcp_u','ladcp_v','ladcp_perp','ladcp_along'})
+if ~ismember(variable,{'temp','salin','ct','ct_anom','asal','asal_anom','press','gamma_n','ladcp_u','ladcp_v','ladcp_perp','ladcp_along','aou','o2sat'})
     newvar=[newvar(1:lastind,:);nan(length(press)-lastind,length(ctds))];
 end
 
@@ -232,6 +237,13 @@ switch(variable)
         plot_var=plot_var-nanmean(plot_var(:,refindices),2);
     case 'ct'
         plot_var=gsw_CT_from_t(gsw_SA_from_SP(salin,press,lon,lat),temp,press);   
+    case 'aou'
+         % calculation of Aparent Oxygen Utilization: AOU (umol/kg) = sat O2 (umol/kg) - obs o2 (umol/kg).
+         o2sat = o2satv2b(salin,temp);
+         plot_var = o2sat - oxy; 
+   case 'o2sat'
+        % calculatign Oxygen saturation at one atmosphere (umol/kg). using function  O2 = o2satv2b(S,T).
+        plot_var=o2satv2b(salin,temp);   
     case 'ct_anom'
         plot_var=gsw_CT_from_t(gsw_SA_from_SP(salin,press,lon,lat),temp,press);
         refindices=zeros(size(anomrefstns));
