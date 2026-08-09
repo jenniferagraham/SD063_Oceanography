@@ -1,15 +1,32 @@
 %Hovmoller plots
 
 close all; clear all;
+cruise='SD063';
+
+
+%% add paths
+if ispc
 addpath('../../matlabF/')
 
 disk = ['L:\work\scientific_work_areas\oceanography\'];
 Tdisk = ['P:\SD063\']; % JG T-drive
 %Tdisk = ['T:\SD063\'];
 ctddata = [disk,'CTD\BASproc\'];
-cruise='SD063';
+
+load([ctddata,cruise,'_ctd.mat']);
+elseif ismac
+    disk = '/Volumes/legwork/scientific_work_areas/oceanography/';
+    addpath('/Volumes/legwork/scientific_work_areas/oceanography/matlabF/')
+
+    Tdisk = ['/Volumes/Scratch/SD063/']; % JG T-drive
+    ctddata = [disk,'CTD/BASproc/'];
+
+end
+
+%% load the data 
 load([ctddata,cruise,'_ctd.mat']);
 
+%%
 %Option to zoom axes in on the ice front section yoyo:
 yoyo_zoom=1;
 
@@ -220,4 +237,4 @@ name = sprintf('_Hovmoller_anomolies_%s_full.png', sectionfilename);
      name = sprintf('_Hovmoller_anomolies_%s.png', sectionfilename);
  end
    
-exportgraphics(gcf, fullfile('Figures', [cruise name]), 'Resolution', 300)
+%exportgraphics(gcf, fullfile('Figures', [cruise name]), 'Resolution', 300)
