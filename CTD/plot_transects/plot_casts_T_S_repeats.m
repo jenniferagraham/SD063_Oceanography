@@ -24,34 +24,62 @@ end
 
 %run through different cruises
 cruises={'SD063','SK2514','SD041'};
+
 %% load CTD structure data 
  cruise='SD063';
-load([ctddata,cruise,'_ctd.mat']);
+%cruise='SD041_edited';
+% cruise='SD063';
+% load([ctddata_old,cruise,'_ctd.mat']);
+
+if strcmp(cruise,'SD063')
+    load([ctddata,cruise,'_ctd.mat']);
+elseif strcmp(cruise,'SK2514')
+    load([ctddata_old,cruise,'_edited_ctd.mat']);
+elseif strcmp(cruise,'SD041')
+    load([ctddata_old,cruise,'_edited_ctd.mat']);
+else
+    error("no section lists for that cruise, sorry!")
+end
 
 %% select the sections 
- sectionfilename={'repeat_3mmmouthsectionrepeats'};
+%sectionfilename={'quick_comp'};
+%sectionfilename={'deception_trough'};
+sectionfilename={'repeat_3mmelangetrough'};
+%sectionfilename={'aw_comp'};
+% sectionfilename={'repeat_3mmmouthsectionrepeats'};
+%sectionfilename={'kgtrough-1','kgtrough-2'};
+sectionfilename={'kangglac_kgtrough'};
+sectionfilename={'skag_kgtrough-1'};
 
-sectionfilename={'kgtrough-1','kgtrough-2'};
-%sectionfilename={'kgtrough-1'};
+sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','repeat_3moutermouth'};
 
 grey  = [0.55 0.55 0.55];
 
 ctds_times=[];
 cast_number=[];
 
-for m=1:2
+%for m=1:length(sectionfilename)
+    for m=1
 %Add in ice front repeat
+%if strcmp(cruise, 'SD063')
 P = sdaSectionParams(sectionfilename{m}); % function that needs to be in the same folder 
+%elseif strcmp(cruise, 'SK2514_edited')
+ %   P = sda041SectionParams(sectionfilename{m}); % function that needs to be in the same folder 
+%elseif strcmp(cruise, 'SD041_edited')
+%    P = sdaSectionParams(sectionfilename{m}); % function that needs to be in the same folder 
+%else
+%    error("no section lists for that cruise, sorry!")
+%end
 ncasts = length(P.sectionlist);
 stns=P.sectionlist;
 blueScale = abyss(ncasts); 
 orangeScale = autumn(ncasts);
 greenScale = summer(ncasts);
-phaseScale=hsv(5);
+phaseScale=hsv(ncasts);
 RosieScale =[
     0.00 0.35 0.75   % blue
     0.00 0.60 0.30   % green
-%    0.00 0.75 0.75   % turquoise
+    0.00 0.75 0.75   % turquoise
     0.00 0.00 0.00   % black
     0.90 0.45 0.05    % pink
     0.85 0.05 0.05   % red
@@ -75,17 +103,20 @@ ctds_plot=ctds(ind);
 
 %% loop the sections 
 for ii=1:ncasts
+ %   for ii=4
     if m==1
      %   if ii<6
         %    cols=orangeScale(ii,:);  
       %  else
-        cols=RosieScale(ii,:);
-        line_style='-'
+        cols=RosieScale(m,:);
+        line_style='-';
     elseif m==2
-             cols=RosieScale_light(ii,:);
-             line_style='-'
+             cols=RosieScale(m,:);
+             line_style='-';
+    elseif m==3
+        cols=RosieScale(6,:);
+        line_style='-'
     end
-
     ax= sd063_cast_plots(ctds_plot(ii),cols,line_style,ref_station,plot_envelope);
     hold on;
     ctd_time=datetime(ctds_plot(ii).gtime);
