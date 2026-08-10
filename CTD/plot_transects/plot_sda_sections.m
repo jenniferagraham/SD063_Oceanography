@@ -1,6 +1,7 @@
 %% created by Laura C (SAMS) uses an updated of Povl's original plot sd sections that were used for the cruise report 
 %% modified by CTD team SD 063
-clear all; close all;
+clear all; 
+close all;
 clc
 %% add paths for GSW and where to save figures 
 
@@ -9,7 +10,7 @@ if ispc
     disk = ['L:\work\scientific_work_areas\oceanography\'];
     figPb   = [disk,'\CTD\plot_transects\Figures\'];
     ctddata = [disk,'CTD\BASproc\'];
-     ctddata_old = [disk,'\Notes\PreviousDataProcessing\KANGGLAC_CTD_data\'];
+    ctddata_old = [disk,'\Notes\PreviousDataProcessing\KANGGLAC_CTD_data\'];
     gridpath= 'L:\work\scientific_work_areas\gis\bathymetry_grids\';
 
     addpath([disk,'matlabF\']) % theta_sdiag function
@@ -35,8 +36,8 @@ set(0, 'DefaultAxesFontSize', FZ);
 sectionfilenames={'Ssection','Ssectionwarm',...
     'melangetroughentrance','melangetroughalong','melangetroughnorth',...
     'magictrough','kgtrough-1','kgtrough-2',...
-    'deception_trough','deceptionloop',...
-    'kangglac_deceptionloop','kangglac_alongtrough','kangglac_kgtrough',...
+    'deception_trough','deceptionloop-1','deceptionloop-2',...
+    'kangglac_deceptionloop','kangglac_alongtrough','kangglac_kgtrough','kangglac_flado',...
     'skag_kgtrough-1','skag_kgtrough-2',...
     '3mtransect','3micefronttowyo','3mhead','3mdoubletrough','3msill','3mthroat','3mmouthsection',...
     '3mbeak-1','3mbeak-2','3mbeaksouth-1','3mbeaksouth-2','3macrosssill-1','3macrosssill-2','3macrosssillsouthdogleg' ...
@@ -44,10 +45,11 @@ sectionfilenames={'Ssection','Ssectionwarm',...
 
 %sectionfilenames={'kangglac_kgtrough'};
 %sectionfilenames={'skag_kgtrough-1','skag_kgtrough-2'};
-%sectionfilenames={'kgtrough-1','kgtrough-2'};
-
-sectionfilenames={'deceptionloop'};
+%sectionfilenames={'kgtrough-1','kgtrough-2','kgtrough-3'};
 %sectionfilenames={'kangglac_kgtroughouter'};
+
+%sectionfilenames={'melangetroughalong-1','melangetroughalong-2'};
+sectionfilenames={'kgtrough-3'};
 
 %cruise='SD041';
 %cruise='SK2514';
