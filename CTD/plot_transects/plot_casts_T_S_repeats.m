@@ -1,7 +1,6 @@
 %Script to plot all casts from ice front section for comparison
 %% add path 
 addpath L:\work\scientific_work_areas\oceanography\matlabF\
-   addpath([disk,'\GSWscripts\gsw_matlab_v3_06_16\'])
 close all; clear all;
 
 %if reF_station=[], it plots casts. If you give it a ref station, it plots
@@ -9,6 +8,7 @@ close all; clear all;
 ref_station=[];
 %turn off here as this is only used to plot envelope (using means and stds)
 plot_envelope=0;
+use_tides=0;
 
 if ispc 
     addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
@@ -21,6 +21,7 @@ else
     disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
     ctddata = [disk,'CTD/BASproc/'];
 end
+addpath([disk,'\CTD\GSWscripts\gsw_matlab_v3_06_16\'])
 
 %run through different cruises
 cruises={'SD063','SK2514','SD041'};
@@ -32,7 +33,11 @@ cruises={'SD063','SK2514','SD041'};
 % load([ctddata_old,cruise,'_ctd.mat']);
 
 if strcmp(cruise,'SD063')
-    load([ctddata,cruise,'_ctd.mat']);
+    if use_tides 
+        load([ctddata,cruise,'_tides_ctd.mat']);
+    else
+        load([ctddata,cruise,'_ctd.mat']);
+    end
 elseif strcmp(cruise,'SK2514')
     load([ctddata_old,cruise,'_edited_ctd.mat']);
 elseif strcmp(cruise,'SD041')
@@ -51,7 +56,7 @@ sectionfilename={'repeat_3mmelangetrough'};
 sectionfilename={'kangglac_kgtrough'};
 sectionfilename={'skag_kgtrough-1'};
 
-sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','repeat_3moutermouth'};
+%sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','repeat_3moutermouth'};
 sectionfilename={'quick_comp'};
 
 grey  = [0.55 0.55 0.55];
@@ -90,6 +95,38 @@ RosieScale =[
 phaseScale_light = 0.5 + 0.5*phaseScale;
 RosieScale_light = 0.5 + 0.5*RosieScale;
 
+%ncasts = length(ctds);
+% Tidal phase for each CTD
+%tidal_phase = [ctds.tidal_phase];
+
+% Cyclic rainbow colormap
+ncol = 256;
+nhalf = ncol/2;
+cmap1 = turbo(nhalf);
+cmap_tides = [cmap1; flipud(cmap1)];
+
+
+% Blue -> white -> red
+blue = [linspace(0,1,ncol/2)', ...
+    linspace(0,1,ncol/2)', ...
+    ones(ncol/2,1)];
+red = [ones(ncol/2,1), ...
+    linspace(1,0,ncol/2)', ...
+    linspace(1,0,ncol/2)'];
+cmap_tides_rb = [blue; red];
+
+n = ncol/2;
+
+% Red -> blue
+r = linspace(1, 0, n)';
+g = zeros(n,1);
+b = linspace(0, 1, n)';
+
+half = [r g b];
+
+% Blue -> red
+cmap = [half; flipud(half)];
+
 allstations=[ctds.station];
 ind=zeros(size(stns));
 for n=1:length(stns)
@@ -106,9 +143,10 @@ ctds_plot=ctds(ind);
 for ii=1:ncasts
  %   for ii=4
     if m==1
-        if ii<6
+      %  if ii<6
             cols=RosieScale(ii,:);  
-        end
+%            cols=cmap_tides(ii,:);
+       % end
         %cols=RosieScale(m,:);
         line_style='-';
     elseif m==2
@@ -118,7 +156,13 @@ for ii=1:ncasts
         cols=RosieScale(6,:);
         line_style='-'
     end
-    ax= sd063_cast_plots(ctds_plot(ii),cols,line_style,ref_station,plot_envelope);
+
+    if use_tides 
+        col = interp1(linspace(0,180,ncol), cmap_tides, ctds(ii).tidal_phase);
+        ax= sd063_cast_plots(ctds_plot(ii),col,line_style,ref_station,plot_envelope);
+    else
+        ax= sd063_cast_plots(ctds_plot(ii),cols,line_style);
+    end
     hold on;
     ctd_time=datetime(ctds_plot(ii).gtime);
     ctds_times=[ctds_times ctd_time];
