@@ -26,7 +26,7 @@ switch lower(sectionName)
 
     case 'quick_comp'
         P.fjord = 1;
-        P.sectionlist = [5 7 151 152];% 13 142 17 143 146];
+        P.sectionlist = [26 137 161 162 163];% 13 142 17 143 146];
         P.msslist = [];
         P.sectionname = 'Quick comparison';
         P.maxy   = 600;
@@ -61,16 +61,28 @@ switch lower(sectionName)
         P.mLON   = [-33.4 -30];
         P.mLAT   = [66.8 69];
 
-    case 'deceptionloop'
+    case 'deceptionloop-1'
         P.fjord = 1;
-        P.sectionlist = [7 6 5 148 146 149 145 144 143 142 141];
+        P.sectionlist = [7 6 5 17 13 11 10 9];
         P.msslist = [];
-        P.sectionname = 'Deception Loop';
+        P.sectionname = 'Deception Loop 1';
         P.maxy   = 800;
         P.vcaxis = [-0.3 0.3];
         P.tcaxis = [-2 2.5];
         P.scaxis = [30 35.0];
-        P.mLON   = [-34 -32];
+        P.mLON   = [-34 -31];
+        P.mLAT   = [67 68];
+
+    case 'deceptionloop-2'
+        P.fjord = 1;
+        P.sectionlist = [152 151 150 148 146 149 145 144 160 159 158 157 156];
+        P.msslist = [];
+        P.sectionname = 'Deception Loop 2';
+        P.maxy   = 800;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 2.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-34 -31];
         P.mLAT   = [67 68];
 
     case 'kangglac_deceptionloop'
@@ -83,7 +95,7 @@ switch lower(sectionName)
         P.vcaxis = [-0.3 0.3];
         P.tcaxis = [-2 2.5];
         P.scaxis = [30 35.0];
-        P.mLON   = [-34 -32];
+        P.mLON   = [-34 -31];
         P.mLAT   = [67 68];
 
     case 'kangglac_alongtrough'
@@ -113,6 +125,18 @@ switch lower(sectionName)
     case 'kangglac_kgtroughouter'
         P.fjord = 1;
         P.sectionlist = [9:15];
+        P.msslist = [];
+        P.sectionname = 'Kang-Glac Kangerlussuaq Trough Outer';
+        P.maxy   = 550;
+        P.tcaxis = [-2 4];
+        P.scaxis = [30 35];
+        P.vcaxis = [-0.5 0.5];
+        P.mLON   = [-33.4 -30];
+        P.mLAT   = [66.8 69];
+
+    case 'kangglac_flado'
+        P.fjord = 1;
+        P.sectionlist = [9 58 67 66 59 63 62 61];
         P.msslist = [];
         P.sectionname = 'Kang-Glac Kangerlussuaq Trough Outer';
         P.maxy   = 550;
@@ -251,12 +275,21 @@ switch lower(sectionName)
         P.mLON   = [-33.4 -30];
         P.mLAT   = [66.8 69];
 
-    case 'melangetroughalong'
-        P.sectionlist = [15,13,11,10,9];
+    case 'melangetroughalong-1'
+        P.sectionlist = [17,13,11,10,9];
         P.sectionname = 'Melange Trough along';
         P.maxy   = 700;
         P.vcaxis = [-0.2 0.2];
-        P.tcaxis = [-2 2];
+        P.tcaxis = [-2 4];
+        P.scaxis = [30 35];
+        P.mLON   = [-33.4 -30];
+
+    case 'melangetroughalong-2'
+        P.sectionlist = [160,159,158,157,156];
+        P.sectionname = 'Melange Trough along';
+        P.maxy   = 700;
+        P.vcaxis = [-0.2 0.2];
+        P.tcaxis = [-2 4];
         P.scaxis = [30 35];
         P.mLON   = [-33.4 -30];
 
@@ -300,6 +333,16 @@ switch lower(sectionName)
     case 'kgtrough-2'
         P.sectionlist = [140,139,138,137,136];
         P.sectionname = 'Kangerlussuaq Trough-2';
+        P.maxy   = 550;
+        P.tcaxis = [-2 2];
+        P.scaxis = [30 35];
+        P.vcaxis = [-0.5 0.5];
+        P.mLON   = [-33.4 -30];
+        P.mLAT   = [66.8 69];
+
+    case 'kgtrough-3'
+        P.sectionlist = [161,162,163,164];
+        P.sectionname = 'Kangerlussuaq Trough-3';
         P.maxy   = 550;
         P.tcaxis = [-2 2];
         P.scaxis = [30 35];
@@ -578,7 +621,7 @@ switch lower(sectionName)
 
     case 'repeat_3mmelangetrough'
         P.fjord = 1;
-        P.sectionlist = [13 142];
+        P.sectionlist = [11 141 158];
         P.msslist = [];
         P.sectionname = '3-M mouth sections repeat';
         P.maxy   = 600;
@@ -588,7 +631,6 @@ switch lower(sectionName)
         P.scaxis = [30 35.0];
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
-
 
 
 
