@@ -3,9 +3,7 @@
 
 close all; clear all;
 
-mac=0;
-
-if mac==0 % ellie you should be able to run it using mac=0 you may need to adjust some of the paths
+if ispc
     addpath 'L:\work\scientific_work_areas\oceanography\MSS34\'
     disk = ['L:\work\scientific_work_areas\']; %
     msslogbook = [disk,'oceanography\MSS34\MSS_logbook_4matlab.csv'];
@@ -20,24 +18,24 @@ if mac==0 % ellie you should be able to run it using mac=0 you may need to adjus
     addpath([disk,'oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\thermodynamics_from_t\'])
     addpath([disk,'oceanography\CTD\plot_transects\']) % directory with section parameter function
 
-elseif mac==1
+else
     slash='/';
     disk = ['/Volumes/legwork/scientific_work_areas/'];
+    msslogbook = [disk,'oceanography/MSS34/MSS_logbook_4matlab.csv']; % Laura C created a new logbook easier for matlab use
     mssdataP = [disk,'oceanography/MSS34/DATA/'];
     ctddata = [disk,'/oceanography/CTD/BASproc/'];
     figpath = [disk,'oceanography/MSS34/Processing/Figures/'];
-    msslogbook = [disk,'oceanography/MSS34/MSS_logbook_4matlab.csv']; % Laura C created a new logbook easier for matlab use
+    gridpath= [disk,'gis/bathymetry_grids/'];
     addpath([disk,'oceanography/matlabF/']) % theta_sdiag function
     addpath([disk,'oceanography/matlabF/m_map/'])
     addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/'])
     addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/library/'])
     addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/thermodynamics_from_t/'])
-    % addpath([disk,'oceanography/CTD/plot_transects/']) % create a similar one for MSS
+    addpath([disk,'oceanography/CTD/plot_transects/']) % create a similar one for MSS
 end
 
 cruise='SD063';
-
-gridpath= 'L:\work\scientific_work_areas\gis\bathymetry_grids\';
+load mb_all_20250512.mat
 
 FZ=12;
 set(0, 'DefaultAxesFontSize', FZ);
@@ -55,6 +53,7 @@ indxRow = find(mssLog.Use==1); % inWater rows only
 msslogLon = mssLog.Longitude_dd(indxRow);
 msslogLat = mssLog.Latitude_dd(indxRow);
 mssLogMSScast = mssLog.MSScast(indxRow);
+
 %% Create parameter object
 % ready choices
 % sectionName= '3msill_towyo'; % works well
@@ -199,7 +198,7 @@ for ii=1:length(nMSS) % select range of casts for this section
     cast = mssparams.castlist(ii);
 
     mssname = [cruise,sprintf('_mss_%03d_struct.mat',cast)]; % string formatting to pad 1 digit cast numbers
-    load ([disk,'oceanography\MSS34\DATA\',mssname]);
+    load ([mssdataP,mssname]);
 
     % specify rows to write to according to length of data
     myPress(1:length(mss.data.press),ii) = [mss.data.press];
@@ -260,11 +259,11 @@ end
 %% Create map 
 
 % Define grid layout
-tiledlayout(3,2) % 3 rows, 2 columns
+t = tiledlayout(); % 3 rows, 2 columns
 
 % Temp plot
-% nexttile(1)
-subplot(2,3,1)
+nexttile(1)
+%subplot(2,3,1)
 title (['MSS ',P.sectionname])
 pcolor(section.km,section.press,section.T)
 shading flat
@@ -279,8 +278,8 @@ hold on ;
 contour(section.km,section.press,section.sigt,P.clevels,'k','ShowText','on')
 
 % Salinity plot
-subplot(2,3,3)
-%nexttile(3)
+%subplot(2,3,3)
+nexttile(2)
 pcolor(section.km,section.press,section.S)
 shading flat
 set(gca,'YDir','reverse')
@@ -293,8 +292,8 @@ hold on
 contour(section.km,section.press,section.sigt,P.clevels,'k','ShowText','on')
 
 % Epsilon plot
-subplot(2,3,6)
-%nexttile(5)
+%subplot(2,3,5)
+nexttile(3)
 pcolor(section.km,section.press,section.eps)
 shading flat
 hold on
@@ -311,8 +310,8 @@ caxis([P.epscaxis(1),P.epscaxis(2)])
 contour(section.km,section.press,section.sigt,P.clevels,'k','ShowText','on')
 
 % TS plot with CTD background points
-subplot(2,3,2)
-%nexttile(2)
+%subplot(2,3,2)
+nexttile(4)
 % Create grid for sigma0 contours
 Tmin=mssparams.tcaxis(1);
 Tmax=mssparams.tcaxis(2);
@@ -320,40 +319,56 @@ Smin=mssparams.scaxis(1);
 Smax=mssparams.scaxis(2);
 [Sg,Tg] = meshgrid(Smin:0.1:Smax,Tmin:0.2:Tmax);
 sigma0 = gsw_sigma0(Sg,Tg);
-
 alpha = 0.5;
-
 scatter(ctdS(:),ctdT(:),12,[0.5,0.5,0.5],...
     'filled',...
     'MarkerFaceAlpha',alpha,...
     'DisplayName','Inner fjord CTDs');
-
+hold on
 % MSS section values (plot on top)
 mssS = asal;
 mssT = ct;
-
 scatter(mssS(:),mssT(:),12,'red',...
     'filled',...
     'MarkerFaceAlpha',alpha,...
     'DisplayName','MSS section');
-
 grid on
 box on
-
 xlim([Smin, Smax])
 ylim([Tmin, Tmax])
-
 contour(Sg,Tg,sigma0,'k','ShowText','on', 'HandleVisibility','off')
 % Suppress density contours from showing in legend
-
 hold off
-
 xlabel('Absolute salinity (‰)') % need to fix unicode
 ylabel('Conservative temperature (°C)') % need to fix unicode
 legend('show')
 
 % Map with section points plotted
-subplot(3,3,4:5)
-%nexttile(4)
+%subplot(2,3,4)
+nexttile(5)
+m_proj('utm','lon',[-33.4 -28],'lat',[66.8 68.53],'zone',25,'hem',0,'ell','wgs84'); %'lon',[-34 -28],'lat',[66 68.7]
+hold on
+
+buffer_m=750;
+dlon=[min(extractfield(section,'lon')) max(extractfield(section,'lon'))]+[-1 1]... % negative longitude - flip min-max?
+    .*buffer_m./1852./60./cos(mean(extractfield(section,'lat')).*pi./180);
+dlat=[min(extractfield(section,'lat')) max(extractfield(section,'lat'))]+[-1 1]....
+    .*buffer_m./1852./60;
+[dx,dy]=m_ll2xy(dlon,dlat);
+axis([dx dy]);
+m_regrid;
+
+xind=find(mb.x>=dx(1),1):find(mb.x<=dx(2),1,'last');
+yind=find(mb.y>=dy(1),1):find(mb.y<=dy(2),1,'last');
+pcolor(mb.x(xind),mb.y(yind),-mb.z(yind,xind));
+
+shading flat;
+m_plot(lon,lat,'k+');
+
+clim([0 500]);
+colormap((cmocean('deep')))
+m_usercoast('greenland_coast.mat','color','k');
+fprintf(1,'longitudes: %.4f %.4f\n',dlon);
+fprintf(1,'latitudes: %.4f %.4f\n',dlat);
 
 %exportgraphics(gcf,[figpath,cruise,'_MSS_',sectionName,'.png'],'Resolution',300)

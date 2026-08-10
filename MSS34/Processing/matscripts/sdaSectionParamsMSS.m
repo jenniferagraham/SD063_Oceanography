@@ -29,7 +29,7 @@ switch lower(sectionName)
     case '3minner_towyo'
         P.castlist = flip([44:55]);
         P.stationlist = flip([24:34]); % left to right facing the ice
-        P.sectionname = '3-M Inner';
+        P.sectionname = '3-M Inner towyo';
         P.maxy   = 400; 
         P.vcaxis = [-0.3 0.3];
         P.tcaxis = [-2 1];
@@ -41,7 +41,7 @@ switch lower(sectionName)
         P.maxy   = 400; 
         P.tcaxis = [-2 1];
         P.scaxis = [26.5 34.5];
-    case '3mtransectinner' % along fjord transect inner 
+    case '3mtransect' % along fjord transect
         P.fjord = 1;
         P.stationlist = [];
         P.castlist = [];
@@ -52,10 +52,10 @@ switch lower(sectionName)
         P.scaxis = [26.5 34.5];
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
-    case '3mtransectmss' % along fjord transect 
+    case '3mtransectmss' % along fjord transect inner
         P.fjord = 1;
         P.stationlist = [6 , 6,   6, 2, 2, 2,  7,  7,  8,  8, 9,   9,  9, 14];
-        P.castlist =    [14, 15, 16, 4, 5, 6, 17,  18, 19, 20, 21, 22, 23, 33]; % replace one of the  20 by 19 once I mange to process 
+        P.castlist =    [14, 15, 16, 4, 5, 6, 17,  18, 19, 20, 21, 22, 23, 33]; % cast 19 replaced a cast with an identical no. to 20 
         P.sectionname = '3-M Transect inner to Sill';
         P.maxy   = 500; 
         P.vcaxis = [-0.3 0.3];

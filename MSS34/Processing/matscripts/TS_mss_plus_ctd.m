@@ -34,7 +34,7 @@ elseif mac==1
     addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/'])
     addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/library/'])
     addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/thermodynamics_from_t/'])
-    % addpath([disk,'oceanography/CTD/plot_transects/']) % create a similar one for MSS
+    addpath([disk,'oceanography/CTD/plot_transects/']) % create a similar one for MSS
 end
 
 cruise= 'SD063';
@@ -84,7 +84,7 @@ for ii=1:length(nMSS) % select range of casts for this section
     cast = mssparams.castlist(ii);
 
     mssname = [cruise,sprintf('_mss_%03d_struct.mat',cast)]; % string formatting to pad 1 digit cast numbers
-    load ([disk,'oceanography\MSS34\DATA\',mssname]);
+    load ([mssdataP,mssname]);
 
     % specify rows to write to according to length of data
     myPress(1:length(mss.data.press),ii) = [mss.data.press];
@@ -153,7 +153,7 @@ mssT = ct;
 scatter(mssS(:),mssT(:),12,'red',...
     'filled',...
     'MarkerFaceAlpha',alpha,...
-    'DisplayName','MSS section');
+    'DisplayName',[mssparams.sectionname, ' MSS']);
 
 grid on
 box on
@@ -168,7 +168,7 @@ hold off
 
 xlabel('Absolute salinity (‰)') % need to fix unicode
 ylabel('Conservative temperature (°C)') % need to fix unicode
-title(['T-S Diagram - ', mssparams.sectionname, ' plus CTDs'])
+%title(['T-S Diagram - ', mssparams.sectionname, ' plus CTDs'])
 legend('show')
 
 set(gcf,'Position',[100 100 800 600])
