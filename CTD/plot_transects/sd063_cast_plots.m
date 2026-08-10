@@ -3,6 +3,7 @@ function break_loop=sd063_cast_plots(ctds,color_set,line_style,ref_station,plot_
 
 if nargin<5
     ref_station=[];
+    plot_envelope=0;
 end
 
     ax=gobjects(1,2);

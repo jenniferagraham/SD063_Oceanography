@@ -2,13 +2,24 @@
 addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
 close all; clear all;
 
-disk = ['L:\work\scientific_work_areas\oceanography\'];
-ctddata = [disk,'CTD\BASproc\'];
+%% choices 
 cruise='SD063';
-load([ctddata,cruise,'_ctd.mat']);
-
 sectionfilename='repeat_3m_icefront';%'repeat_3m_icefront';
 %sectionfilename='repeat_3msillpeak'; [N or peak?]
+
+%%
+if ispc
+    disk = ['L:\work\scientific_work_areas\oceanography\'];
+    ctddata = [disk,'CTD\BASproc\'];
+elseif ismac
+    disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+     ctddata = [disk,'CTD/BASproc/'];
+
+end
+
+%%
+load([ctddata,cruise,'_ctd.mat']);
+
 P = sdaSectionParams(sectionfilename);
 
 ncasts = length(P.sectionlist);
