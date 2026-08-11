@@ -4,6 +4,34 @@ from collections import OrderedDict
 # 'vmax': [u, v, across, along velocity]
 
 dict_sections = OrderedDict([
+    ('along fjord 11.08. am',  #25
+     {'start_time': '2026-08-11 07:20:00',
+      'end_time': '2026-08-11 10:00:00',
+      'adcp': 'os150bb',
+      'bin_size': 10,
+      'idx_bend': 11,
+      'flip_xax': True,
+      'max_depth_plot': 300,
+      'vmax': [0.2, 0.2, 0.2, 0.2],
+      'extent_map': [-30.9, -30.3, 68.05, 68.4]}),
+    ('3M shelf north 11.08. am',  #24
+     {'start_time': '2026-08-11 04:25:00',
+      'end_time': '2026-08-11 06:50:00',
+      'adcp': 'os150bb',
+      'bin_size': 10,
+      'flip_xax': True,
+      'max_depth_plot': 280,
+      'vmax': [0.45, 0.45, 0.45, 0.45],
+      'extent_map': [-30.9, -29.7, 67.95, 68.4]}),
+    ('3M shelf south 10.08. pm',  #24
+     {'start_time': '2026-08-10 21:00:00',
+      'end_time': '2026-08-10 23:15:00',
+      'adcp': 'os150bb',
+      'bin_size': 10,
+      'flip_xax': True,
+      'max_depth_plot': 250,
+      'vmax': [0.45, 0.2, 0.45, 0.2],
+      'extent_map': [-30.9, -29.7, 67.95, 68.4]}),
     ('icefront 7.08. am',  #24
      {'start_time': '2026-08-07 11:10:00',
       'end_time': '2026-08-07 11:45:00',
@@ -241,12 +269,45 @@ dict_sections = OrderedDict([
       'vmax': [0.15, 0.15, 0.2, 0.1],
       'max_depth_plot': 200,
       'extent_map': [-30.9, -30.3, 68.05, 68.4]}),
-    ('Kangerlussuaq Trough',  #2
+    ('Kangerlussuaq Trough\n10.08. (os150bb)',  #2
+     {'start_time': '2026-08-10 11:30:00',
+      'end_time': '2026-08-10 19:00:00',
+      'adcp': 'os150bb',
+      'bin_size': 100,
+      'flip_xax': False,
+      'vmax': [0.3, 0.3, 0.3, 0.3],
+      'max_depth_plot': 450}),
+    ('Kangerlussuaq Trough\n10.08. (os75bb)',  #2
+     {'start_time': '2026-08-10 11:30:00',
+      'end_time': '2026-08-10 19:00:00',
+      'adcp': 'os75bb',
+      'bin_size': 100,
+      'flip_xax': False,
+      'vmax': [0.3, 0.3, 0.3, 0.3],
+      'max_depth_plot': 450}),
+    ('Kangerlussuaq Trough\n7.08. (os75bb)',  #2
+     {'start_time': '2026-08-07 22:50:00',
+      'end_time': '2026-08-08 07:35:00',
+      'adcp': 'os75bb',
+      'bin_size': 100,
+      'flip_xax': False,
+      'vmax': [0.3, 0.3, 0.3, 0.3],
+      'max_depth_plot': 450}),
+    ('Kangerlussuaq Trough\n7.08. (150bb)',  #2
+     {'start_time': '2026-08-07 22:50:00',
+      'end_time': '2026-08-08 07:35:00',
+      'adcp': 'os150bb',
+      'bin_size': 100,
+      'flip_xax': False,
+      'vmax': [0.3, 0.3, 0.3, 0.3],
+      'max_depth_plot': 450}),
+    ('Kangerlussuaq Trough\n27.07. (os150nb)',  #2
      {'start_time': '2026-07-27 20:00:00',
       'end_time': '2026-07-28 06:00:00',
       'adcp': 'os150nb',
       'bin_size': 100,
       'flip_xax': False,
+      'vmax': [0.3, 0.3, 0.3, 0.3],
       'max_depth_plot': 450}),
     ('Melange northern',  #1
      {'start_time': '2026-07-26 21:30:00',
