@@ -357,11 +357,12 @@ switch lower(sectionName)
         P.maxy   = 300; 
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
-        P.tcaxis = [-2 1.5];
-        P.scaxis = [30 35.0];
+       % P.tcaxis = [-2 1.5];
+       % P.scaxis = [30 35.0];
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
-
+        P.tcaxis = [-2 1];
+        P.scaxis = [26.5 34.5];
     case '3minnersill'
         P.fjord = 1;
         P.msslist = [13 14 15 16 17 18 19 20 21 22 23 24];
@@ -459,6 +460,29 @@ switch lower(sectionName)
         P.scaxis = [30 35.0];
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
+    case '3mshelfnorth'
+        P.fjord = 1;
+        P.sectionlist = [170 169 168];
+        P.sectionname = '3-M shelf north';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+ case '3mshelfsouth'
+        P.fjord = 1;
+        P.sectionlist = [166, 167, 165];
+        P.sectionname = '3-M shelf south';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
 
     case '3macrosssill-1'
         P.fjord = 1;
@@ -520,8 +544,10 @@ switch lower(sectionName)
         P.maxy   = 300; 
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
-        P.tcaxis = [-2 1.5];
-        P.scaxis = [30 35.0];
+        %P.tcaxis = [-2 1.5];
+        % P.scaxis = [30 35.0];
+        P.scaxis = [26.5 34.5]; % match SDA 041 erabus deployment
+        P.tcaxis = [-2 1]; % to match SDA 041 erabus deployment 
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
@@ -564,14 +590,67 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
+    case 'yoyo_3mwestsillouter'
+        P.fjord = 1;
+        P.sectionlist = [51 71 90];
+        P.msslist = [];
+        P.sectionname = '3-M sill west outer repeats';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+
+    case '3micefront_section-reverse'
+        P.fjord = 1;
+        P.sectionlist = [171 172 174];
+        P.msslist = [];
+        P.sectionname = '3-M ice front repeats';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.2 0.2];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3micefront_section-2'
+        P.fjord = 1;
+        P.sectionlist = [174 172 171];
+        P.msslist = [];
+        P.sectionname = '3-M ice front repeats';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.2 0.2];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
 
     case 'repeat_3m_icefront'
         P.fjord = 1;
         P.sectionlist = [43 63 65 ...
             77:84 ...
-            95 96 111 117 127 128 129 134];
+            95 96 111 117 127 128 129 134 ...
+            171 172 173 174];
         P.msslist = [];
         P.sectionname = '3-M ice front repeats';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'repeat_3m_icefront_yoyo_only'
+        P.fjord = 1;
+        P.sectionlist = [77:84];
+        P.msslist = [];
+        P.sectionname = '3-M ice front repeats yoyo only';
         P.maxy   = 300; 
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
@@ -588,16 +667,28 @@ switch lower(sectionName)
         P.maxy   = 300;
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
-        P.tcaxis = [-2 1.5];
-        P.scaxis = [30 35.0];
+       P.tcaxis = [-2 1.5];
+       P.scaxis = [30 35.0];
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
-
+     
     case 'repeat_3moutermouth'
         P.fjord = 1;
         P.sectionlist = [28 58 113];
         P.msslist = [];
         P.sectionname = '3-M outer mouth repeat';
+        P.maxy   = 600;
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+    case 'repeat_3mshelfnorth'
+        P.fjord = 1;
+        P.sectionlist = [112 168];
+        P.msslist = [];
+        P.sectionname = '3-M shelf north';
         P.maxy   = 600;
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];

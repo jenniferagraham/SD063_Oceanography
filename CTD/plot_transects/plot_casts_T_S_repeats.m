@@ -7,7 +7,7 @@ close all; clear all;
 %anomolies.
 ref_station=[];
 %turn off here as this is only used to plot envelope (using means and stds)
-plot_envelope=0;
+plot_envelope=1;
 use_tides=0;
 
 if ispc 
@@ -56,16 +56,18 @@ sectionfilename={'repeat_3mmelangetrough'};
 sectionfilename={'kangglac_kgtrough'};
 sectionfilename={'skag_kgtrough-1'};
 
-%sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','repeat_3moutermouth'};
-sectionfilename={'quick_comp'};
+sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','repeat_3moutermouth'};
+
+sectionfilename={'repeat_3m_icefront'};
+%sectionfilename={'quick_comp'};
 
 grey  = [0.55 0.55 0.55];
 
 ctds_times=[];
 cast_number=[];
 
-%for m=1:length(sectionfilename)
-    for m=1
+for m=1:length(sectionfilename)
+%    for m=1
 %Add in ice front repeat
 %if strcmp(cruise, 'SD063')
 P = sdaSectionParams(sectionfilename{m}); % function that needs to be in the same folder 
@@ -144,10 +146,10 @@ for ii=1:ncasts
  %   for ii=4
     if m==1
       %  if ii<6
-            cols=RosieScale(ii,:);  
+            %cols=RosieScale(m,:);  
 %            cols=cmap_tides(ii,:);
        % end
-        %cols=RosieScale(m,:);
+        cols=orangeScale(ii,:);
         line_style='-';
     elseif m==2
              cols=RosieScale(m,:);
@@ -168,6 +170,7 @@ for ii=1:ncasts
     ctds_times=[ctds_times ctd_time];
     cast_number=[cast_number P.sectionlist(ii)];
 end
+1;
 
 end
 

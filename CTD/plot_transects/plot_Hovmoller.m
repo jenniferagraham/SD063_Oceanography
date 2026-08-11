@@ -8,7 +8,7 @@ if ispc
 addpath('../../matlabF/')
 
 disk = ['L:\work\scientific_work_areas\oceanography\'];
-Tdisk = ['P:\SD063\']; % JG T-drive
+Tdisk = ['P:\SD063\']; % JG T-drive = P-drive!
 %Tdisk = ['T:\SD063\'];
 ctddata = [disk,'CTD\BASproc\'];
 addpath('../../matlabF/')
@@ -37,7 +37,7 @@ else
  figure('Position', [10, 100, 1250, 600])
 end
 
-sectionfilename='3micefronttowyo'; % repeat_3msill[n or peak]
+sectionfilename='repeat_3m_icefront'; % repeat_3msill[n or peak]
 
 P = sdaSectionParams(sectionfilename);
 
@@ -101,7 +101,7 @@ ylabel('tide height (m)')
 lowering_tide_prediction=-diff(z)/datenum(t(2)-t(1));
 time_at_deriv=t(:)+(t(2)-t(1))/2;
 plot(datenum(time_at_deriv(1:end-1)), lowering_tide_prediction);
-ylabel('lowering tide prediction (m/h)')
+ylabel('lowering tide prediction (m/day)')
 grid on
 box on
 hold on
