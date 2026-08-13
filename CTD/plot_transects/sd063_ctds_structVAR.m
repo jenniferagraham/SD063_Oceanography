@@ -18,6 +18,9 @@ if ispc
  %   addpath([disk,'matlabF\']) % theta_sdiag function
 %    addpath([disk,'matlabF\GSW\'])
     addpath([disk,'\GSWscripts\gsw_matlab_v3_06_16\'])
+    tdrive=input('What letter is your temp drive, e.g., T or P?\n','s');
+    tidefile=sprintf('%s:/SD063/Gr1kmTM/data/Gr1kmTM_v1.nc',...
+        upper(tdrive));
 %    addpath([disk,'matlabF\GSW\thermodynamics_from_t\'])
     FZ=12;
 elseif ismac
@@ -100,7 +103,7 @@ end
 
 %calculate tides for the range of interest:
 t = datetime('jul 16, 2026'):seconds(1):datetime('aug 28, 2026');
-z = tmd_predict('T:/SD063/Gr1kmTM/data/Gr1kmTM_v1.nc',68.2796,-30.7665,t);
+z = tmd_predict(tidefile,68.2796,-30.7665,t);
 dzhdt=diff(z)/datenum(t(2)-t(1));
 time_at_deriv=t(:)+(t(2)-t(1))/2;
 
