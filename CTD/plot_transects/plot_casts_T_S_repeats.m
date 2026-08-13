@@ -1,14 +1,15 @@
 %Script to plot all casts from ice front section for comparison
 %% add path 
 addpath L:\work\scientific_work_areas\oceanography\matlabF\
-close all; clear all;
+close all;
+clear all;
 
 %if reF_station=[], it plots casts. If you give it a ref station, it plots
 %anomolies.
 ref_station=[];
 %turn off here as this is only used to plot envelope (using means and stds)
 plot_envelope=1;
-use_tides=0;
+use_tides=1;
 
 if ispc 
     addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
@@ -33,11 +34,11 @@ cruises={'SD063','SK2514','SD041'};
 % load([ctddata_old,cruise,'_ctd.mat']);
 
 if strcmp(cruise,'SD063')
-    if use_tides 
-        load([ctddata,cruise,'_tides_ctd.mat']);
-    else
+    %if use_tides 
+    %    load([ctddata,cruise,'_tides_ctd.mat']);
+    %else
         load([ctddata,cruise,'_ctd.mat']);
-    end
+    %end
 elseif strcmp(cruise,'SK2514')
     load([ctddata_old,cruise,'_edited_ctd.mat']);
 elseif strcmp(cruise,'SD041')
@@ -49,17 +50,21 @@ end
 %% select the sections 
 %sectionfilename={'quick_comp'};
 %sectionfilename={'deception_trough'};
-sectionfilename={'repeat_3mmelangetrough'};
+%sectionfilename={'repeat_3mmelangetrough'};
 %sectionfilename={'aw_comp'};
 % sectionfilename={'repeat_3mmmouthsectionrepeats'};
 %sectionfilename={'kgtrough-1','kgtrough-2'};
-sectionfilename={'kangglac_kgtrough'};
-sectionfilename={'skag_kgtrough-1'};
+%sectionfilename={'kangglac_kgtrough'};
+%sectionfilename={'skag_kgtrough-1'};
 
-sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','repeat_3moutermouth'};
+%sectionfilename={'repeat_3micefront','yoyo_3meastsill','repeat_3moutermouth'};
 
-sectionfilename={'repeat_3m_icefront'};
+sectionfilename={'repeat_3micefront'};%,'repeat_3micefrontsouth'};
 %sectionfilename={'quick_comp'};
+
+%sectionfilename={'repeat_3moutermouth','repeat_3minnermouth'};
+
+%sectionfilename={'repeat_3meastsill','repeat_3mwestsillouter','repeat_3minnermouth'};
 
 grey  = [0.55 0.55 0.55];
 
@@ -149,19 +154,19 @@ for ii=1:ncasts
             %cols=RosieScale(m,:);  
 %            cols=cmap_tides(ii,:);
        % end
-        cols=orangeScale(ii,:);
+        cols=RosieScale(6,:);
         line_style='-';
     elseif m==2
-             cols=RosieScale(m,:);
+             cols=RosieScale(1,:);
              line_style='-';
     elseif m==3
-        cols=RosieScale(6,:);
+        cols=RosieScale(2,:);
         line_style='-'
     end
 
     if use_tides 
-        col = interp1(linspace(0,180,ncol), cmap_tides, ctds(ii).tidal_phase);
-        ax= sd063_cast_plots(ctds_plot(ii),col,line_style,ref_station,plot_envelope);
+        col = interp1(linspace(-1,1,ncol), cmap_tides, ctds(ii).tide_phase_fraction);
+        ax= sd063_cast_plots(ctds_plot(ii),col,line_style);
     else
         ax= sd063_cast_plots(ctds_plot(ii),cols,line_style);
     end
