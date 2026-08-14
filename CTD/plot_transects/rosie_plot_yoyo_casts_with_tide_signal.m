@@ -4,16 +4,13 @@
 %% add path
 close all; clear all;
 
-%Need to specify mac or not
-mac=0; % macusers use mac=1;window users use mac=0
-
-if mac==0
+if ispc
     addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
     disk = ['L:\work\scientific_work_areas\oceanography\'];
     ctddata = [disk,'CTD\BASproc\'];
     addpath([disk,'CTD\GSWscripts\gsw_matlab_v3_06_16\'])
     addpath([disk,'matlabF\']) % for cmocean
-elseif mac==1
+else
     addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
     disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
     ctddata = [disk,'CTD/BASproc/'];
