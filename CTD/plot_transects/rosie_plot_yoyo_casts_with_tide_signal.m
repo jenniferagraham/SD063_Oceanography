@@ -19,6 +19,7 @@ if mac==0
     disk = ['L:\work\scientific_work_areas\oceanography\'];
     ctddata = [disk,'CTD\BASproc\'];
     addpath([disk,'CTD\GSWscripts\gsw_matlab_v3_06_16\'])
+    addpath([disk,'matlabF\']) % for cmocean
 elseif mac==1
     addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
     disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
@@ -72,12 +73,12 @@ for m=1
     ctds_n=ctds(ind);
 
     ncolours=100;
-    cmap=jet(ncolours);
+    cmap=cmocean('phase',ncolours);
 
     tidestep=1/(ncolours-1);
     tidebounds=[0:tidestep:1];
 
-
+    
 
 
     theta=0:1:360;
