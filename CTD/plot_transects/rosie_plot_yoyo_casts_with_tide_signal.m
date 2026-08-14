@@ -25,10 +25,14 @@ load([ctddata,cruise,'_ctd.mat']);
 %sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','yoyo_3mwestsillouter','repeat_3moutermouth'};
 %'repeat_3m_icefront';
 %sectionfilename='repeat_3msillpeak';
-%sectionfilename={'repeat_3micefrontsouthyoyoonly'};
-sectionfilename={'repeat_3micefrontnorthyoyoonly'};
+sectionfilename={'repeat_3micefrontsouthyoyoonly'};
+%sectionfilename={'repeat_3micefrontnorthyoyoonly'};
+%sectionfilename={'repeat_3micefrontbothyoyo'};
+%sectionfilename={'3mdoubletroughrepeats'};
 
 grey  = [0.55 0.55 0.55];
+
+alpha = 0.6;
 
 ctds_times=[];
 cast_number=[];
@@ -54,7 +58,7 @@ for m=1
     if strcmp(cchoice, 'jet')
         cmap=jet(ncolours);
     else
-        cmap=cmocean('phase',ncolours);
+        cmap=flipud(cmocean('phase',ncolours));
     end
 
     tidestep=1/(ncolours-1);
@@ -85,7 +89,7 @@ for m=1
 
         grid on
         set(ax(1),'XTick',-5:0.5:5.0);
-        h=plot(ctds_n(ii).Ctemp,ctds_n(ii).press,'Color',cmap(cnumbertide(ii),:),'LineWidth',2,'LineStyle',line_style);
+        h=plot(ctds_n(ii).Ctemp,ctds_n(ii).press,'Color',[cmap(cnumbertide(ii),:) alpha],'LineWidth',2,'LineStyle',line_style);
 
 
         ax(3)=subplot(2,3,[2,5]);
@@ -95,7 +99,7 @@ for m=1
         xlabel('Salinity');
         ylabel(gca,'Pressure (dbar)')
         xlim([28 36])
-        h=plot(ctds_n(ii).asalin,ctds_n(ii).press,'Color',cmap(cnumbertide(ii),:),'LineWidth',2);
+        h=plot(ctds_n(ii).asalin,ctds_n(ii).press,'Color',[cmap(cnumbertide(ii),:) alpha],'LineWidth',2);
         grid on;
         hold on;
         %
@@ -104,7 +108,7 @@ for m=1
         cast_number=[cast_number P.sectionlist(ii)];
 
         ax(5)=subplot(2,3,3);
-        h=plot(ctds_n(ii).asalin,ctds_n(ii).Ctemp, 'Color',cmap(cnumbertide(ii),:),'LineWidth',1.5,'LineStyle',':');
+        h=plot(ctds_n(ii).asalin,ctds_n(ii).Ctemp, 'Color',[cmap(cnumbertide(ii),:) alpha],'LineWidth',1.5,'LineStyle',':');
         hold on
         xlabel('Salinity')
         ylabel('\theta (^oC)')
@@ -112,8 +116,8 @@ for m=1
         grid on 
 
         % add density contours 
-        thetaTS=[-1.5:0.1:1.5];
-        s=[30:0.5:35];
+        thetaTS=[-1.5:0.1:3.5];
+        s=[28:0.5:35];
 
         smin=min(s)-0.01.*min(s);
         smax=max(s)+0.01.*max(s);
