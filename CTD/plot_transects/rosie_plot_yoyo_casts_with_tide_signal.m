@@ -1,0 +1,197 @@
+%Script to plot all casts from ice front section for comparison, and where
+%multiple sections exist, find the mean and std and make envelope...
+
+%% add path
+close all; clear all;
+
+%Need to specify mac or not
+mac=0; % macusers use mac=1;window users use mac=0
+
+%if reF_station=[], it plots casts. If you give it a ref station, it plots
+%anomolies.
+ref_station=[];
+
+%Would you like to plot envelopes? Yes please in this script :-)
+plot_envelope=1;
+
+if mac==0
+    addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
+    disk = ['L:\work\scientific_work_areas\oceanography\'];
+    ctddata = [disk,'CTD\BASproc\'];
+elseif mac==1
+    addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
+    disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+    ctddata = [disk,'CTD/BASproc/'];
+end
+%% load CTD structure data
+cruise='SD063';
+load([ctddata,cruise,'_ctd.mat']);
+
+%% select the sections
+%sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','yoyo_3mwestsillouter','repeat_3moutermouth'};
+%'repeat_3m_icefront';
+%sectionfilename='repeat_3msillpeak';
+sectionfilename={'repeat_3micefrontsouthyoyoonly'};
+
+grey  = [0.55 0.55 0.55];
+
+ctds_times=[];
+cast_number=[];
+
+RosieScale =[
+    0.00 0.35 0.75   % blue
+    %  0.00 0.60 0.30   % green
+    0.00 0.75 0.75   % turquoise
+    % 0.00 0.00 0.00   % black
+    1.0 0.65 0.30
+    0.85 0.05 0.05   % red
+    ];
+
+
+
+for m=1
+    %Add in ice front repeat
+    P = sdaSectionParams(sectionfilename{m}); % function that needs to be in the same folder
+    ncasts = length(P.sectionlist);
+    stns=P.sectionlist;
+
+    blueScale = abyss(ncasts);
+    orangeScale = autumn(ncasts);
+ phaseScale = jet(ncasts);
+
+    allstations=[ctds.station];
+    ind=zeros(size(stns));
+    for n=1:length(stns)
+        try
+            ind(n)=find(allstations==stns(n));
+        catch
+            error('Cannot find %s station %d',cruise,stns(n));
+        end
+    end
+    ctds_n=ctds(ind);
+
+    ncolours=100;
+    cmap=jet(ncolours);
+
+    tidestep=1/(ncolours-1);
+    tidebounds=[0:tidestep:1];
+
+
+
+
+    theta=0:1:360;
+    %% loop the sections, now plotting
+    for ii=1:ncasts
+        cols=phaseScale(ii,:);
+        line_style='-';
+
+        % nc=length(ctd.number);
+        cnumbertide=zeros(ncasts,1);
+        for c=1:ncasts
+            [junk,ind]=min(ctds_n(ii).tide_phase_fraction>tidebounds);
+            cnumbertide(c)=ind;
+        end
+
+
+        ax=gobjects(1,2);
+        figure(1)
+        orient landscape
+        ax(1)=subplot(2,3,[1,4]);
+        set(gca,'ydir','reverse','xaxislocation','top')
+        box on
+        hold on
+        ylabel(gca,'Pressure (dbar)')
+        xlabel('\theta (^oC)')
+        xlim([-1.5 1.5])
+
+        grid on
+        set(ax(1),'XTick',-5:0.5:5.0);
+        h=plot(ctds_n(ii).Ctemp,ctds_n(ii).press,'Color',cmap(cnumbertide(ii),:),'LineWidth',2,'LineStyle',line_style);
+
+
+        ax(3)=subplot(2,3,[2,5]);
+        set(ax(3),'XTick',-10:1:100);
+        set(gca,'ydir','reverse','xaxislocation','top')
+        box on
+        xlabel('Salinity');
+        ylabel(gca,'Pressure (dbar)')
+        xlim([28 36])
+        h=plot(ctds_n(ii).asalin,ctds_n(ii).press,'Color',cmap(cnumbertide(ii),:),'LineWidth',2);
+        grid on;
+        hold on;
+        %
+        ctd_time=datetime(ctds_n(ii).gtime);
+        ctds_times=[ctds_times ctd_time];
+        cast_number=[cast_number P.sectionlist(ii)];
+
+        % lgd=legend([string(ctds_times(ii),cast_number(ii))],'Location','SouthWest','FontSize',8);
+        % %,string(ctds_times(3)),string(ctds_times(4)),string(ctds_times(5)),string(ctds_times(6)),string(ctds_times(7)),'Location','SouthWest','FontSize',8)
+        % lgd.ItemTokenSize = [12 10];
+
+        ax(5)=subplot(2,3,3);
+        h=plot(ctds_n(ii).asalin,ctds_n(ii).Ctemp, 'Color',cmap(cnumbertide(ii),:),'LineWidth',1.5,'LineStyle',':');
+        %,'Marker','x','LineStyle', 'none');
+        hold on
+        xlabel('Salinity')
+        ylabel('\theta (^oC)')
+
+        grid on 
+        %  set(gca,'XTick',0:1:100);     
+
+        % add density contours 
+        thetaTS=[-1.5:0.1:1.5];
+        s=[30:0.5:35];
+
+        smin=min(s)-0.01.*min(s);
+        smax=max(s)+0.01.*max(s);
+        thetamin=min(thetaTS)-0.1*max(thetaTS);
+        thetamax=max(thetaTS)+0.1*max(thetaTS);
+        xdim=round((smax-smin)./0.1+1);
+        ydim=round((thetamax-thetamin)+1);
+        dens=zeros(ydim,xdim);
+        thetai=((1:ydim)-1)*1+thetamin;
+        si=((1:xdim)-1)*0.1+smin;
+        for j=1:ydim
+            for i=1:xdim
+                dens(j,i)=gsw_sigma0(si(i),thetai(j)); % LC modified potential density anomaly
+            end
+        end
+        [c,h] = contour(si, thetai, dens, 20:1:28, ...
+            'Color', [0.6 0.6 0.6], ...
+            'LineWidth', 0.3);
+
+        clabel(c,h, ...
+            'Color', [0.4 0.4 0.4], ...
+            'FontWeight', 'normal', ...
+            'FontSize', 8, ...
+            'LabelSpacing', Inf );
+        h.HandleVisibility = 'off';
+
+        %ax1 = subplot(1,4,1);
+        %  xlim(gca, [P.tcaxis]); 
+        %  ylim(gca, [0, P.maxy]); 
+        hold on;
+
+
+        ax(4)=subplot(2,3,6);
+        plot(ctds_n(ii).tide_phase_fraction,cosd(ctds_n(ii).tide_phase_fraction*360),'Marker','o','Color',cmap(cnumbertide(ii),:),'LineStyle','none','MarkerSize',6,'LineWidth', 1.5);
+        hold on
+        plot(theta/360,cosd(theta),'k-','LineWidth',1.5);
+        xlabel('Idealised tidal phase');
+        ylabel(gca,'Illustrative tidal wave');
+        title("CTDs timings in tidal cycle ")
+    end
+end
+
+% lgd=legend([string(ctds_times),(cast_number)],'Location','SouthWest','FontSize',8);
+% %,string(ctds_times(3)),string(ctds_times(4)),string(ctds_times(5)),string(ctds_times(6)),string(ctds_times(7)),'Location','SouthWest','FontSize',8)
+% lgd.ItemTokenSize = [12 10];
+
+subplot(2,3,[2,5])
+labels = string(ctds_times) + " (" + string(cast_number) + ")";
+legend(labels,'Location','southwest','FontSize',8);
+
+set(gcf, 'Color', 'w')
+
+name = sprintf('_ctd_casts_tides_frontsouthyoyo%s.png', sectionfilename{1});
+exportgraphics(gcf, fullfile('Figures', [cruise name]), 'Resolution', 300)
