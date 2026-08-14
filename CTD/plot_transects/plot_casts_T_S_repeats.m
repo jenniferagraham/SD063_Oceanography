@@ -1,6 +1,5 @@
 %Script to plot all casts from ice front section for comparison
 %% add path 
-addpath L:\work\scientific_work_areas\oceanography\matlabF\
 close all;
 clear all;
 
@@ -9,20 +8,24 @@ clear all;
 ref_station=[];
 %turn off here as this is only used to plot envelope (using means and stds)
 plot_envelope=1;
-use_tides=1;
+use_tides=0;
 
 if ispc 
+    addpath L:\work\scientific_work_areas\oceanography\matlabF\
     addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
     disk = ['L:\work\scientific_work_areas\oceanography\'];
     ctddata = [disk,'CTD\BASproc\'];
     ctddata_old = [disk,'\Notes\PreviousDataProcessing\KANGGLAC_CTD_data\'];
-   
+   addpath([disk,'\CTD\GSWscripts\gsw_matlab_v3_06_16\'])
+
 else
-    addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
-    disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+    addpath '/Volumes/leg/work/scientific_work_areas/oceanography/CTD/Code/'
+    disk = ['/Volumes/leg/work/scientific_work_areas/oceanography/'];
+    addpath([disk,'matlabF'])
     ctddata = [disk,'CTD/BASproc/'];
+    addpath([disk,'/CTD/GSWscripts/gsw_matlab_v3_06_16/'])
+
 end
-addpath([disk,'\CTD\GSWscripts\gsw_matlab_v3_06_16\'])
 
 %run through different cruises
 cruises={'SD063','SK2514','SD041'};
@@ -59,12 +62,14 @@ end
 
 %sectionfilename={'repeat_3micefront','yoyo_3meastsill','repeat_3moutermouth'};
 
-sectionfilename={'repeat_3micefront'};%,'repeat_3micefrontsouth'};
+%sectionfilename={'repeat_3micefront'};%,'repeat_3micefrontsouth'};
 %sectionfilename={'quick_comp'};
+%sectionfilename={'repeat_3micefrontsouthyoyoonly'};
 
 %sectionfilename={'repeat_3moutermouth','repeat_3minnermouth'};
-
 %sectionfilename={'repeat_3meastsill','repeat_3mwestsillouter','repeat_3minnermouth'};
+
+sectionfilename={'3mdoubletroughrepeats'};
 
 grey  = [0.55 0.55 0.55];
 
@@ -102,9 +107,6 @@ RosieScale =[
 phaseScale_light = 0.5 + 0.5*phaseScale;
 RosieScale_light = 0.5 + 0.5*RosieScale;
 
-%ncasts = length(ctds);
-% Tidal phase for each CTD
-%tidal_phase = [ctds.tidal_phase];
 
 % Cyclic rainbow colormap
 ncol = 256;
@@ -154,7 +156,7 @@ for ii=1:ncasts
             %cols=RosieScale(m,:);  
 %            cols=cmap_tides(ii,:);
        % end
-        cols=RosieScale(6,:);
+        cols=RosieScale(ii,:);
         line_style='-';
     elseif m==2
              cols=RosieScale(1,:);
@@ -190,7 +192,7 @@ ylim(ax1, [0, P.maxy]);
 ax2 = subplot(1,4,2);
 ylim(ax2, [0, P.maxy]); 
 
-%lgd=legend([string(ctds_times),(cast_number)],'Location','SouthWest','FontSize',8);
+lgd=legend([string(ctds_times),(cast_number)],'Location','SouthWest','FontSize',8);
 %,string(ctds_times(3)),string(ctds_times(4)),string(ctds_times(5)),string(ctds_times(6)),string(ctds_times(7)),'Location','SouthWest','FontSize',8)
 lgd.ItemTokenSize = [12 10];
 
