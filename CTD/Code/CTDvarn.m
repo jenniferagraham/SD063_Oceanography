@@ -26,7 +26,7 @@ if ismac
     dir_out='/Volumes/leg/work/scientific_work_areas/ctd/BASproc';
     dir_plots='/Volumes/leg/work/scientific_work_areas/ctd/BASproc/plots';
     %dir_salts='/Volumes/leg/work/scientific_work_areas/ctd/salts';
-    dir_salts='/Volumes/leg/work/scientific_work_areas/Salinometer/salinities';
+    dir_salts='/Volumes/leg/work/scientific_work_areas/oceanography/Salinometer/salinities';
     dir_und='/Volumes/leg/work/scientific_work_areas/physics/Underway/ocl'; %underway data (for comparison with 7m CTD values)
 
     addpath('/Volumes/leg/work/scientific_work_areas/ctd/GSWscripts/gsw_matlab_v3_06_16/library')
@@ -62,7 +62,7 @@ elseif isunix
     dir_out='/mnt/leg/work/scientific_work_areas/ctd/BASproc'; 
     dir_plots='/mnt/leg/work/scientific_work_areas/ctd/BASproc/plots';
     %dir_salts='/mnt/leg/work/scientific_work_areas/ctd/salts';
-    dir_salts='/mnt/leg/work/scientific_work_areas/salinometer/salinities';
+    dir_salts='/mnt/leg/work/scientific_work_areas/oceanography/salinometer/salinities';
     dir_und='/mnt/leg/work/scientific_work_areas/physics/Underway/ocl'; %underway data (for comparison with 7m CTD values)
 
     addpath('/mnt/leg/work/scientific_work_areas/ctd/GSWscripts/gsw_matlab_v3_06_16/library')
