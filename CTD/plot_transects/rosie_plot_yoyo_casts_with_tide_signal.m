@@ -40,26 +40,11 @@ grey  = [0.55 0.55 0.55];
 ctds_times=[];
 cast_number=[];
 
-RosieScale =[
-    0.00 0.35 0.75   % blue
-    %  0.00 0.60 0.30   % green
-    0.00 0.75 0.75   % turquoise
-    % 0.00 0.00 0.00   % black
-    1.0 0.65 0.30
-    0.85 0.05 0.05   % red
-    ];
-
-
-
 for m=1
     %Add in ice front repeat
     P = sdaSectionParams(sectionfilename{m}); % function that needs to be in the same folder
     ncasts = length(P.sectionlist);
     stns=P.sectionlist;
-
-    blueScale = abyss(ncasts);
-    orangeScale = autumn(ncasts);
- phaseScale = jet(ncasts);
 
     allstations=[ctds.station];
     ind=zeros(size(stns));
@@ -78,16 +63,11 @@ for m=1
     tidestep=1/(ncolours-1);
     tidebounds=[0:tidestep:1];
 
-    
-
-
     theta=0:1:360;
     %% loop the sections, now plotting
     for ii=1:ncasts
-        cols=phaseScale(ii,:);
         line_style='-';
 
-        % nc=length(ctd.number);
         cnumbertide=zeros(ncasts,1);
         for c=1:ncasts
             [junk,ind]=min(ctds_n(ii).tide_phase_fraction>tidebounds);
@@ -126,19 +106,13 @@ for m=1
         ctds_times=[ctds_times ctd_time];
         cast_number=[cast_number P.sectionlist(ii)];
 
-        % lgd=legend([string(ctds_times(ii),cast_number(ii))],'Location','SouthWest','FontSize',8);
-        % %,string(ctds_times(3)),string(ctds_times(4)),string(ctds_times(5)),string(ctds_times(6)),string(ctds_times(7)),'Location','SouthWest','FontSize',8)
-        % lgd.ItemTokenSize = [12 10];
-
         ax(5)=subplot(2,3,3);
         h=plot(ctds_n(ii).asalin,ctds_n(ii).Ctemp, 'Color',cmap(cnumbertide(ii),:),'LineWidth',1.5,'LineStyle',':');
-        %,'Marker','x','LineStyle', 'none');
         hold on
         xlabel('Salinity')
         ylabel('\theta (^oC)')
 
         grid on 
-        %  set(gca,'XTick',0:1:100);     
 
         % add density contours 
         thetaTS=[-1.5:0.1:1.5];
@@ -169,11 +143,7 @@ for m=1
             'LabelSpacing', Inf );
         h.HandleVisibility = 'off';
 
-        %ax1 = subplot(1,4,1);
-        %  xlim(gca, [P.tcaxis]); 
-        %  ylim(gca, [0, P.maxy]); 
         hold on;
-
 
         ax(4)=subplot(2,3,6);
         plot(ctds_n(ii).tide_phase_fraction,cosd(ctds_n(ii).tide_phase_fraction*360),'Marker','o','Color',cmap(cnumbertide(ii),:),'LineStyle','none','MarkerSize',6,'LineWidth', 1.5);
@@ -184,10 +154,6 @@ for m=1
         title("CTDs timings in tidal cycle ")
     end
 end
-
-% lgd=legend([string(ctds_times),(cast_number)],'Location','SouthWest','FontSize',8);
-% %,string(ctds_times(3)),string(ctds_times(4)),string(ctds_times(5)),string(ctds_times(6)),string(ctds_times(7)),'Location','SouthWest','FontSize',8)
-% lgd.ItemTokenSize = [12 10];
 
 subplot(2,3,[2,5])
 labels = string(ctds_times) + " (" + string(cast_number) + ")";
