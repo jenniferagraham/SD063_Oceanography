@@ -7,13 +7,6 @@ close all; clear all;
 %Need to specify mac or not
 mac=0; % macusers use mac=1;window users use mac=0
 
-%if reF_station=[], it plots casts. If you give it a ref station, it plots
-%anomolies.
-ref_station=[];
-
-%Would you like to plot envelopes? Yes please in this script :-)
-plot_envelope=1;
-
 if mac==0
     addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
     disk = ['L:\work\scientific_work_areas\oceanography\'];
