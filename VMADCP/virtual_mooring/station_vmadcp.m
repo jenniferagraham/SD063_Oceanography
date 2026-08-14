@@ -10,6 +10,10 @@ clear all
 %
 % choose location
 %
+tdrive=input('What letter is your temp drive, e.g., T or P?\n','s');
+tidefile=sprintf('%s:/SD063/Gr1kmTM/data/Gr1kmTM_v1.nc',...
+    upper(tdrive));
+addpath(sprintf('%s:/SD063/TMD3.0',upper(tdrive)))
 
 addpath('L:\work\scientific_work_areas\oceanography\CTD\plot_transects')
 
@@ -150,14 +154,12 @@ ctd.vbotmean=nanmean(ctd.v(:,valid),2);
 % get tidal height model
 % ----------------------
 
-addpath T:/SD063/TMD3.0
-
 tide.times=datetime('jul 25, 2026'):minutes(1):datetime('aug 29, 2026');
 %tide.times=datetime('aug 7, 2026'):hours(1):datetime('aug 9, 2026');
 
-tide.height=tmd_predict('T:/SD063/Gr1kmTM/data/Gr1kmTM_v1.nc',68.2796,-30.7665,tide.times);
+tide.height=tmd_predict(tidefile,68.2796,-30.7665,tide.times);
 
-ctd.tideheight=tmd_predict('T:/SD063/Gr1kmTM/data/Gr1kmTM_v1.nc',68.2796,-30.7665,ctd.starttime);
+ctd.tideheight=tmd_predict(tidefile,68.2796,-30.7665,ctd.starttime);
 
 % ------------------------------------
 % plot hovmoller plots and time series
