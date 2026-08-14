@@ -23,9 +23,15 @@ sitenames={'repeat_3micefront','repeat_3micefrontsouthyoyoonly', ...
           };
 
 sitenames={'repeat_3micefrontsouthyoyoonly'};
+%sitenames={'repeat_3micefrontnorthyoyoonly'};
 
 absplotscal=0.05;
 anmplotscal=0.05;
+
+%
+% choose colormap
+%
+cchoice=input('What cmap do you want: phase or jet?\n','s');
 
 % +++++++++++++++++++++++++++++++++
 % start main loop over repeat sites
@@ -201,8 +207,11 @@ plottime(end,:)=plottime(end-1,:)+minutes(windowminutes);
 figure(1)
 clf
 
-colormap(jet)
-
+if strcmp(cchoice, 'jet')
+    colormap(jet)
+else
+    colormap(cmocean('phase'))
+end
 subplot(3,1,1)
 
 plot(tide.times,tide.height)
@@ -287,7 +296,11 @@ clf
 %
 
 ncolours=100;
-cmap=jet(ncolours);
+if strcmp(cchoice, 'jet')
+    cmap=jet(ncolours);
+else
+    cmap=cmocean('phase',ncolours);
+end
 
 tidestep=1/(ncolours-1);
 tidebounds=[0:tidestep:1];
