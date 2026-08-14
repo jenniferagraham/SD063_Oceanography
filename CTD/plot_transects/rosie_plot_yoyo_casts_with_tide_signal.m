@@ -4,6 +4,8 @@
 %% add path
 close all; clear all;
 
+cchoice=input('What cmap do you want: phase or jet?\n','s');
+
 if ispc
     addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
     disk = ['L:\work\scientific_work_areas\oceanography\'];
@@ -23,7 +25,8 @@ load([ctddata,cruise,'_ctd.mat']);
 %sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','yoyo_3mwestsillouter','repeat_3moutermouth'};
 %'repeat_3m_icefront';
 %sectionfilename='repeat_3msillpeak';
-sectionfilename={'repeat_3micefrontsouthyoyoonly'};
+%sectionfilename={'repeat_3micefrontsouthyoyoonly'};
+sectionfilename={'repeat_3micefrontnorthyoyoonly'};
 
 grey  = [0.55 0.55 0.55];
 
@@ -48,7 +51,11 @@ for m=1
     ctds_n=ctds(ind);
 
     ncolours=100;
-    cmap=cmocean('phase',ncolours);
+    if strcmp(cchoice, 'jet')
+        cmap=jet(ncolours);
+    else
+        cmap=cmocean('phase',ncolours);
+    end
 
     tidestep=1/(ncolours-1);
     tidebounds=[0:tidestep:1];
