@@ -18,6 +18,7 @@ if mac==0
     addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
     disk = ['L:\work\scientific_work_areas\oceanography\'];
     ctddata = [disk,'CTD\BASproc\'];
+    addpath([disk,'CTD\GSWscripts\gsw_matlab_v3_06_16\'])
 elseif mac==1
     addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
     disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
