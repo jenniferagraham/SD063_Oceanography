@@ -20,12 +20,13 @@
 if ismac
     % from cruise:
     dir_sb='/Volumes/leg/work/scientific_work_areas/ctd/SBEproc';
-    dir_raw='/Volumes/leg/system/ctd_seabird_sbe911plus/acquisition/data/SD046/CTD/raw';
-    dir_SBE35='/Volumes/leg/system/ctd_seabird_sbe911plus/acquisition/data/SD046/CTD/raw';
+    dir_raw='/Volumes/leg/system/ctd_seabird_sbe911plus/acquisition/data/SD063/CTD/raw';
+    dir_SBE35='/Volumes/leg/system/ctd_seabird_sbe911plus/acquisition/data/SD063/CTD/raw';
 
     dir_out='/Volumes/leg/work/scientific_work_areas/ctd/BASproc';
     dir_plots='/Volumes/leg/work/scientific_work_areas/ctd/BASproc/plots';
-    dir_salts='/Volumes/leg/work/scientific_work_areas/ctd/salts';
+    %dir_salts='/Volumes/leg/work/scientific_work_areas/ctd/salts';
+    dir_salts='/Volumes/leg/work/scientific_work_areas/Salinometer/salinities';
     dir_und='/Volumes/leg/work/scientific_work_areas/physics/Underway/ocl'; %underway data (for comparison with 7m CTD values)
 
     addpath('/Volumes/leg/work/scientific_work_areas/ctd/GSWscripts/gsw_matlab_v3_06_16/library')
@@ -42,12 +43,12 @@ if ismac
     %    dir_oxy='/Users/epab/Povl/SD033/CTD/oxy';
 elseif ispc
     dir_sb='L:\work\scientific_work_areas\oceanography\CTD\SBEproc';
-    dir_raw='L:\system\ctd_seabird_sbe911plus\acquisition\data\SD046\CTD\raw';
-    dir_SBE35='L:\system\ctd_seabird_sbe911plus\acquisition\data\SD046\CTD\raw';
+    dir_raw='L:\system\ctd_seabird_sbe911plus\acquisition\data\SD063\CTD\raw';
+    dir_SBE35='L:\system\ctd_seabird_sbe911plus\acquisition\data\SD063\CTD\raw';
     dir_out='L:\work\scientific_work_areas\oceanography\CTD\BASproc'; % 'L:/work/scientific_work_areas/CTD/CTD_processed' ;
     dir_plots='L:\work\scientific_work_areas\oceanography\CTD\BASproc\plots';
     %dir_salts='L:\work\scientific_work_areas\oceanography\CTD\salts'; % 
-    dir_salts='L:\work\scientific_work_areas\oceanography\CTD\Salinometry\salinities';
+    dir_salts='L:\work\scientific_work_areas\oceanography\Salinometer\salinities';
     dir_und='L:\work\scientific_work_areas\physics\Underway\ocl'; %underway data (for comparison with 7m CTD values)
 
     dir_oxy='L:\work\scientific_work_areas\oceanography\CTD\Oxygen_CSV_format';  %may need to edit readoxyGEN for filename pattern
@@ -56,11 +57,12 @@ addpath('L:\work\scientific_work_areas\oceanography\CTD\GSWscripts\gsw_matlab_v3
 
 elseif isunix
     dir_sb='/mnt/leg/work/scientific_work_areas/ctd/SBEproc';
-    dir_raw='/mnt/leg/system/ctd_seabird_sbe911plus/acquisition/data/SD046/CTD/raw';
-    dir_SBE35='/mnt/leg/system/ctd_seabird_sbe911plus/acquisition/data/SD046/CTD/raw';
+    dir_raw='/mnt/leg/system/ctd_seabird_sbe911plus/acquisition/data/SD063/CTD/raw';
+    dir_SBE35='/mnt/leg/system/ctd_seabird_sbe911plus/acquisition/data/SD063/CTD/raw';
     dir_out='/mnt/leg/work/scientific_work_areas/ctd/BASproc'; 
     dir_plots='/mnt/leg/work/scientific_work_areas/ctd/BASproc/plots';
-    dir_salts='/mnt/leg/work/scientific_work_areas/ctd/salts';
+    %dir_salts='/mnt/leg/work/scientific_work_areas/ctd/salts';
+    dir_salts='/mnt/leg/work/scientific_work_areas/salinometer/salinities';
     dir_und='/mnt/leg/work/scientific_work_areas/physics/Underway/ocl'; %underway data (for comparison with 7m CTD values)
 
     addpath('/mnt/leg/work/scientific_work_areas/ctd/GSWscripts/gsw_matlab_v3_06_16/library')
