@@ -23,6 +23,7 @@ if ispc
         upper(tdrive));
 %    addpath([disk,'matlabF\GSW\thermodynamics_from_t\'])
     FZ=12;
+    addpath(sprintf('%s:/SD063/TMD3.0',upper(tdrive)))
 elseif ismac
     %%%NOT YET EDITED - ROSIE 25/07/2026
     disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
