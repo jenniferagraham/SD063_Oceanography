@@ -66,7 +66,7 @@ while bl==0
         disp('readsalGEN problem')
         break
     end
-% %  
+% % 
     disp('Running addsalGEN') % _sal_.mat + .1st -> _bot_.sal
     if addsalGEN(aaa)
         bl=1;

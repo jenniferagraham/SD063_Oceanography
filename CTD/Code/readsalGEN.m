@@ -49,7 +49,7 @@ end
 end
 
 
-salfile=fullfile(dir_salts,['output_sal_',cruise,'_',aaa,'.csv'])
+salfile=fullfile(dir_salts,['output_sal_',cruise,'_',aaa,'.csv']);
 
 
 if ~exist(salfile)
