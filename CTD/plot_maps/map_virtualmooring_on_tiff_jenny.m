@@ -6,6 +6,9 @@
 clear all
 clc
 close all
+create_cmap=1;
+cmap = flipud(cmocean('phase',100));
+alpha=0.6;
 layer ='top'; %top =  0 to 75m ; bottom 100 m -
 mmap=1; % plot the image using m_map, mmap=0; plots using matlab geospatial function 
 type='sill'; %sill=0; zoom the map out to get the sill, sill=1; zooms the map on the ice front
@@ -23,8 +26,8 @@ if ispc
     addpath([disk,'oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\library\'])
     addpath([disk,'oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\thermodynamics_from_t\'])
     addpath([disk,'oceanography\CTD\plot_transects\']) % directory with section parameter function
-    figP = [disk,'oceanogrpahy\Figures\MAP\'];
-
+    figP = [disk,'oceanography\CTD\plot_maps\Figures\'];
+    vmadcp_pauldata = [disk,'oceanography\VMADCP\virtual_mooring\'];
 elseif ismac
     disk = ['/Volumes/leg/work/scientific_work_areas/'];
     dataPsenti =[disk,'gis/satellite_imagery/3-miippugut (Ryberg)/'];
@@ -33,10 +36,12 @@ elseif ismac
     addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/'])
     addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/library/'])
     addpath([disk,'oceanography/CTD/GSWscripts/gsw_matlab_v3_06_16/thermodynamics_from_t/'])
-    vmadcp_pauldata = [disk, 'oceanography/VMADCP/virtual_mooring/'];
     figP= [disk,'oceanography/CTD/plot_maps/Figures/'];
    % addpath([disk,'oceanography/CTD/plot_transects/']); % 
 end
+
+
+
 %% get the satellite imaged
 flname=[dataPsenti,sentinatlname];
 [A,R] = readgeoraster(flname);
@@ -46,7 +51,7 @@ flname=[dataPsenti,sentinatlname];
 % when map is over the full sill it is sill
     xxmapS.sill = [-30.99 -30.10];
     yymapS.sill = [ 68.14 68.35];
-    yoyolistS.sill = {'repeat_3micefrontnorthyoyoonly', 'repeat_3micefrontsouthyoyoonly', 'repeat_3mwestsill','repeat_3meastsill'};
+    yoyolistS.sill = {'repeat_3micefrontnorthyoyoonly', 'repeat_3micefrontsouthyoyoonly','3mdoubletroughrepeats', 'repeat_3mwestsill','repeat_3meastsill'};
     lon_vecrefS.sill = xxmapS.sill(1)+0.07;
     lat_vecrefS.sill = yymapS.sill(2)-0.03;
     vecsizeS.sill = 0.2; % % 0.2 m/s reference vector
@@ -103,7 +108,6 @@ else
 
 end
 
-
 %% add vectors to the plot
 for ii=1:length(yoyolist)
     load([vmadcp_pauldata,'virtualmooringdata_',yoyolist{ii},'.mat'])
@@ -124,13 +128,28 @@ for ii=1:length(yoyolist)
     m_plot(lon, lat, 'ok', 'MarkerFaceColor', 'k')
     hold on
     % multiple colours for the arrows
+    if create_cmap
+        ncolours = 100;
+        % Create colormap
+        tidephase =[virtualmooring.tidephase];
+        tidestep=1/(ncolours-1);
+        tidebounds=[0:tidestep:1];
+        rgbtriplet = zeros(length(tidephase),3);
+        for c=1:length(tidephase)
+            [junk,ind]=min(tidephase(c)>tidebounds);
+            %cnumbertide=ind;
+            rgbtriplet(c,:) = [cmap(ind,:)];
+        end
+    else   
+        rgbtriplet = [virtualmooring.cmaptriplet];
+    end
     for in = 1:size(u,2)
         %m_quiver(lon, lat, u(in), v(in), vecsize, 'faceColor', rgbtriplet(in,:),'LineWidth', 1.5,'MaxHeadSize', 0.8);
         m_vec(vecsize,lon, lat, u(in), v(in), 'faceColor', rgbtriplet(in,:),'edgecolor','none');
     end
 end
 %% colorbar 
-colormap(jet(100))
+colormap(cmap)
 cb = colorbar;
 cb.Label.String = 'Tidal phase (fraction)';
 cb.Ticks = 0:0.25:1;
@@ -168,8 +187,10 @@ if isinset==1
     % reference vector
     m_vec(vecsize,lon_vecref, lat_vecref+0.002, 0.01,0,'k','key','1 cm/s','shaftwidth', 0.9, 'headlength', 5, 'headwidth', 5,'facecolor','k','edgecolor','k')
 
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % add vectors to the plot
+
 for ii=1:length(yoyolist)
     load([vmadcp_pauldata,'virtualmooringdata_',yoyolist{ii},'.mat'])
     p = [virtualmooring.lon virtualmooring.lat];       % location of the point
@@ -177,8 +198,22 @@ for ii=1:length(yoyolist)
     lat = p(2);
     u = [virtualmooring.utop']; % eastward velocity
     v = [virtualmooring.vtop']; % northward velocity
-    tidephase =[virtualmooring.tidephase];
-    rgbtriplet = [virtualmooring.cmaptriplet];
+
+    if create_cmap
+        % Create colormap
+        tidephase =[virtualmooring.tidephase];
+        tidestep=1/(ncolours-1);
+        tidebounds=[0:tidestep:1];
+        rgbtriplet = zeros(length(tidephase),3);
+        for c=1:length(tidephase)
+            [junk,ind]=min(tidephase(c)>tidebounds);
+            %cnumbertide=ind;
+            rgbtriplet(c,:) = [cmap(ind,:)];
+        end
+    else   
+        rgbtriplet = [virtualmooring.cmaptriplet];
+    end
+
     %all vectors to originate from the same point
     arrowu=lon*ones(size(u));
     arrowv =lat*ones(size(v));
