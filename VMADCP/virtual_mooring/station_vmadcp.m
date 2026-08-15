@@ -22,8 +22,8 @@ sitenames={'repeat_3micefront','repeat_3micefrontsouthyoyoonly', ...
            'repeat_3mmouth','repeat_3mbeak', ...
           };
 
-sitenames={'repeat_3micefrontsouthyoyoonly'};
-%sitenames={'repeat_3micefrontnorthyoyoonly'};
+%sitenames={'repeat_3micefrontsouthyoyoonly'};
+sitenames={'repeat_3micefrontnorthyoyoonly'};
 
 absplotscal=0.05;
 anmplotscal=0.05;
@@ -210,7 +210,7 @@ clf
 if strcmp(cchoice, 'jet')
     colormap(jet)
 else
-    colormap(cmocean('phase'))
+    colormap(cmocean('balance'))
 end
 subplot(3,1,1)
 
@@ -299,7 +299,7 @@ ncolours=100;
 if strcmp(cchoice, 'jet')
     cmap=jet(ncolours);
 else
-    cmap=cmocean('phase',ncolours);
+    cmap=flipud(cmocean('phase',ncolours));
 end
 
 tidestep=1/(ncolours-1);
