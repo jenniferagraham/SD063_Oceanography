@@ -46,10 +46,18 @@ end
 %temperature fits should be copied from tempcalbottGEN
 
 switch(cruise)
+    case 'SD063'
+        condoffset1fcn = ;
+        condoffset2fcn = @(press,temp,cond,stano,gtime) interp1([0 ],[],press);
+        tempoffset1fcn = @(press,temp,cond,stano,gtime) interp1([0 ],[],press);
+        tempoffset2fcn = @(press,temp,cond,stano,gtime) interp1([0 ],[],press); 
+        oxygenoffset1fcn = ;
+        oxygenoffset2fcn = ;
+
     case 'SD046'
-        condoffset1fcn =  @Condoffset2_sd046;
+        condoffset1fcn = @Condoffset2_sd046;
         condoffset2fcn = @(press,temp,cond,stano,gtime) interp1([0 2750 5000 6200],[0.0008 -0.0009 -0.0009 -0.0003],press);
-         tempoffset1fcn = @(press,temp,cond,stano,gtime) interp1([0 2000 6200],[0.00055 -0.00065 -0.00065],press);
+        tempoffset1fcn = @(press,temp,cond,stano,gtime) interp1([0 2000 6200],[0.00055 -0.00065 -0.00065],press);
         tempoffset2fcn = @(press,temp,cond,stano,gtime) interp1([0 2000 6200],[-0.00025 -0.00125 -0.00125],press); 
         oxygenoffset1fcn = @oxygenoffset1_sd046;
         oxygenoffset2fcn = @oxygenoffset2_sd046;
