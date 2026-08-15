@@ -4,6 +4,26 @@ from collections import OrderedDict
 # 'vmax': [u, v, across, along velocity]
 
 dict_sections = OrderedDict([
+    ('along fjord 15.08. am',  #12
+     {'start_time': '2026-08-15 05:25:00',
+      'end_time': '2026-08-15 08:15:00',
+      'adcp': 'os150bb',
+      'bin_size': 10,
+      'idx_bend': 14,
+      'flip_xax': True,
+      'max_depth_plot': 300,
+      'vmax': [0.2, 0.2, 0.2, 0.2],
+      'extent_map': [-30.9, -30.3, 68.05, 68.4]}),
+    ('along fjord 14/15.08.',  #11
+     {'start_time': '2026-08-14 21:40:00',
+      'end_time': '2026-08-15 03:40:00',
+      'adcp': 'os150bb',
+      'bin_size': 10,
+      'idx_bend': 24,
+      'flip_xax': True,
+      'max_depth_plot': 300,
+      'vmax': [0.2, 0.2, 0.2, 0.2],
+      'extent_map': [-30.9, -30.3, 68.05, 68.4]}),
     ('along fjord 13.08. am',  #10
      {'start_time': '2026-08-13 03:20:00',
       'end_time': '2026-08-13 08:20:00',
@@ -248,7 +268,7 @@ dict_sections = OrderedDict([
       'extent_map': [-30.9, -30.3, 68.05, 68.4]}),
     ('hovmoeller icefront 13/14.08.',
      {'start_time': '2026-08-13 13:25:00',
-      'end_time': '2026-08-14 08:20:00',
+      'end_time': '2026-08-14 11:20:00',
       'adcp': 'os150bb',
       'bin_size': 10,
       'angle': 45,
