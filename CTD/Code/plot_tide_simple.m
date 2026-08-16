@@ -17,6 +17,7 @@ end
 location = 'fjordall'; % kg or melange
 timenow = true;
 savecsv = false; % set to false if you don't want to save
+calculate_fraction = true;
 
 switch location
     case 'all'
@@ -105,11 +106,12 @@ grid on
 figname = sprintf('Tide_%s.png', location);
 exportgraphics(gcf,fullfile('..', figname),'Resolution',300)
 
+
+dzdt = gradient(z,hours(t(2)-t(1)));
+T = table(t(:), z(:), dzdt(:), 'VariableNames', {'Time','Z', 'dZdt'});
 if savecsv 
-    csvname = sprintf('Tide_%s.csv', location);
-    dzdt = gradient(z,hours(t(2)-t(1)));
-    T = table(t(:), z(:), dzdt(:), 'VariableNames', {'Time','Z', 'dZdt'});
     writetable(T, fullfile('..', csvname));
+    csvname = sprintf('Tide_%s.csv', location);
 end
 
 %% Classify ebb and flood? 
@@ -156,3 +158,31 @@ ylabel('tide height (m)')
 
 figname = sprintf('Tide_phase_%s_today.png', location);
 exportgraphics(gcf,fullfile('..', figname),'Resolution',300)
+
+%% Calculate tide fraction? 
+if calculate_fraction
+    ntime = length(T.Time);
+    
+    [pks,locs] = findpeaks(T.Z);
+    
+    tHW = T.Time(locs);
+    
+    T.tidefrac = zeros(size(T.phase));
+    
+    for i = 1:ntime
+    
+        ind = find(tHW <= T.Time(i),1,'last');
+    
+        if ind < length(tHW)
+    
+            T.tidefrac(i) = (T.Time(i)-tHW(ind)) / ...
+                (tHW(ind+1)-tHW(ind));
+    
+        end
+    
+    end
+    
+    csvname = sprintf('Tide_phasefrac_%s.csv', location);
+    writetable(T, fullfile('..', csvname));
+
+end
