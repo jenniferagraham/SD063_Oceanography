@@ -729,6 +729,58 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
+    case '3micefrontsouth-fjord1'
+        P.fjord = 1;
+        P.sectionlist = [118:125];
+        P.msslist = [];
+        P.sectionname = '3-M ice front repeat';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3micefrontsouth-fjord2'
+        P.fjord = 1;
+        P.sectionlist = [177 191 176 175 197:206];
+        P.msslist = [];
+        P.sectionname = '3-M ice front repeat';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3micefrontnorth-fjord1'
+        P.fjord = 1;
+        P.sectionlist = [43 63 65 77:84 127 134 111 117];
+        P.msslist = [];
+        P.sectionname = '3-M ice front repeat';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3micefrontnorth-fjord2'
+        P.fjord = 1;
+        P.sectionlist = [172 174 195];
+        P.msslist = [];
+        P.sectionname = '3-M ice front repeat';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
     case 'repeat_3micefrontbothyoyo'
         P.fjord = 1;
         P.sectionlist = [77:84 196:207];
