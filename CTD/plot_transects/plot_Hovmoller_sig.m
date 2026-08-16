@@ -2,6 +2,8 @@
 
 close all; clear all;
 
+lowering_tide=false;
+fjordvisit=2;
 
 %% add paths
 if ispc
@@ -37,10 +39,27 @@ else
  figure('Position', [10, 100, 1250, 600])
 end
 
-sectionfilename='repeat_3micefrontnorthyoyoonly'; % repeat_3msill[n or peak]
+% yoyo stations to compare? 
+% repeat_3micefrontsouthyoyoonly ; repeat_3micefrontnorthyoyoonly ; 
+% repeat_3msouthtroughyoyoonly ; repeat_3msouthtroughyoyosite
+% repeat_3mwestsill ; 
+% repeat_3micefront ??
+sectionfilename='3micefrontsouth-fjord2'; % repeat_3msill[n or peak]
 
 P = sdaSectionParams(sectionfilename);
-
+P.sectionlist = sort(P.sectionlist);
+%%
+if strcmp(sectionfilename,'all_inshore_of_sill')
+    switch fjordvisit
+        case 1
+            P.sectionlist = P.sectionlist(P.sectionlist < 136);
+        case 2
+            P.sectionlist = P.sectionlist(P.sectionlist > 164);
+        case 'all'
+            disp('Using all available data ...')
+    end
+end
+%%
 ncasts = length(P.sectionlist);
 
 blueScale = abyss(3);
@@ -54,7 +73,7 @@ CTempS=NaN(size(grid,2),ncasts);
 asalinS=NaN(size(grid,2),ncasts);
 pressS=NaN(size(grid,2),ncasts);
 sigma0=NaN(size(grid,2),ncasts);
-
+phase=NaN(ncasts);
 
 %%%JENNY CHECK here - this is what I added to deal with the missing CTDs
 %%%issue.
@@ -78,6 +97,7 @@ for ii=1:ncasts
     asalinS(:,ii)=ctds_stns(ii).asalin;
     pressS(:,ii)=ctds_stns(ii).press;
     sigma0(:,ii)=ctds_stns(ii).sigma0;
+    phase(ii) = ctds_stns(ii).tide_phase_fraction;
 end
 
 x = 1:ncasts;
@@ -100,10 +120,12 @@ z = tmd_predict(fullfile(Tdisk,'Gr1kmTM/data/Gr1kmTM_v1.nc'),68.2796,-30.7665,t)
 plot(datenum(t), z);
 ylabel('tide height (m)')
 %take derivative of z:
-lowering_tide_prediction=-diff(z)/datenum(t(2)-t(1));
-time_at_deriv=t(:)+(t(2)-t(1))/2;
-plot(datenum(time_at_deriv(1:end-1)), lowering_tide_prediction);
-ylabel('lowering tide prediction (m/day)')
+if lowering_tide
+    lowering_tide_prediction=-diff(z)/datenum(t(2)-t(1));
+    time_at_deriv=t(:)+(t(2)-t(1))/2;
+    plot(datenum(time_at_deriv(1:end-1)), lowering_tide_prediction);
+    ylabel('lowering tide prediction (m/day)')
+end
 grid on
 box on
 hold on
@@ -118,7 +140,7 @@ datetick('x','dd-mmm HH:MM','keeplimits')
 
 %Make array the length of tidal time, and the depth of pressure:
 t30=t(1):minutes(30):t(end);
-CTemp_array=NaN(size(CTempS,1),length(t30));
+sigma0_array=NaN(size(sigma0,1),length(t30));
 press_array=repmat(pressS(:,1),1,length(t30));
 x_t30 = datenum(t30);
 %Now search for nearest time to match the time of the CTD profile, for each
@@ -127,8 +149,8 @@ closestTime=NaT(size(ctd_time));
 for ii=1:ncasts
     [~, idx] = min(abs(t30 - ctd_time(ii)));
     closestTime(ii) = t30(idx)
-    CTemp_array(:,idx)=CTempS(:,ii);
-    CTemp_array(:,idx-1)=CTempS(:,ii);
+    sigma0_array(:,idx)=sigma0(:,ii);
+    sigma0_array(:,idx-1)=sigma0(:,ii);
 end
 
 %or do with adding start time and end time:
@@ -141,18 +163,18 @@ x_start=datenum(ctd_time_start);
 x_end=datenum(ctd_time_end);
 
 x_interval=NaN(1,2*ncasts);
-CTempS_padded=NaN(size(CTempS,1),2*ncasts);
+sigma0_padded=NaN(size(sigma0,1),2*ncasts);
 
 for ii=1:ncasts 
  x_interval(1,2*ii-1)=x_start(ii);
  x_interval(1,2*ii)=x_end(ii);
-CTempS_padded(:,2*ii-1)=CTempS(:,ii);
+sigma0_padded(:,2*ii-1)=sigma0(:,ii);
 end
 
 %ax2=subplot(3,1,1)
 axes(ha(1))
 %pcolor(x, pressS(:,1), CTempS)
-pcolor(x_interval, pressS(:,1), CTempS_padded);
+pcolor(x_interval, pressS(:,1), sigma0_padded);
 %pcolor(x_t30, press_array, CTemp_array);
 shading flat
 set(gca,'YDir','reverse')
@@ -168,16 +190,16 @@ xtickangle(45)
 ylabel('Depth (m)');
     cmocean('thermal')
 hcb=colorbar;
-caxis([-1.5 1.5]);
-hcb.Label.String= 'CT (\circC)'; 
+caxis([23 28]);
+hcb.Label.String= 'Sigma0'; 
 hcb.Location='east'
 title(P.sectionname)
 
 %Now plot anomolies
 %Calculate average from 10 casts at every pressure level:
 % Mean profile over all casts
-CTemp_mean = mean(CTempS, 2, 'omitnan');
-CTemp_std = std(CTempS,0,2,'omitnan');
+sigma0_mean = mean(sigma0, 2, 'omitnan');
+sigma0_std = std(sigma0,0,2,'omitnan');
 
 % Rosie - finding the max standard deviation of the mean temp. It's at
 % depth 125m for this case.
@@ -186,27 +208,27 @@ CTemp_std = std(CTempS,0,2,'omitnan');
 %plot(CTemp_std,pressS(:,1)); set(gca,'YDir','reverse')
 
 % Temperature anomaly
-CTemp_anom = CTempS - CTemp_mean;
-CTemp_padded_anom = CTempS_padded - CTemp_mean;
+sigma0_anom = sigma0 - sigma0_mean;
+sigma0_padded_anom = sigma0_padded - sigma0_mean;
 
 
 %Extract temps at this depth for each cast:
-chosen_press=125.0;
+chosen_press=120.0;
 press_bin_size=2.0;
 binID=round(chosen_press/press_bin_size);
-chosen_CTemp=CTempS(binID,:);
+chosen_sigma0=sigma0_anom(binID,:);
 
 axes(ha(3))
 yyaxis right
-plot(x,chosen_CTemp,'r*');
-ylabel('CT anomoly at 125 m');
-ylim([-0.8  0.0])
+plot(x,chosen_sigma0,'r*');
+ylabel('sig0 anomoly at 125 m');
+ylim([-0.5  0.5])
 
 %figure;
 %axes(2)=subplot(3,1,2)
 axes(ha(2))
 %pcolor(x, pressS(:,1), CTemp_anom)
-pcolor(x_interval, pressS(:,1), CTemp_padded_anom)
+pcolor(x_interval, pressS(:,1), sigma0_padded_anom)
 shading flat
 set(gca,'YDir','reverse')
 
@@ -219,7 +241,7 @@ ha(2).XTickLabel = {};
 ylabel('Depth (m)');
 cmocean('balance');
 hcb=colorbar;
-cmax = max(abs(CTemp_anom(:)), [], 'omitnan');
+cmax = max(abs(sigma0_anom(:)), [], 'omitnan');
 clim([-cmax cmax]);
 caxis([-1.0 1.0]);
 hcb.Label.String= 'CT (\circC)'; 
@@ -251,9 +273,32 @@ end
  set(gcf, 'Color', 'w')
 
  if yoyo_zoom
-name = sprintf('_Hovmoller_anomolies_%s_full.png', sectionfilename);
+name = sprintf('_Hovmoller_anomolies_sig_%s_full.png', sectionfilename);
  else
-     name = sprintf('_Hovmoller_anomolies_%s.png', sectionfilename);
+     name = sprintf('_Hovmoller_anomolies_sig_%s.png', sectionfilename);
  end
-   
+
+if strcmp(sectionfilename,'all_inshore_of_sill')
+    name = sprintf('_Hovmoller_anomolies_sig_%s_fjord%d.png', sectionfilename, fjordvisit);
+end
+exportgraphics(gcf, fullfile('Figures', [cruise name]), 'Resolution', 300)
+
+%%
+%Create new figure, scatter plot of Sig0 with tide phase? 
+
+
+figure('Position', [100, 100, 600, 500]); 
+scatter(phase, chosen_sigma0)
+xlim([0 1])
+xlabel('Tide Phase Fraction')
+ylabel(sprintf('Sigma0 Anomaly at %d m',chosen_press))
+title(sectionfilename)
+grid on
+
+if strcmp(sectionfilename,'all_inshore_of_sill')
+    name = sprintf('_tide_sig0_scat_%s_fjord%d.png', sectionfilename, fjordvisit);
+else
+    name = sprintf('_tide_sig0_scat_%s.png', sectionfilename);
+end
+
 exportgraphics(gcf, fullfile('Figures', [cruise name]), 'Resolution', 300)
