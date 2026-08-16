@@ -2,14 +2,21 @@
 close all
 clear all
 
-disk = ['L:\work\scientific_work_areas\oceanography\'];
-Tdisk = ['P:\SD063\']; % JG T-drive
-%Tdisk = ['T:\SD063\'];
+if ispc
+    disk = ['L:\work\scientific_work_areas\oceanography\'];
+    Tdisk = ['P:\SD063\']; % JG T-drive
+    %Tdisk = ['T:\SD063\'];
+    tidemodel='Gr1kmTM/data/';
+else
+    disk = ['/Volumes/leg/work/scientific_work_areas/oceanography/'];
+    Tdisk = ['/Volumes/Scratch/SD063'];% JG T-drive
+    tidemodel='Gr1kmTM/data/';
+end
 
 % location of interest? 
 location = 'fjordall'; % kg or melange
-timenow = false;
-savecsv = true;
+timenow = true;
+savecsv = false; % set to false if you don't want to save
 
 switch location
     case 'all'
@@ -72,14 +79,19 @@ figure
 t = datetime(tstart):hours(5/60):datetime(tend);
 if strcmp(location, 'all')
     for ii=1:length(lon)
-        z = tmd_predict(fullfile(Tdisk,'Gr1kmTM/data/Gr1kmTM_v1.nc'),...
-            lat(ii),lon(ii),t);
+        % z = tmd_predict(fullfile(Tdisk,'Gr1kmTM/data/Gr1kmTM_v1.nc'),...
+        %     lat(ii),lon(ii),t);
+          z = tmd_predict(fullfile(Tdisk,tidemodel,'Gr1kmTM_v1.nc'),...
+             lat(ii),lon(ii),t);
         plot(t, z);
         hold on
     end
     legend('Fjord head', 'Fjord mouth', 'KG mouth', 'Melange')
 else
-    z = tmd_predict(fullfile(Tdisk,'Gr1kmTM/data/Gr1kmTM_v1.nc'),lat,lon,t);
+  %  z = tmd_predict(fullfile(Tdisk,'Gr1kmTM/data/Gr1kmTM_v1.nc'),lat,lon,t);
+     z = tmd_predict(fullfile(Tdisk, tidemodel,'Gr1kmTM_v1.nc'),lat,lon,t);
+
+    
     plot(t, z);
 end
 ylabel('tide height (m)')
@@ -93,7 +105,7 @@ grid on
 figname = sprintf('Tide_%s.png', location);
 exportgraphics(gcf,fullfile('..', figname),'Resolution',300)
 
-if savecsv
+if savecsv 
     csvname = sprintf('Tide_%s.csv', location);
     dzdt = gradient(z,hours(t(2)-t(1)));
     T = table(t(:), z(:), dzdt(:), 'VariableNames', {'Time','Z', 'dZdt'});
@@ -106,17 +118,18 @@ s = sign(T.dZdt);
 highIdx = find(diff(s) < 0) + 1;   % +ve to -ve
 lowIdx  = find(diff(s) > 0) + 1;   % -ve to +ve
 
-T.phase = repmat("flood",height(T),1);
-T.phase(T.dZdt < 0) = "ebb";
+T.phase = repmat("rising",height(T),1);
+T.phase(T.dZdt < 0) = "falling";
 
-% Set as high/low for +/- 20 min (4 x dt) around max/min 
+% Set as high/low for +/- 30 min (6 x dt) around max/min 
+ndt=6;
 for ii=1:length(highIdx)
     imax = highIdx(ii);
-    T.phase(imax-4:imax+4) = "high";
+    T.phase(imax-ndt:imax+ndt) = "high";
 end
 for ii=1:length(lowIdx)
     imax = lowIdx(ii);
-    T.phase(imax-4:imax+4) = "low";
+    T.phase(imax-ndt:imax+ndt) = "low";
 end
 
 %%
@@ -128,13 +141,15 @@ end
 %% Plot phase for today
 
 figure;
-scatter(T.Time(T.phase=='flood'),T.Z(T.phase=='flood'), 'r')
+scatter(T.Time(T.phase=='rising'),T.Z(T.phase=='rising'), 'r')
 hold on
-scatter(T.Time(T.phase=='ebb'),T.Z(T.phase=='ebb'), 'b')
+scatter(T.Time(T.phase=='falling'),T.Z(T.phase=='falling'), 'b')
 scatter(T.Time(T.phase=='high'),T.Z(T.phase=='high'), 'k', 'filled')
 scatter(T.Time(T.phase=='low'),T.Z(T.phase=='low'), 'y', 'filled')
 
 xlim([datetime('today') datetime('tomorrow')])
+% add veritcal line to the plot 
+plot([datetime('now') datetime('now')],[-1 1],'-k')
 grid on
 
 ylabel('tide height (m)')
