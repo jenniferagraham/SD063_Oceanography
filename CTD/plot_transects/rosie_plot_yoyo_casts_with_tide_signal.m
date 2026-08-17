@@ -9,12 +9,13 @@ close all; clear all;
 
 
 %cchoice=input('What cmap do you want: phase or jet?\n','s');
-c_jet=1; % if 0, uses phase
+c_jet=0; % if 0, uses phase
 
-plot_casts_and_tides=;
+plot_casts_and_tides=1;
 % within that, would you like me to plot the isopycnals?
+plot_isopycnal=1;
 plot_isopycnal=0;
-plot_tide_metrics=1;
+plot_tide_metrics=0;
 
 
 if ispc
@@ -51,17 +52,24 @@ sectionfilename={'3micefront_section-2','3micefronttowyo','3mhead','3mdoubletrou
 
 %sectionfilename={'all_inshore_of_sill'};
 
-sectionfilename={'repeat_3msouthtroughyoyoonly'}
+%sectionfilename={'repeat_3msouthtroughyoyoonly'}
 
+%sectionfilename={'repeat_3micefrontsouthyoyoonly','repeat_3micefrontnorthyoyoonly','repeat_3msouthtroughyoyoonly','repeat_3msillsouthpeakyoyoonly','repeat_3mmouth'};
+
+%sectionfilename={'3micefrontnorth-fjord2'}; 
+
+%sectionfilename={'repeat_3micefrontnorthyoyoplus'};
+sectionfilename={'quick_comp'};
 
 grey  = [0.55 0.55 0.55];
 
 alpha = 0.6;
 
-ctds_times=[];
-cast_number=[];
 
-for m=1
+
+for m=1:length(sectionfilename)
+    ctds_times=[];
+    cast_number=[];
     %Add in ice front repeat
     P = sdaSectionParams(sectionfilename{m}); % function that needs to be in the same folder
     ncasts = length(P.sectionlist);
@@ -102,7 +110,6 @@ for m=1
         ctds_times=[ctds_times ctd_time];
         cast_number=[cast_number P.sectionlist(ii)];
 
-
         %Calculate the depth at which temp=TC for each cast:
         TC=-0.2;
         temp_below=80/2;
@@ -125,6 +132,8 @@ for m=1
         index_iso=index_iso+iso_below-1;
         ctds_n(ii).sigma0(index_iso);
         press_at_iso(ii)=ctds_n(ii).press(index_iso);
+
+
     end
 
     if plot_casts_and_tides
@@ -145,6 +154,7 @@ for m=1
             ylabel(gca,'Pressure (dbar)')
             xlabel('\theta (^oC)')
             xlim([-1.5 1.5])
+            ylim([0 275])
 
             grid on
             set(ax(1),'XTick',-5:0.5:5.0);
@@ -158,11 +168,11 @@ for m=1
             xlabel('Salinity');
             ylabel(gca,'Pressure (dbar)')
             xlim([28 36])
+            ylim([0 275])
             h=plot(ctds_n(ii).asalin,ctds_n(ii).press,'Color',[cmap(cnumbertide(ii),:) alpha],'LineWidth',2);
             grid on;
             hold on;
             %
-
 
             subplot(2,3,[2,5])
             labels = string(ctds_times) + " (" + string(cast_number) + ")";
@@ -238,7 +248,7 @@ for m=1
             hold on
             ylabel(gca,'Isotherm depth');
             xlim([0 1]);
-            ylim([75 115]);
+            %ylim([75 115]);
 
             end
         end
@@ -258,17 +268,16 @@ end
         plot(tidal_phase_idealised(1:snap)/360,press_at_iso(1:snap),'LineWidth', 1.5,'Color','k','Marker','none');
         plot(tidal_phase_idealised(snap+1:end)/360,press_at_iso(snap+1:end),'LineWidth', 1.5,'Color','k','Marker','none');
         else
-            plot(tidal_phase_idealised(1:snap)/360,press_at_isopycnal(1:snap),'LineWidth', 1.5,'Color','k','Marker','none');
-            plot(tidal_phase_idealised(snap+1:end)/360,press_at_isopycnal(snap+1:end),'LineWidth', 1.5,'Color','k','Marker','none');
+            plot(tidal_phase_idealised(1:snap)/360,press_at_TC(1:snap),'LineWidth', 1.5,'Color','k','Marker','none');
+            plot(tidal_phase_idealised(snap+1:end)/360,press_at_TC(snap+1:end),'LineWidth', 1.5,'Color','k','Marker','none');
         end
 
         %  plot(tidal_phase_idealised(7:end)/360,press_at_TC(7:12),'LineWidth', 1.5,'Color','k','Marker','none');
         %  ylim([min(press_at_TC)-5 min(press_at_TC)+5]);
 
-        name = sprintf('_ctd_casts_tides_%s.png', sectionfilename{1});
+        name = sprintf('_ctd_casts_tides_%s.png', sectionfilename{m});
         exportgraphics(gcf, fullfile('Figures', [cruise name]), 'Resolution', 200)
         % set(gca,'ydir','reverse','xaxislocation','top')
-
 
     end
 
@@ -277,7 +286,6 @@ end
         load([disk,'oceanography\VMADCP\virtual_mooring\virtualmooringdata_repeat_3micefrontsouthyoyoonly.mat']);
 
         figure('Position', [100, 100, 1200, 300]);
-
 
         for ii=1:ncasts
             cnumbertide=zeros(ncasts,1);
