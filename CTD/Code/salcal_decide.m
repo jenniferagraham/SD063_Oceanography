@@ -10,7 +10,7 @@ close all
 
 CTDvarn
 load (fullfile(dir_out,'salts','salcals12_tcal.all.mat'))
-condoff1(:,1:46)=NaN;
+%condoff1(:,1:46)=NaN; % discount conductivity for certain casts
 % condoff1(:,47:end)=NaN;
 
 condoff1grad=condoff1-0.5*ctdgradc1;
@@ -104,25 +104,24 @@ plot(botptda2f,cdiffav2filt,'k^','MarkerFaceColor','k')
 title('Average cond offsets (r=1,k=2), gradient correction applied')
 xlabel('Pressure')
 
- x1=[0 2000 6200];    %SD046 cond 1 casts 57 onwards
- y1=[0.0092 0.0063 0.0053];
+x1=[0 430 1400 2000];    %[0 2000 6200]
+y1=[0.0046 -0.002 -0.002 -0.002];
 plot(x1,y1,'m')
+
+x2=[0 430 1400 2000];  %[0 2750 5000 6200]
+y2=[-0.0023 -0.0029 -0.0035 -0.0035];
+plot(x2,y2,'g')
 
 % x1=[0 6200];    %SD046 cond 1 casts 51:56
 % y1=[0.005 -0.0003];
 % % 
 % plot(x1,y1,'m')
 
-
 % x1=[0 3000 6200];    %SD046 cond 1 to cast 50
 % y1=[0.0019 -0.0012 -0.0021];
 % 
 % plot(x1,y1,'m')
 
-
-x2=[0 2750 5000 6200];  %SD046 cond 2
-y2=[0.0008 -0.0009 -0.0009 -0.0003];
-plot(x2,y2,'g')
 
 % pressure=0:6200; %to test plotting, need to apply equation directly for 24hz files
 % ccalib1=NaN*pressure;

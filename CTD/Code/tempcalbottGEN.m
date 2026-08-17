@@ -42,6 +42,11 @@ end
 %% define the offsets for our cruise
 
 switch(cruise)
+    case 'SD063' ...
+
+        tempoffset1fcn = @(press,temp,cond,stano,gtime) interp1([0 40 970 2000],[0.0076 0.0023 -0.0015 0],press); 
+        tempoffset2fcn = @(press,temp,cond,stano,gtime) interp1([0 40 970 2000],[0.0058 0.0012 -0.0014 0],press); 
+
     case 'SD046' ...
         
         tempoffset1fcn = @(press,temp,cond,stano,gtime) interp1([0 2000 6200],[0.00055 -0.00065 -0.00065],press);

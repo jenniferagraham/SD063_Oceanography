@@ -47,12 +47,12 @@ end
 
 switch(cruise)
     case 'SD063'
-        condoffset1fcn = ;
-        condoffset2fcn = @(press,temp,cond,stano,gtime) interp1([0 ],[],press);
-        tempoffset1fcn = @(press,temp,cond,stano,gtime) interp1([0 ],[],press);
-        tempoffset2fcn = @(press,temp,cond,stano,gtime) interp1([0 ],[],press); 
-        oxygenoffset1fcn = ;
-        oxygenoffset2fcn = ;
+        condoffset1fcn = @(press,temp,cond,stano,gtime) interp1([0 430 1400 2000],[0.0046 -0.002 -0.002 -0.002],press);
+        condoffset2fcn = @(press,temp,cond,stano,gtime) interp1([0 430 1400 2000],[-0.0023 -0.0029 -0.0035 -0.0035],press);
+        tempoffset1fcn = @(press,temp,cond,stano,gtime) interp1([0 40 970 2000],[0.0076 0.0023 -0.0015 0],press);
+        tempoffset2fcn = @(press,temp,cond,stano,gtime) interp1([0 40 970 2000],[0.0058 0.0012 -0.0014 0],press); 
+        oxygenoffset1fcn = @(press,temp,oxygen,stano,gtime) 0; % no offset currently applied 
+        oxygenoffset2fcn = @(press,temp,oxygen,stano,gtime) 0; % no offset currently applied 
 
     case 'SD046'
         condoffset1fcn = @Condoffset2_sd046;

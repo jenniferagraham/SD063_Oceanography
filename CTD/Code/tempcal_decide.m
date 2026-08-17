@@ -18,6 +18,8 @@ CTDvarn
 close all
 load (fullfile(dir_out,'SBE35','tempcals.all.mat'));
 
+% CTD T1 diff from SBE35 + adjusted for gradient of CTD profile 
+% (SBE35 higher on instrument than T1) 
 figure
 plot(botp,sb35temp-ctdt1,'b.'); hold on
 title ('SBE35-CTD T1')  %first look at everything
@@ -27,7 +29,8 @@ plot(botp,(sb35temp-ctdt1)-0.75*ctdgradt1,'r.');%'r^','MarkerFaceColor','r')
 title ('SBE35-CTD T1, gradient adjusted')
 xlabel('Pressure')
 
-figure
+% CTD T2 diff from SBE35 + adjusted for gradient of CTD profile 
+% (SBE35 higher on instrument than T2)
 plot(botp,sb35temp-ctdt2,'g.'); hold on
 title ('SBE35-CTD T2')
 xlabel('Pressure')
@@ -36,19 +39,20 @@ plot(botp,(sb35temp-ctdt2)-0.75*ctdgradt2,'k.');%'k^','MarkerFaceColor','k')
 title ('SBE35-CTD T2, gradient adjusted')
 xlabel('Pressure')
 
+% Diff between CTD sensors
 figure
-plot(botp,ctdt1-ctdt2,'k.'); hold on
+plot(botp,ctdt1-ctdt2,'k.'); hold on 
 plot([0 6000],[0 0],'r')
 title ('CTD T1-T2')  %any calibrations should sum to make this flat on 0
         %more data in full deep CTD casts. Check first, last and deepest
 
 T1T2difflim=0.002;
 
-
+% Filtering steps
 jj=stdt1>0.0025;    %removing data when high variability around bottle firing
 
 kk=(ctdt1-ctdt2)>T1T2difflim;  %useful, but criterion will need checking 
-offest=-0.001;
+offest=-0.001; % offset?
 ll=abs(sb35temp-ctdt1-offest)>0.05;
 
 ii=jj|kk|ll;
@@ -58,7 +62,6 @@ botp1f=botp;
 ctdt1filt(ii)=NaN;
 ctdgradt1filt(ii)=NaN;
 botp1f(ii)=NaN;
-
 
 jj=stdt2>0.0025;
 kk=(ctdt1-ctdt2)>T1T2difflim;  %useful, but criterion will need checking 
@@ -73,6 +76,7 @@ ctdt2filt(ii)=NaN;
 ctdgradt2filt(ii)=NaN;
 botp2f(ii)=NaN;
 
+% CTD T2 filtered + gradient-adjusted diff 
 figure
 plot(botp,(sb35temp-ctdt2filt)-0.75*ctdgradt2filt,'k.');%'k^','MarkerFaceColor','k')
 title ('SBE35-CTD T2, gradient adjusted, filtered')
@@ -98,23 +102,24 @@ for pcut=[25 125 250:500:6250]
     end
 end
 
+% CTD offset from SBE35 (combined plot: raw, filtered, binned?)
 figure
 plot(botp,sb35temp-ctdt1,'c.')
 hold on
 plot(botp1f,sb35temp-ctdt1filt,'b.')
 plot(botptda1,tdiffav1,'r.')
-plot(botptda1f,tdiffav1filt,'r.','MarkerSize',25)
+plot(botptda1f,tdiffav1filt,'r.','MarkerSize',25) % Large red circles
 plot(botptda1f,tdiffav1filt-0.75*tgradav1filt,'r^','MarkerFaceColor','r')
 
 plot(botp,sb35temp-ctdt2,'y.')
 plot(botp2f,sb35temp-ctdt2filt,'g.')
 plot(botptda2,tdiffav2,'k.')
-plot(botptda2f,tdiffav2filt,'k.','MarkerSize',25)
+plot(botptda2f,tdiffav2filt,'k.','MarkerSize',25) % Large black circles
 plot(botptda2f,tdiffav2filt-0.75*tgradav2filt,'k^','MarkerFaceColor','k')
 
 xlabel('Pressure (dbar)');
 ylabel('SBE35 - CTD (^oC)');
-title('c/b/r = primary; y/g/k = secondary;');
+title('c/b/r = primary; y/g/k = secondary;'); % primary = T1, secondary = T2
 
 
 figure
@@ -127,16 +132,18 @@ figure
 plot(botptda1f,tdiffav1filt-0.75*tgradav1filt,'r^','MarkerFaceColor','r')
 hold on
 plot(botptda2f,tdiffav2filt-0.75*tgradav2filt,'k^','MarkerFaceColor','k')
-title('Average offsets (r=1,k=2), gradient correction applied')
+title('Average offsets (r=1,k=2), gradient correction applied') % red = T1, black = T2
 xlabel('Pressure')
 
-x1=[0 2000 6200];  
-y1=[0.00055 -0.00065 -0.00065];
+% offsets for testing against CTD T1
+x1=[0 40 970 2000]; %[0 2000 6200] [0 430 970 1410 2000]
+y1=[0.0076 0.0023 -0.0015 0]; %[0.00055 -0.00065 -0.00065] [0.0023 -0.0022 -0.0015 -0.0013 0]
 %y1=[-0.00025 -0.0005];
 plot(x1,y1,'m')
 
-x2=[0 2000 6200];
-y2=[-0.00025 -0.00125 -0.00125];
+% offsets for testing against CTD T2
+x2=[0 40 970 2000]; %[0 2000 6200] [0 430 970 1410 2000]
+y2=[0.0058 0.0012 -0.0014 0]; %[-0.00025 -0.00125 -0.00125] [0.0012 -0.0016 -0.0014 -0.0014 0]
 plot(x2,y2,'g')
 
 pressure=0:6200; %to test plotting, need to apply equation directly for 24hz files
@@ -146,7 +153,7 @@ pressure=0:6200; %to test plotting, need to apply equation directly for 24hz fil
 %     tcalib1(ii)=y1(ip)+((y1(ip+1)-y1(ip))/x1(ip+1))*pressure(ii); 
 % end 
 % plot(pressure,tcalib1,'k--')   %check this matches the simple plotting
-tcalib1=interp1(x1,y1,botp);
+tcalib1=interp1(x1,y1,botp); % Interpolate T1 offsets to pressure array
 
 plot(botp,tcalib1,'r.')
 % tempoffset1fcn = @(press,temp,oxygen,stano,gtime) 0.0*temp + interp1([0 3000 6200],[-0.0001 -0.0006 -0.0006],press);  
@@ -158,7 +165,7 @@ tcalib2=NaN*pressure;
 %     ii=pressure>x2(ip)&pressure<=x2(ip+1);
 %     tcalib2(ii)=y2(ip)+((y2(ip+1)-y2(ip))/x2(ip+1))*pressure(ii); 
 % end
-tcalib2=interp1(x2,y2,botp);
+tcalib2=interp1(x2,y2,botp); % Interpolate T2 offsets to pressure array
 plot(botp,tcalib2,'k.')
 
 tcalibdiff=tcalib1-tcalib2;
@@ -167,13 +174,13 @@ figure
 plot(stn,tcalib1-(sb35temp-ctdt1),'k.'); hold on
 plot([0 max(stn)],[0 0],'m')
 xlabel('CTD station')
-ylabel('Residual from calibration fit')
+ylabel('CTD T1 Residual from calibration fit')
 
 figure
 plot(stn,tcalib2-(sb35temp-ctdt2),'k.'); hold on
 plot([0 max(stn)],[0 0],'m')
 xlabel('CTD station')
-ylabel('Residual from calibration fit')
+ylabel('CTD T2 Residual from calibration fit')
 
 figure
 plot(botptda1f,(tdiffav1filt-0.75*tgradav1filt)-(tdiffav2filt-0.75*tgradav2filt),'r^','MarkerFaceColor','r'); hold on
