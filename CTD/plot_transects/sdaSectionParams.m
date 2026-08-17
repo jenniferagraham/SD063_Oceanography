@@ -27,7 +27,7 @@ switch lower(sectionName)
     case 'quick_comp'
         P.fjord = 1;
         %P.sectionlist = [26 137 161 162 163];% 13 142 17 143 146]; P.maxy   = 600;
-        P.sectionlist = [49 192 209]; 
+        P.sectionlist = [81:83 234:235]; 
         P.maxy   = 300;
         P.msslist = [];
         P.sectionname = 'Quick comparison';
@@ -770,9 +770,22 @@ switch lower(sectionName)
 
     case '3micefrontnorth-fjord2'
         P.fjord = 1;
-        P.sectionlist = [172 174 195];
+        P.sectionlist = [172 174 195 233:235];
         P.msslist = [];
         P.sectionname = '3-M ice front repeat';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'repeat_3micefrontnorthyoyoplus'
+        P.fjord = 1;
+        P.sectionlist = [77:84 234:235];
+        P.msslist = [];
+        P.sectionname = '3-M ice front south repeat yoyo';
         P.maxy   = 300; 
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
@@ -938,6 +951,19 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
+    case 'repeat_3mmouthall'
+        P.fjord = 1;
+        P.sectionlist = [29 52:55 184 187 212];
+        P.msslist = [];
+        P.sectionname = '3-M mouth repeat';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
     case 'repeat_3mbeak'
         P.fjord = 1;
         P.sectionlist = [28 58 113 185];
@@ -961,12 +987,6 @@ switch lower(sectionName)
             addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
             disk = ['L:\work\scientific_work_areas\'];
             ctddata = [disk,'oceanography\CTD\BASproc\'];
-            addpath([disk,'oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\'])
-            addpath([disk,'oceanography\matlabF\']) % for cmocean
-            addpath([disk,'oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\'])
-            addpath([disk,'oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\library\'])
-            addpath([disk,'oceanography\CTD\GSWscripts\gsw_matlab_v3_06_16\thermodynamics_from_t\'])
-            addpath([disk,'oceanography\CTD\plot_transects\']) % directory with section parameter function
         else
             addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
             disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
@@ -982,7 +1002,7 @@ switch lower(sectionName)
 
         %Pick a line 
         lon_cutoff=-30.7;
-        lat_cutoff=68.2;
+        lat_cutoff=68.26;
 
         stations_included=[];
         for ii=1:length(stns)
@@ -1002,6 +1022,54 @@ switch lower(sectionName)
         P.scaxis = [30 35.0];
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
+
+    case 'all_offshore_of_sill'
+
+        %For this case, you need to work out all stations inshore of sill in 3M:
+        %Bit faffy, but feels easier to do in here rather than in a separate
+        %script...
+
+        if ispc
+            addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
+            disk = ['L:\work\scientific_work_areas\'];
+            ctddata = [disk,'oceanography\CTD\BASproc\'];
+        else
+            addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
+            disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+            ctddata = [disk,'CTD/BASproc/'];
+        end
+
+        %% load CTD structure data
+        cruise='SD063';
+        load([ctddata,cruise,'_ctd.mat']);
+
+        stns=[ctds.station];
+
+        %Pick a line 
+        lon_cutoff=-30.607;
+        lat_cutoff=68.12;
+        lat_max=68.3;
+
+        stations_included=[];
+        for ii=1:length(stns)
+            if ctds(ii).lon > lon_cutoff && ctds(ii).lat > lat_cutoff ...
+                    && ctds(ii).lat < lat_max
+                stations_included=[stations_included ctds(ii).station];
+            end
+        end
+
+        P.fjord = 1;
+        P.sectionlist = [stations_included];
+        P.msslist = [];
+        P.sectionname = '3-M offshore of sill';
+        P.maxy   = 600;
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
 
     otherwise
         error('Unknown section name: %s',sectionName)
