@@ -2,7 +2,7 @@
 
 close all; clear all;
 
-selectvisit=false;
+selectvisit=true;
 
 %% add paths
 if ispc
@@ -30,8 +30,9 @@ load([ctddata,cruise,'_ctd.mat']);
 % repeat_3msouthtroughyoyoonly ; repeat_3msouthtroughyoyosite
 % repeat_3mwestsill ; 'all)
 % repeat_3micefront ?? '3micefrontsouth-fjord2'
-sectionfilename='repeat_3meastsill'; % repeat_3msill[n or peak]
-fjordvisit=2; % 1, 2, or 'all'
+% all_offshore_of_sill, all_inshore_of_sill repeat_3mmouthall
+sectionfilename='repeat_3mmouthall'; % repeat_3msill[n or peak]
+fjordvisit='all'; % 1, 2, or 'all'
 
 P = sdaSectionParams(sectionfilename);
 P.sectionlist = sort(P.sectionlist);
@@ -106,10 +107,11 @@ for n = 1:length(targets)
     hold on
 end
 ylabel('Isopycnal depth anomaly, m')
+xlabel('Tide phase fraction')
 set(gca,'YDir','reverse')
 grid on 
 
-title(sprintf('Isopycnal depths - %s'),sectionfilename)
+title(['Isopycnal depths - ',sectionfilename], 'Interpreter', 'none')
 
 if selectvisit
     name = sprintf('Iso_depth_tides_%s-fjord%s.png', sectionfilename, ...
