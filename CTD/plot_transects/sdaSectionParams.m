@@ -833,6 +833,20 @@ switch lower(sectionName)
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
 
+    case 'repeat_3msillsouthpeakyoyoonly'
+        P.fjord = 1;
+        P.sectionlist = [225:232];
+        % P.sectionlist = [30 225:229];
+        P.msslist = [];
+        P.sectionname = '3-M sill south peak repeat yoyo';
+        P.maxy   = 300; 
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
     case 'repeat_3msouthtroughyoyosite'
         P.fjord = 1;
         P.sectionlist = [49 192 209 214 217:223];
@@ -842,6 +856,19 @@ switch lower(sectionName)
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
         P.tcaxis = [-2 1];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'repeat_3mwestsillyoyoonly'
+        P.fjord = 1;
+        P.sectionlist = [97:111];
+        P.msslist = [];
+        P.sectionname = '3-M west sill repeat yoyo only';
+        P.maxy   = 300;
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
         P.scaxis = [30 35.0];
         P.mLON   = [-31 -30];
         P.mLAT   = [68 68.5];
