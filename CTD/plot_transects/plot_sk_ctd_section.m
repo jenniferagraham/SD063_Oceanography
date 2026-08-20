@@ -51,6 +51,8 @@ grdfile='';
 plottype='pcolor';
 make_chartlet=false;
 station_labels=false;
+tide_phase_labels=false;
+cruise='SD063';
 while length(varargin)>m
     if length(varargin)==m
         levels=varargin{m};
@@ -128,6 +130,7 @@ for n=1:length(stns)
     press(dest_ind,n)=ctds(n).press;
     temp(dest_ind,n)=ctds(n).temp;
     salin(dest_ind,n)=ctds(n).salin;
+    
     if strcmp(variable,'oxygen_umol_kg')||strcmp(variable,'aou')||strcmp(variable,'o2sat') 
        oxy(dest_ind,n)=ctds(n).oxygen_umol_kg; %lc
     end
@@ -385,9 +388,9 @@ hold on;
 for n=1:length(stns)
     plot(plot_x(n).*[1,1],ctds(n).press([1,end]),'k');
 end
-if station_labels
-    text(plot_x,zeros(size(plot_x)),int2str(stns(:)),'horizontalalignment','center','verticalalignment','bottom');
-end
+ if station_labels
+     text(plot_x,zeros(size(plot_x)),int2str(stns(:)),'horizontalalignment','center','verticalalignment','bottom');
+ end
 
 if strcmpi(xvar,'date')
     datetick('x','keeplimits');
@@ -447,7 +450,14 @@ plot(bot_dist,bot_press_fills,'r--');
 elseif  isempty(grdfile)
 %x_points=[0 0 1 2 2];
 %y_points=[0 4000 5000 4000 0];
-x_points=[0 plot_x.' plot_x(end)];
+
+% lc added August 19 6am, I am not sure why the line below was giving an error: Error using horzcat Dimensions of arrays being concatenated are not consistent.
+if size(plot_x,2) == 1
+    x_points=[0 plot_x.' plot_x(end)]; 
+else
+x_points=[0 plot_x plot_x(end)]; % substitute for above line due to the mentioned error
+end
+%
 
 y_points=[maxP];
 
@@ -464,8 +474,15 @@ end
 % xlim(plot_x([1,end]));
 xlim(bot_dist([1,end]));
 set(gca,'ydir','reverse');
- ylim([0 700]);
+ylim([0 700]);
 
+for n=1:length(plot_x)
+  textlabels{n}=sprintf('%.2f',ctds(n).tide_height_zh);
+end
+if tide_phase_labels
+    text(plot_x,300*ones(size(plot_x)),textlabels,'Rotation',90,...
+        'horizontalalignment','left','verticalalignment','bottom');
+end
 
 if make_chartlet
     figure;
