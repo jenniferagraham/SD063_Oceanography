@@ -1,3 +1,12 @@
+
+%Script to take the mat structures from the CTD and put them into a
+%structure of structures.
+
+% Based on script provided by Laura Castro from SD041 (?) and edited by Rosie Williams onboard SD063
+
+% Tidal metrics based on TMD tide model for Greenland added to structure
+% (based on CTD time).
+
 close all; clear all;
 % need to create a structure variable with all CTD data 
 % row must be a station 
@@ -81,19 +90,7 @@ for ii = 1:length(stationlist)
 
 end
 
-%Now add in tidal info based on the tidal model
-
-% allstations=[ctds.station];
-% stns=allstations;
-% ind=zeros(size(stns));
-% for n=1:length(stns)
-%     try
-%         ind(n)=find(allstations==stns(n));
-%     catch
-%         error('Cannot find %s station %d',cruise,stns(n));
-%     end
-% end
-% ctds=ctds(ind);
+%Now add in tidal info based on the tidal model TMD
 
 %% All CTDs have a gtime number that needs converting to datenum:
 ctds_times=[];
