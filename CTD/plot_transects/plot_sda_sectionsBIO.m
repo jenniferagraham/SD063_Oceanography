@@ -20,7 +20,7 @@ if ispc
     addpath([disk,'CTD\GSWscripts\gsw_matlab_v3_06_16\thermodynamics_from_t\'])
     FZ=12;
 elseif ismac % thi is cool. I did not know about this. LC
-    disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+    disk = ['/Volumes/leg/work/scientific_work_areas/oceanography/'];
     figPb   = [disk,'CTD/plot_transects/Figures/BIO/'];
     ctddata = [disk,'CTD/BASproc/'];
     addpath([disk,'matlabF/']) % theta_sdiag function
@@ -33,15 +33,30 @@ elseif ismac % thi is cool. I did not know about this. LC
 end
 set(0, 'DefaultAxesFontSize', FZ);
 
-sectionfilenames={'Ssection','Ssectionwarm',...
-    'melangetroughentrance','melangetroughalong','melangetroughnorth',...
-    'magictrough','kgtrough-1','kgtrough-2',...
-    'deception_trough','deceptionloop',...
-    '3mtransect','3micefronttowyo','3mhead','3mdoubletrough','3msill','3mthroat','3mmouthsection',...
-    '3mbeak-1','3mbeak-2','3mbeaksouth-1','3mbeaksouth-2','3macrosssill-1','3macrosssill-2','3macrosssillsouthdogleg' ...
-    };
+% sectionfilenames={'Ssection','Ssectionwarm',...
+%     'melangetroughentrance','melangetroughalong-1','melangetroughalong-2','melangetroughnorth',...
+%     'magictrough','kgtrough-1','kgtrough-2',...
+%     'deception_trough','deceptionloop-1','deceptionloop-2',...
+%     'kangglac_deceptionloop','kangglac_alongtrough','kangglac_kgtrough','kangglac_flado',...
+%     'skag_kgtrough-1','skag_kgtrough-2',...
+%     'eclipse_trough_along', 'eclipse_trough_across',...
+%     '3mtransect','3mtransect-2',...
+%     '3micefronttowyo','3mhead','3mdoubletrough','3msill','3mthroat','3mmouthsection',...
+%     '3mbeak-1','3mbeak-2','3mbeaksouth-1','3mbeaksouth-2',...
+%     '3macrosssill-1','3macrosssill-2','3macrosssill-3','3macrosssill-4','3macrosssillsouthdogleg', ...
+%     '3mshelfsouth','3mshelfnorth' ...
+%     };
+% 
+ sectionfilenames={'melangetroughalong-1','melangetroughalong-2','3micefronttowyo','3mhead','3mdoubletrough','3msill','3mthroat','3mmouthsection',...
+     '3mbeak-1','3mbeak-2','3mbeaksouth-1','3mbeaksouth-2',...
+     '3macrosssill-1','3macrosssill-2','3macrosssill-3','3macrosssill-4','3macrosssillsouthdogleg', ...
+    '3mshelfsouth','3mshelfnorth', '3mtransect-1','3mtransect-2' ...
+   };
 
-maxy=1000; % depth 
+ sectionfilenames={'3micefront_section-3','3mtransect-1','3mtransect-3','3micefront_section-2'}; %'3micefront_section-3', 
+
+
+maxy=100; % depth 
 % definition of colours you may need to fix 
     ercolor = [.5 1 1]; % bright blue
     skcolor2025 = [.5 .5 1]; % purple
@@ -83,10 +98,10 @@ maxy=1000; % depth
 
 %% plot the sections
 thefig=figure; thefig.WindowState = 'maximized'; set(thefig,'Visible','off')
-thefig.Position(3)=thefig.Position(4).*16./9; % change the aspect ratio
+thefig.Position=[1 1 513 540];%thefig.Position(3)=thefig.Position(4).*16./9; % change the aspect ratio
 %%
     fignameappend='BIO';
-for m=20:length(sectionfilenames)
+for m=1:length(sectionfilenames)
 clf
 % use SDA track from Underway. Still tricky with interpolation.
 %grid_options={'sdatrack'}; % use default bathymetry as bottom CTD 
@@ -100,7 +115,7 @@ grid_options={'botdepth'};
     subplot(3,5,3:5);
      plot_sk_ctd_section(P.sectionlist,ctds,'fluor_ug_l','xvar','dist','type','pcolor_interp',...
          'levels',[],'station_labels','true',grid_options{:});
-     clim([0 0.5]);
+     clim([0 0.7]);
      cmocean('algae')
     ylim([0 P.maxy]);
     ylabel('Depth (m)');
@@ -115,11 +130,11 @@ grid_options={'botdepth'};
         grid_options{:});
     % log scale needed here 
     ax2.ColorScale = 'log'; 
-    clim([1 10]);
+    clim([0.01 1000]);
     cb = colorbar;
-    cb.Ticks = [1 2 5 10 20 50 100];
-    cb.TickLabels = {'1','2','5','10','20','50','100'};
-    cmocean('gray')
+    cb.Ticks = [0.01 0.1 1 10 100 1000];
+    cb.TickLabels = {'0.01','0.1','1','10','100','1000'};
+   % cmocean('gray')
     ylim([0 P.maxy]);
     ylabel('Depth (m)');
     cb.Label.String='PAR umol photons^{-1}';
@@ -267,4 +282,6 @@ grid_options={'botdepth'};
     figname=sprintf('_ctd_section_%s.png',strcat(sectionfilenames{m},fignameappend));
 %    print(thefig,'-dpng','-r200',figname);
     exportgraphics(gcf,[figPb,cruise,figname],'Resolution',300)
+
 end
+    close all 
