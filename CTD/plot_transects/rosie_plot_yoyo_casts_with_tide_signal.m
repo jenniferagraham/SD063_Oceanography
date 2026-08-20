@@ -1,21 +1,33 @@
-%Script to plot all casts from ice front section for comparison, and where
-%multiple sections exist, find the mean and std and make envelope...
+%Script to plot CTD casts:
+% option 1: plot_casts_and_tides=1;
+% plots a) temp b) salinity with pressure, c) TS diagram, and d)
+% isotherm/isophycnal depth against tidal phrase fraction - a measure of
+% how far along the TMD tidal cycle from the TMD model the CTD was taken.
+% This is calculated when the ctds structure is created in
+% sd063_ctds_structVAR.m
+%option 2: plot_tide_metrics=1;
+%This plots tidal metrics:
+%a) heat content 
+%b) isotherm depth
+%c) isopycnal depth
+% as a function of idealised tide phase 
+
+%For use with yoyo stations.
+
+%Written on SD063 for 3m fjord.
 %Rosie Williams 14/08/2026
 
-%Editing in progress - rush at end. Take a copy to play with if desired.
 
 %% add path
 close all; clear all;
 
-
 %cchoice=input('What cmap do you want: phase or jet?\n','s');
-c_jet=0; % if 0, uses phase
+c_jet=1; % if 0, uses phase
 
-plot_casts_and_tides=1;
+plot_casts_and_tides=0;
 % within that, would you like me to plot the isopycnals?
 plot_isopycnal=1;
-plot_isopycnal=0;
-plot_tide_metrics=0;
+plot_tide_metrics=1;
 
 
 if ispc
@@ -37,40 +49,16 @@ end
 cruise='SD063';
 load([ctddata,cruise,'_ctd.mat']);
 
-%% select the sections
-%sectionfilename={'repeat_3m_icefront','yoyo_3meastsill','yoyo_3mwestsillouter','repeat_3moutermouth'};
-%'repeat_3m_icefront';
-%sectionfilename='repeat_3msillpeak';
-%sectionfilename={'repeat_3micefrontsouthyoyoonly'};
-
-%sectionfilename={'repeat_3micefrontbothyoyo'};
-sectionfilename={'3mdoubletroughsouth','3mdoubletroughnorth'};
-
-sectionfilename={'3micefront_section-2','3micefronttowyo','3mhead','3mdoubletrough','3mdoubletrough-2'};
-
-%sectionfilename={'repeat_3msouthtroughyoyosite'};
-
-%sectionfilename={'all_inshore_of_sill'};
-
-%sectionfilename={'repeat_3msouthtroughyoyoonly'}
-
-%sectionfilename={'repeat_3micefrontsouthyoyoonly','repeat_3micefrontnorthyoyoonly','repeat_3msouthtroughyoyoonly','repeat_3msillsouthpeakyoyoonly','repeat_3mmouth'};
-
-%sectionfilename={'3micefrontnorth-fjord2'}; 
-
-%sectionfilename={'repeat_3micefrontnorthyoyoplus'};
-sectionfilename={'quick_comp'};
+%% select the repeats
+sectionfilename={'repeat_3msillsouthpeakyoyoonly','repeat_3meastsillyoyoonly'};
 
 grey  = [0.55 0.55 0.55];
-
 alpha = 0.6;
-
 
 
 for m=1:length(sectionfilename)
     ctds_times=[];
     cast_number=[];
-    %Add in ice front repeat
     P = sdaSectionParams(sectionfilename{m}); % function that needs to be in the same folder
     ncasts = length(P.sectionlist);
     stns=P.sectionlist;
@@ -113,10 +101,7 @@ for m=1:length(sectionfilename)
         %Calculate the depth at which temp=TC for each cast:
         TC=-0.2;
         temp_below=80/2;
-       % all_sigma0 = [ctds_n.sigma0];
-      %  max_sigma0 = max(all_sigma0);
         max_common_sigma0 = min(arrayfun(@(x) max(x.sigma0), ctds_n));
-        %isopycnal_level= max_common_sigma0;
         isopycnal_level= 26.3;
         iso_below=1;
         % For the isotherm:
@@ -132,8 +117,6 @@ for m=1:length(sectionfilename)
         index_iso=index_iso+iso_below-1;
         ctds_n(ii).sigma0(index_iso);
         press_at_iso(ii)=ctds_n(ii).press(index_iso);
-
-
     end
 
     if plot_casts_and_tides
@@ -227,7 +210,7 @@ for m=1:length(sectionfilename)
                 plot(theta/360,cosd(theta),'k-','LineWidth',1.5);
                 xlabel('Idealised tidal phase');
                 ylabel(gca,'Illustrative tidal wave');
-                title("CTDs timings in tidal cycle ")
+                title("Phase and isophycnal depth ")
                 yyaxis right
                 plot(tidal_phase_idealised(ii)/360,press_at_iso(ii),'Marker','+','Color',cmap(cnumbertide(ii),:),'LineStyle','none','MarkerSize',6,'LineWidth', 1.5);
                 hold on
@@ -242,7 +225,7 @@ for m=1:length(sectionfilename)
             plot(theta/360,cosd(theta),'k-','LineWidth',1.5);
             xlabel('Idealised tidal phase');
             ylabel(gca,'Illustrative tidal wave');
-            title("CTDs timings in tidal cycle ")
+             title("Phase and isotherm depth ")
             yyaxis right
             plot(tidal_phase_idealised(ii)/360,press_at_TC(ii),'Marker','o','Color',cmap(cnumbertide(ii),:),'LineStyle','none','MarkerSize',6,'LineWidth', 1.5);
             hold on
@@ -272,8 +255,7 @@ end
             plot(tidal_phase_idealised(snap+1:end)/360,press_at_TC(snap+1:end),'LineWidth', 1.5,'Color','k','Marker','none');
         end
 
-        %  plot(tidal_phase_idealised(7:end)/360,press_at_TC(7:12),'LineWidth', 1.5,'Color','k','Marker','none');
-        %  ylim([min(press_at_TC)-5 min(press_at_TC)+5]);
+
 
         name = sprintf('_ctd_casts_tides_%s.png', sectionfilename{m});
         exportgraphics(gcf, fullfile('Figures', [cruise name]), 'Resolution', 200)
@@ -283,7 +265,14 @@ end
 
     if plot_tide_metrics
 
-        load([disk,'oceanography\VMADCP\virtual_mooring\virtualmooringdata_repeat_3micefrontsouthyoyoonly.mat']);
+%load in virutal mooring (P Holland) 
+
+   load_name = sectionfilename{m};
+
+filename = fullfile(disk, 'oceanography', 'VMADCP', ...
+    'virtual_mooring', ['virtualmooring_ctd_', load_name]);
+
+load(filename);
 
         figure('Position', [100, 100, 1200, 300]);
 
@@ -293,27 +282,6 @@ end
                 [junk,ind]=min(ctds_n(ii).tide_phase_fraction>tidebounds);
                 cnumbertide(c)=ind;
             end
-
-            % subplot(1,3,1)
-            % %heat content
-            % 
-            % heatcontent = heat_content_layer(80,200,P.sectionlist,ctds);
-            % yyaxis left
-            % plot(ctds_n(ii).tide_phase_fraction,cosd(ctds_n(ii).tide_phase_fraction*360),'Marker','o','Color',cmap(cnumbertide(ii),:),'LineStyle','none','MarkerSize',6,'LineWidth', 1.5);
-            % hold on
-            % plot(theta/360,cosd(theta),'k-','LineWidth',1.5);
-            % xlabel('Idealised tidal phase');
-            % ylabel(gca,'Illustrative tidal wave');
-            % title("Heat content (J)")
-            % %
-            % yyaxis right
-            % plot(tidal_phase_idealised(ii)/360,heatcontent.data(ii),'Marker','o','Color',cmap(cnumbertide(ii),:),'LineStyle','none','MarkerSize',6,'LineWidth', 1.5);
-            % ylabel(gca,'J');
-            % hold on
-            % xlim([0 1]);
-            % 
-            % %ylim([-180 180]);
-
 
             subplot(1,3,1)
             %isotherm depth
@@ -326,21 +294,18 @@ end
             title("Heat content (J)")
             %
             yyaxis right
-          %  plot(tidal_phase_idealised(ii)/360,virtualmooring.topanomang(ii),'Marker','o','Color',cmap(cnumbertide(ii),:),'LineStyle','none','MarkerSize',6,'LineWidth', 1.5);
-          plot(tidal_phase_idealised(ii)/360,virtualmooring.heatcontent(ii),'Marker','o','Color',cmap(cnumbertide(ii),:),'LineStyle','none','MarkerSize',6,'LineWidth', 1.5);
+
+          plot(tidal_phase_idealised(ii)/360,virtualmooring_ctd.heatcontent(ii),'Marker','o','Color',cmap(cnumbertide(ii),:),'LineStyle','none','MarkerSize',6,'LineWidth', 1.5);
             ylabel(gca,'J');
             hold on
             xlim([0 1]);
                 ylim([5.5e8 7.5e8]);
-           % ylim([-180 180]);
-
             subplot(1,3,2)
             yyaxis left
             plot(ctds_n(ii).tide_phase_fraction,cosd(ctds_n(ii).tide_phase_fraction*360),'Marker','o','Color',cmap(cnumbertide(ii),:),'LineStyle','none','MarkerSize',6,'LineWidth', 1.5);
             hold on
             plot(theta/360,cosd(theta),'k-','LineWidth',1.5);
             xlabel('Idealised tidal phase');
-   %         ylabel(gca,'Illustrative tidal wave');
             title('Isotherm depth')
             %
             yyaxis right
@@ -356,7 +321,6 @@ end
             hold on
             plot(theta/360,cosd(theta),'k-','LineWidth',1.5);
             xlabel('Idealised tidal phase');
-      %      ylabel(gca,'Illustrative tidal wave');
             title('Isopycnal depth')
             %
             yyaxis right
@@ -377,19 +341,9 @@ end
             snap=ncasts;
         end
 
-        % subplot(1,3,1)
-        % %[junk tides_index]=sort(tidal_phase_idealised);
-        % %plot(tidal_phase_idealised(tides_index)/360,virtualmooring.topanomang(tides_index),'LineWidth', 1.5,'Color','k','Marker','none');
-        % %
-        % plot(tidal_phase_idealised(1:snap)/360,heatcontent.data(1:snap),'LineWidth', 1.5,'Color','k','Marker','none');
-        % plot(tidal_phase_idealised(snap+1:end)/360,heatcontent.data(snap+1:end),'LineWidth', 1.5,'Color','k','Marker','none');
-        % %
         subplot(1,3,1)
-        %[junk tides_index]=sort(tidal_phase_idealised);
-        %plot(tidal_phase_idealised(tides_index)/360,virtualmooring.topanomang(tides_index),'LineWidth', 1.5,'Color','k','Marker','none');
-        %
-        plot(tidal_phase_idealised(1:snap)/360,virtualmooring.heatcontent(1:snap),'LineWidth', 1.5,'Color','k','Marker','none');
-        plot(tidal_phase_idealised(snap+1:end)/360,virtualmooring.heatcontent(snap+1:end),'LineWidth', 1.5,'Color','k','Marker','none');
+        plot(tidal_phase_idealised(1:snap)/360,virtualmooring_ctd.heatcontent(1:snap),'LineWidth', 1.5,'Color','k','Marker','none');
+        plot(tidal_phase_idealised(snap+1:end)/360,virtualmooring_ctd.heatcontent(snap+1:end),'LineWidth', 1.5,'Color','k','Marker','none');
         subplot(1,3,2)
         plot(tidal_phase_idealised(1:snap)/360,press_at_TC(1:snap),'LineWidth', 1.5,'Color','k','Marker','none');
         plot(tidal_phase_idealised(snap+1:end)/360,press_at_TC(snap+1:end),'LineWidth', 1.5,'Color','k','Marker','none');
@@ -397,19 +351,12 @@ end
         subplot(1,3,3)
         plot(tidal_phase_idealised(1:snap)/360,press_at_iso(1:snap),'LineWidth', 1.5,'Color','k','Marker','none');
         plot(tidal_phase_idealised(snap+1:end)/360,press_at_iso(snap+1:end),'LineWidth', 1.5,'Color','k','Marker','none');
-        %[junk tides_index]=sort(tidal_phase_idealised);
-
-        %plot(tidal_phase_idealised(tides_index)/360,press_at_TC(tides_index),'LineWidth', 1.5,'Color','k','Marker','none');
-
-      %  title(sprintf(sectionfilename{1}))
 
         set(gcf, 'Color', 'w');
 
-        name = sprintf('ctds_tides_metrics_%s.png', sectionfilename{1});
+        name = sprintf('ctds_tidal_metrics_%s.png', sectionfilename{1});
         exportgraphics(gcf, fullfile('Figures', [cruise name]), 'Resolution', 300)
-
     end
 end
 
-%linkaxes(findall(gcf,'Type','axes'),'x');
 
