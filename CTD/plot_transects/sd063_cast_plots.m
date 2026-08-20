@@ -1,3 +1,7 @@
+%function used to plot cast data from CTD casts from SD063 cruise.
+
+%Created by Rosie Williams, July 2026 on GIANT SD063.
+
 function break_loop=sd063_cast_plots(ctds,color_set,line_style,ref_station,plot_envelope)
 
 
@@ -51,12 +55,6 @@ end
 
 
         if i==1
-          %  TITLE=['CTD ',ctds_title,''];
-           % h=suptitle(TITLE);
-         %   set(h,'fontsize',16)
-            
-      %       file=fullfile(dir_plots,['CTDtsd',aaa,'.png']);
-       %     print('-dpng','-r300',file)
             hold on
             
         elseif i==2
@@ -81,15 +79,6 @@ end
         end
     end
     
- %   iic=find(strcmp(columnuse,'ctd_plot'));
- %   iiu=find(strcmp(columnuse,'plot_title'));
-    
-    % sv=size(varnames);
-    % vpp=zeros(sv(1),1);
-    % for iv=1:sv(1)
-    %     vpp(iv)=varnames{iv,iic}*((varnames{iv,2}*varnames{iv,iic})>0);
-    % end
-    
     colorsequence='kgm';
 
     if plot_envelope
@@ -104,7 +93,7 @@ end
     set(ax(3),'XTick',0:1:100);     
 
     % add density contours 
-    thetaTS=[-2:0.2:8];
+    thetaTS=[-2:0.2:4];
     s=[28:0.5:36];
 
     smin=min(s)-0.01.*min(s);
@@ -125,28 +114,6 @@ end
     clabel(c,h,'LabelSpacing',90);
     h.HandleVisibility = 'off';
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-   
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     % add the water masses LC
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     FZ=12;   msize=20;
-%     % I follow Rudels 2001 for all the definition, but I have made modifications to the density.
-%     % Reduce it because on the shelf watermasses seem lighter
-%     mysig0AWmin = 27.3; % adjusted from below 27.7 is Surface PW above it Arctic Atlantic Water
-%     mysig0PW    = 26.5;      % adjusted from 27.7 to create an intermediate water mass between PW and AAW
-%     mysig0AWmax = 29;   % adjusted from 27.97 above that likely Polar intermediate water
-%     % plot water masses
-%      PWt1    = [-1.1];  PWs1 = [32]; %
-%      AWt1    = [2.5];  AWs1 = [34.8]; %
-%      AWit1   = [-1.5];  AWis1 = [33.5]; % based on CTD16 this is AW modified by ice (sits exactly along the gade line) 
-%      plot(AWs1, AWt1,'sk','markersize',msize,'MarkerEdgeColor','k','MarkerFaceColor','none')
-%      plot(PWs1 , PWt1, 'sk','markersize',msize,'MarkerEdgeColor','k','MarkerFaceColor','none')
-%      plot(AWis1 , AWit1, 'sk','markersize',msize,'MarkerEdgeColor','k','MarkerFaceColor','none')
-%      text (AWs1+0.3, AWt1,'AW','FontSize',FZ)
-%      text (AWis1-0.4,AWit1-0.4,'MAW','FontSize',FZ-1)
-%      text (PWs1-0.5, PWt1+.8,'PW','FontSize',FZ)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
     end
