@@ -1,11 +1,13 @@
 %% created by Laura C (SAMS) uses an updated of Povl's original plot sd sections that were used for the cruise report 
-%% LC writting this temporal script too look at  Oxygen sensors 
+%% LC script too look at  Oxygen sensors 
   %'oxygen_umol_kg'
   % calculatign Oxygen saturation at one atmosphere (umol/kg). using function  O2 = o2satv2b(S,T).
   % calculation of Aparent Oxygen Utilization: AOU (umol/kg) = sat O2 (umol/kg) - obs o2 (umol/kg).
 %% modified by CTD team SD 063
 clear all; close all;
 clc
+istsplot=1;
+ismap =1;
 anomalyplot=0; % =
 oxyplots=0; % =1 plots oxygen saturation, oxygen concentration and oxygen utilizations, otherwise it plots CT, S, and oxygen concentration 
 %% add paths for GSW and where to save figures 
@@ -24,7 +26,7 @@ if ispc
     addpath([disk,'CTD\GSWscripts\gsw_matlab_v3_06_16\thermodynamics_from_t\'])
     FZ=12;
 elseif ismac % thi is cool. I did not know about this. LC
-    disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+    disk = ['/Volumes/leg/work/scientific_work_areas/oceanography/'];
     figPb   = [disk,'CTD/plot_transects/Figures/OXY/'];
     ctddata = [disk,'CTD/BASproc/'];
     addpath([disk,'matlabF/']) % theta_sdiag function
@@ -37,15 +39,29 @@ elseif ismac % thi is cool. I did not know about this. LC
 end
 set(0, 'DefaultAxesFontSize', FZ);
 
-%sectionfilenames={'3msill','kgtrough'} % '3mhead', '3mtransect', '3mdoubletrough'};
+% sectionfilenames={'Ssection','Ssectionwarm',...
+%     'melangetroughentrance','melangetroughalong-1','melangetroughalong-2','melangetroughnorth',...
+%     'magictrough','kgtrough-1','kgtrough-2',...
+%     'deception_trough','deceptionloop-1','deceptionloop-2',...
+%     'kangglac_deceptionloop','kangglac_alongtrough','kangglac_kgtrough','kangglac_flado',...
+%     'skag_kgtrough-1','skag_kgtrough-2',...
+%     'eclipse_trough_along', 'eclipse_trough_across',...
+%     '3mtransect','3mtransect-2',...
+%     '3micefronttowyo','3mhead','3mdoubletrough','3msill','3mthroat','3mmouthsection',...
+%     '3mbeak-1','3mbeak-2','3mbeaksouth-1','3mbeaksouth-2',...
+%     '3macrosssill-1','3macrosssill-2','3macrosssill-3','3macrosssill-4','3macrosssillsouthdogleg', ...
+%     '3mshelfsouth','3mshelfnorth' ...
+%     };
+% 
 
-sectionfilenames={'Ssection','Ssectionwarm',...
-    'melangetroughentrance','melangetroughalong','melangetroughnorth',...
-    'magictrough','kgtrough-1','kgtrough-2',...
-    'deception_trough','deceptionloop',...
-    '3mtransect','3micefronttowyo','3mhead','3mdoubletrough','3msill','3mthroat','3mmouthsection',...
-    '3mbeak-1','3mbeak-2','3mbeaksouth-1','3mbeaksouth-2','3macrosssill-1','3macrosssill-2','3macrosssillsouthdogleg' ...
-    };
+sectionfilenames={'melangetroughalong-1','melangetroughalong-2','3micefronttowyo','3mhead','3mdoubletrough','3msill','3mthroat','3mmouthsection',...
+     '3mbeak-1','3mbeak-2','3mbeaksouth-1','3mbeaksouth-2',...
+     '3macrosssill-1','3macrosssill-2','3macrosssill-3','3macrosssillsouthdogleg', ...
+     '3mshelfsouth','3mshelfnorth', '3mtransect-1','3mtransect-2','3mtransect-3' ...
+   };
+
+sectionfilenames={'3micefront_section-3'}; %'3micefront_section-3', 
+sectionfilenames={'3mtransect-1'};
 
 maxy=1000; % depth 
 % definition of colours you may need to fix 
@@ -88,30 +104,40 @@ maxy=1000; % depth
 % CruiseTrack.depth_EM124_m_ = str2double(CruiseTrack.depth_EM124_m_);
 
 %% plot the sections
-thefig=figure; set(thefig,'Visible','off')
+thefig=figure; set(thefig,'Visible','on')
 thefig.Position=[1 1 513 540];%thefig.Position(4).*16./9; % change the aspect ratio
 %thefig.WindowState = 'maximized';
+% redblue colormapn = 64;
+n=64;
+
+r = [linspace(0.05, 0.85, n/2), linspace(0.85, 0.8, n/2)]';
+g = [linspace(0.2, 0.75, n/2), linspace(0.75, 0.05, n/2)]';
+b = [linspace(0.8, 0.95, n/2), linspace(0.95, 0.05, n/2)]';
+
+myMap = [r g b]; % red/blue colormap 
+
+
 %%
-for m=7%:length(sectionfilenames)
+for m=1:length(sectionfilenames)
 clf
 % use SDA track from Underway. Still tricky with interpolation.
 %grid_options={'sdatrack'}; % use default bathymetry as bottom CTD 
 % switch to using bottle depths:
 grid_options={'botdepth'};
 % specifics for each section, depth, caxis, etc
-    P = sdaSectionParams(sectionfilenames{m});
+P = sdaSectionParams(sectionfilenames{m});
 
 if oxyplots==1
      % OSAT
      myvar='o2sat';
      ax1=subplot(3,5,3:5);
     plot_sk_ctd_section(P.sectionlist,ctds,myvar,'xvar','dist','type','pcolor_interp','levels',[],...
-        grid_options{:});
+        'station_labels','false',grid_options{:});
    clim([320 370]);
     cb = colorbar;
     colormap(ax1,'jet')
     ylim([0 P.maxy]);
-    ylabel('Depth (m)');
+     ylabel('Depth (m)');
     cb.Label.String={'O2SAT'; 'umol kg^{-1}'};
 
 
@@ -120,7 +146,7 @@ if oxyplots==1
         ax2=subplot(3,5,8:10);
      % % 'oxygen_umol_kg'
      plot_sk_ctd_section(P.sectionlist,ctds,myvar,'xvar','dist',...
-        'type','pcolor_interp','levels',[],'station_labels','true',grid_options{:});
+        'type','pcolor_interp','levels',[],'station_labels','false',grid_options{:});
     ylim([0 P.maxy]);
     clim([250 370]);
     xlabel('Distance (km)');
@@ -150,16 +176,19 @@ if oxyplots==1
 else
      % conservative temperature
     subplot(3,5,3:5);
-
+    %contourL=[23.0:0.5:27]; % density contours
+     contourL=[-1:0.5:2];
+     %contourL=[];
     if (anomalyplot==0)
-        % this snippet plots absolute fields
-        plot_sk_ctd_section(P.sectionlist,ctds,'ct','xvar','dist','type','pcolor_interp',...
-           'levels',[-2.0:0.5:7],'station_labels','true',grid_options{:});
-        clim([P.tcaxis]);
+             plot_sk_ctd_section(P.sectionlist,ctds,'ct','xvar','dist','type','pcolor_interp',...
+           'levels',contourL,'station_labels','true',grid_options{:}); 
+             clim([P.tcaxis]);
         cmocean('thermal')
         fignameappend='';
-    else
+
+        else
         % this snippet plots anomalies (beware reference cast is hard wired)
+        
         plot_sk_ctd_section(P.sectionlist,ctds,'ct_anom','xvar','dist','type','pcolor_interp',...
             'levels',[-1.0:0.5:1.0],'station_labels','true',grid_options{:});    
         clim([-1 1]);
@@ -201,8 +230,8 @@ else
    end
     
 % Oxygen concentrations 
-     %myvar='oxygen_umol_kg';
-     myvar='aou';
+     myvar='oxygen_umol_kg';
+     %myvar='aou';
         ax2=subplot(3,5,13:15);
      % % 'oxygen_umol_kg'
      plot_sk_ctd_section(P.sectionlist,ctds,myvar,'xvar','dist',...
@@ -222,9 +251,8 @@ else
     end
     sectionlength=max(xlim);
 
-    % T-S plot (will add density later)
-    subplot(2,5,6:7) % top right - t/s
-    allstations=[sd_ctds.station];
+%% index the station for the next plost s
+  allstations=[sd_ctds.station]; 
     ind=zeros(size(P.sectionlist));
     for n=1:length(P.sectionlist)
         try
@@ -233,7 +261,10 @@ else
             error('Cannot find %s station %d',cruise,stns(n));
         end
     end
-    
+   if istsplot==1
+    % T-S plot (will add density later)
+    subplot(2,5,6:7) % top right - t/s
+  
     plot(vertcat(sd_ctds.asal),vertcat(sd_ctds.ct),'.','markersize',2,'color',sdcolor);
     hold on;
     % plot(vertcat(er_ctds.asal),vertcat(er_ctds.ct),'.','markersize',2,'color',ercolor);
@@ -288,11 +319,14 @@ else
      plot(PWs1 , PWt1, 'sk','markersize',msize,'MarkerEdgeColor','k','MarkerFaceColor','none')
      plot(AWis1 , AWit1, 'sk','markersize',msize,'MarkerEdgeColor','k','MarkerFaceColor','none')
      text (AWs1+0.3, AWt1,'AW','FontSize',FZ)
-        text (AWis1-0.4,AWit1-0.4,'MAW','FontSize',FZ-1)
-        text (PWs1-0.5, PWt1+.8,'PW','FontSize',FZ)
+     text (AWis1-0.4,AWit1-0.4,'MAW','FontSize',FZ-1)
+     text (PWs1-0.5, PWt1+.8,'PW','FontSize',FZ)
+
+end % isTSplot
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     % Map for section location
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    if ismap==1
     if P.fjord==1
         subplot(2,5,1) % region - map
         % set our projection to UTM zone 25 north
@@ -350,6 +384,7 @@ else
     % add ruler to the map
     
     title(P.sectionname);
+    end
     figname=sprintf('_ctd_section_%s.png',strcat(sectionfilenames{m},fignameappend));
 %    print(thefig,'-dpng','-r200',figname);
     exportgraphics(gcf,[figPb,cruise,figname],'Resolution',300)
