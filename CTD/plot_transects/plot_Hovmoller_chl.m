@@ -1,47 +1,48 @@
 %Hovmoller plots
-
+% work in progres:
+% add density contour rho variable name rho= ctds.sigma0;
 close all; clear all;
 cruise='SD063';
-
-
-%% add paths
-if ispc
-addpath('../../matlabF/')
-
-disk = ['L:\work\scientific_work_areas\oceanography\'];
-Tdisk = ['P:\SD063\']; % JG T-drive
-%Tdisk = ['T:\SD063\'];
-ctddata = [disk,'CTD\BASproc\'];
- figP = [disk,'Figures\BIO\Hovmoller\'];
-
-elseif ismac
-    disk = '/Volumes/legwork/scientific_work_areas/oceanography/';
-    addpath('/Volumes/legwork/scientific_work_areas/oceanography/matlabF/')
-
-    Tdisk = ['/Volumes/Scratch/SD063/']; % JG T-drive
-    ctddata = [disk,'CTD/BASproc/'];
-    figP = [disk,'CTD/plot_transects/Figures/BIO/hovmoller/'];
-end
-
-%% load the data 
-load([ctddata,cruise,'_ctd.mat']);
-varname1='fluor_ug_l'; varunit1 = 'ug_l'; varcaxis1 = [0 1];
-varname2='oxygen_umol_kg';varunit2 = 'umol_kg';varcaxis2 = [300 360];
-
-%%
+%% variables to select for the plot 
+%varname1='fluor_ug_l'; varunit1 = 'ug_l'; varcaxis1 = [0 1]; diffaxis =[-0.5 0.5];
+varname1='oxygen_umol_kg';varunit1 = 'umol_kg'; varcaxis1 = [300 360]; diffaxis =[-0.5 0.5];
+%% section to select for the plot 
 %Option to zoom axes in on the ice front section yoyo:
 
 %sectionfilename='repeat_3m_icefront'; yoyo_zoom=1;
-sectionfilename ='repeat_3msillpeak';yoyo_zoom=0;
+%sectionfilename='repeat_3micefrontnorthyoyoonly'; yoyo_zoom=0;
+%sectionfilename ='repeat_3msillpeak';yoyo_zoom=0;
+%sectionfilename ='yoyo_3meastsill';yoyo_zoom=0;
 %sectionfilename ='repeat_3msilln'; yoyo_zoom=0;
-%%
-%figure;
-if yoyo_zoom
-figure('Position', [100, 100, 800, 600])
-else
- figure('Position', [10, 100, 1250, 600])
+%sectionfilename='repeat_3m_icefront_yoyo_only';yoyo_zoom=1;
+sectionfilename='repeat_3micefrontsouthyoyoonly';yoyo_zoom=0;
+%% add paths
+if ispc
+    addpath('../../matlabF/')
+
+    disk = ['L:\work\scientific_work_areas\oceanography\'];
+    Tdisk = ['P:\SD063\']; % JG T-drive
+   % Tdisk = ['T:\SD063\'];
+    ctddata = [disk,'CTD\BASproc\'];
+    figP = [disk,'Figures\BIO\Hovmoller\'];
+
+elseif ismac
+    disk = '/Volumes/leg/work/scientific_work_areas/oceanography/';
+    addpath('/Volumes/leg/work/scientific_work_areas/oceanography/matlabF/')
+    meteoP = ['/Volumes/leg/work/scientific_work_areas/oceanography/METEO/PARsfc/'];
+    Tdisk = ['/Volumes/Scratch/SD063/']; % JG T-drive
+    ctddata = [disk,'CTD/BASproc/'];
+    figP = [disk,'CTD/plot_transects/Figures/BIO/hovmoller/'];
+    pardataP = ['/Volumes/leg/work/scientific_work_areas/oceanography/METEO/PARsfc/'];
 end
 
+%% load the CTD data 
+load([ctddata,cruise,'_ctd.mat']);
+%% load PAR data from the METEO sensors 
+% see :'/Volumes/leg/work/scientific_work_areas/oceanography/METEO/PARsfc/importPARfile.m';
+load ([pardataP,'PARsfc.mat'],'PAR') % structure variable 
+PAR.umol_m2_s(PAR.umol_m2_s<0)=0;
+%% read the data needed 
 P = sdaSectionParams(sectionfilename);
 
 ncasts = length(P.sectionlist);
@@ -61,40 +62,63 @@ pressS=NaN(size(grid,2),ncasts);
 for ii=1:ncasts
     ctd_time(ii)=datetime(ctds(P.sectionlist(ii)).gtime);
     eval(['myVAR1(:,',num2str(ii),')=ctds(P.sectionlist(',num2str(ii),')).',varname1,';']);
-    eval(['myVAR2(:,',num2str(ii),')=ctds(P.sectionlist(',num2str(ii),')).',varname2,';']);
+   % eval(['myVAR2(:,',num2str(ii),')=ctds(P.sectionlist(',num2str(ii),')).',varname2,';']);
     pressS(:,ii)=ctds(P.sectionlist(ii)).press;
-end
+    rho(:,ii) = ctds(P.sectionlist(ii)).sigma0; % for N2 calculations and 
+ end
 
 x = 1:ncasts;
 x = datenum(ctd_time);
+%% calculate N2  
+gravity = 9.81;
+drho_dz = diff(rho)./ diff(pressS);
+N2 = - gravity./rho(1:end-1,:).* drho_dz; % gravity = 9.81
+ctd_time_matrix = repmat(ctd_time, size(N2,1), 1);
+%pcolor(1:17,-pressS(2:end,:),N2); shading flat
+%% make the figure 
+%figure;
+if yoyo_zoom
+figure('Position', [100, 100, 800, 600])
+else
+ figure('Position', [10, 100, 1250, 600])
+end
 
 ha=tight_subplot(3,1,[0.015 0.01], [0.11 0.05], [0.08 0.05]);
 
-
-%figure;
-%subplot(3,1,3)
 axes(ha(3))
-%plot tidal cycle:
+
+%% plot tidal cycle:
 addpath(fullfile(Tdisk,'TMD3.0')) 
 
 yyaxis left
 
 %ax1 = subplot(3,1,3);
-t = datetime('15-Jul-2026'):hours(1):datetime('22-Aug-2026');
-z = tmd_predict(fullfile(Tdisk,'Gr1kmTM/data/Gr1kmTM_v1.nc'),68.2796,-30.7665,t);
-plot(datenum(t), z);
-ylabel('tide height (m)')
-%take derivative of z:
-lowering_tide_prediction=-diff(z)/datenum(t(2)-t(1));
-time_at_deriv=t(:)+(t(2)-t(1))/2;
-plot(datenum(time_at_deriv(1:end-1)), lowering_tide_prediction);
-ylabel('lowering tide prediction (m/h)')
+t = datetime('15-Jul-2026 00:00:00'):hours(1):datetime('22-Aug-2026 00:00:00');
+tidalheight = tmd_predict(fullfile(Tdisk,'Gr1kmTM/data/Gr1kmTM_v1.nc'),68.2796,-30.7665,t); % previously call z 
+%%%%%% exclude the tidal rate of change 
+% %take derivative of z:
+% dt_hours = diff(datenum(t)) * 24;
+% %lowering_tide_prediction=diff(tidalheight)./dt_hours;
+% tidal_rate=diff(tidalheight)./dt_hours;
+% time_at_deriv=t(:)+(t(2)-t(1))/2; % time at the half hour in between the two derivatives
+% plot(datenum(time_at_deriv(1:end-1)), tidal_rate);
+% ylabel('lowering tide prediction (m/h)')
+%%%%%%%%%%%%%%%%%%%%%%%%
+% plot the tidal height
+yyaxis right
+plot(datenum(t), tidalheight);
+ylabel('Tidal height (m)')
+% plot surface PAR - time of day basically 
+yyaxis left
+plot(PAR.datenum, PAR.umol_m2_s); hold on; 
+ylabel('PAR \mumol m^{-2} s^{-1}')
+plot(datenum(t),zeros(size(datenum(t))),'-k','linewidth',0.52)
 %grid on
 box on
 hold on
 
 % tidal day markers
-xline(datenum(datetime(2026,7,15)+days(0:40)), 'k--')
+%xline(datenum(datetime(2026,7,15)+days(0:40)), 'k--')
 
 % set limits in datenum
 xlim([datenum(t(1)), datenum(t(end))])
@@ -127,33 +151,42 @@ x_end=datenum(ctd_time_end);
 
 x_interval=NaN(1,2*ncasts);
 myVAR1_padded=NaN(size(myVAR1,1),2*ncasts);
+rho_padded=NaN(size(myVAR1,1),2*ncasts);
 
 for ii=1:ncasts
     x_interval(1,2*ii-1)=x_start(ii);
     x_interval(1,2*ii)=x_end(ii);
     myVAR1_padded(:,2*ii-1)=myVAR1(:,ii);
+    rho_padded(:,2*ii-1)=rho(:,ii);
 end
 
 %ax2=subplot(3,1,1)
 axes(ha(1))
-pcolor(x_interval, pressS(:,1), myVAR1_padded);
-shading flat
+pcolor(x_interval, pressS(:,1), myVAR1_padded); shading flat
 set(gca,'YDir','reverse')
 ax = gca;
 ax.XTick = x_t30;
-if strcmp(varname1,'fluor_ug_l'); ax.YLim = [0 100]; end;
 datetick('x','dd-mmm HH:MM','keepticks');
 ha(1).XTickLabel = {};
 ha(1).XTick={}
-
 xtickangle(45)
 %xlabel('Time');
 ylabel('Depth (m)');
-cmocean('algae')
 hcb=colorbar;
 caxis(varcaxis1);
 hcb.Label.String= strrep(varname1,'_',' '); 
 hcb.Location='northoutside';
+if strcmp(varname1,'fluor_ug_l'); 
+    cmocean('haline') % cmocean('algae'); 
+    ax.YLim = [0 60];
+else;  
+    cmocean('haline'); 
+end 
+hold on % add density contours 
+colormap(ha(1), 'jet')
+%contour(x_interval, pressS(:,1),  rho_padded); % is not working LC
+
+
 title(P.sectionname)
 
 %Now plot anomolies
@@ -204,9 +237,12 @@ cmocean('balance');
 hcb=colorbar;
 cmax = max(abs(myVAR1_anom(:)), [], 'omitnan');
 clim([-cmax cmax]);
-caxis([-0.5 0.5]);
+if strcmp(varname1,'fluor_ug_l'); 
+    ax.YLim = [0 100];
+end 
+
 hcb.Label.String= strrep(varunit1,'_','/'); 
-hcb.Location='northoutside'
+hcb.Location='northoutside';
 %title(P.sectionname);
 
 linkaxes(findall(gcf,'Type','axes'),'x');
@@ -226,7 +262,9 @@ for n=1:3
     if yoyo_zoom
         xlim([datenum(ctd_time_start(4)-minutes(60)) datenum(ctd_time_end(end)+minutes(60))]);
     else
-        xlim([datenum(ctd_time_start(1)-minutes(500)) datenum(ctd_time_end(end)+minutes(60))]);
+     %   xlim([datenum(ctd_time_start(1)-minutes(500)) datenum(ctd_time_end(end)+minutes(60))]);
+      xlim([datenum(ctd_time_start(1)-minutes(60)) datenum(ctd_time_end(end)+minutes(60))]);
+
     end
 end
 
