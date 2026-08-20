@@ -1,4 +1,9 @@
-%Hovmoller plots
+%Hovmoller plots for CTD yoyos.
+%plots a) temperatures and b) temp anomalies and b) TMD tidal cycle for
+%repeat stations.
+
+%Created by Rosie Williams onboard SD063.
+%Edited by Jenny Graham.
 
 close all; clear all;
 
@@ -37,7 +42,7 @@ else
  figure('Position', [10, 100, 1250, 600])
 end
 
-sectionfilename='repeat_3m_icefront'; % repeat_3msill[n or peak]
+sectionfilename='repeat_3micefrontnorthyoyoonly'; % repeat_3msill[n or peak]
 
 P = sdaSectionParams(sectionfilename);
 
