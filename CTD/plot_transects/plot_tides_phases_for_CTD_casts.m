@@ -1,6 +1,8 @@
 
-%%% For each station with repeats, plot which quadrant of the tide phase
-%%% the CDTs taken here fall in.
+%%% Script to take each CTD station with repeats and plot which phase of of
+%%% the tide phase that station was taken in,
+%%% Can also plot today's tidal cycle.
+%%% This code was created on the SDA for cruise planning purposes.
 
 %%% Created by Rosie Williams August 2026
 
@@ -10,8 +12,8 @@ addpath L:\work\scientific_work_areas\oceanography\matlabF\
 close all; clear all;
 
 %plot today's tides?
-today=0;
-subplot_plotting=1;
+today=1;
+subplot_plotting=0;
 
 %if reF_station=[], it plots casts. If you give it a ref station, it plots
 %anomolies.
@@ -68,6 +70,7 @@ sectionfilename={'skag_kgtrough-1'};
 %sectionfilename={'repeat_3micefront', 'repeat_3micefrontSouth', '3mdoubletrough'};%,'repeat_3meastsill','repeat_3msillnorthpeak','repeat_3mwestsill','repeat_3mmouth','repeat_3mbeak'};
 sectionfilename={'repeat_3micefront', 'repeat_3mwestsill','repeat_3msillnorthpeak','repeat_3meastsill','repeat_3mmouth','repeat_3mbeak'};
 
+sectionfilename={'3micefront_section-2','3micefronttowyo','3mhead','3mdoubletrough','3mdoubletrough-2'}
 %sectionfilename={'repeat_3micefrontsouthyoyoonly'};
 
 %sectionfilename={'3mshelfnorth'};
