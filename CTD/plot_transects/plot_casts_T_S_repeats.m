@@ -1,13 +1,23 @@
-%Script to plot all casts from ice front section for comparison
+%Script to plot repeated CTD station casts, Can also be used to plot
+%transects.
+% plots a) temp and b) salinity with pressure, c) TS diagram.
+% Playing around with using tidal cycle metircs for colours, but this is
+% not finalised here - it's done more systematically in
+% plot_casts_with_tide_signal.m, so I would recommend porting that over.
+
+%Written on SD063 for 3m fjord.
+
+% Created by Rosie Williams 07/2026 on SD063 
+% Edited by Jenny Graham
+
 %% add path 
 close all;
 clear all;
 
-%if reF_station=[], it plots casts. If you give it a ref station, it plots
+%if ref_station=[], it plots casts. If you give it a ref station, it plots
 %anomolies.
 ref_station=[];
-%turn off here as this is only used to plot envelope (using means and stds)
-plot_envelope=1;
+%if you want colours of lines to be related to tidal phase fraction.
 use_tides=0;
 
 if ispc 
@@ -17,7 +27,6 @@ if ispc
     ctddata = [disk,'CTD\BASproc\'];
     ctddata_old = [disk,'\Notes\PreviousDataProcessing\KANGGLAC_CTD_data\'];
    addpath([disk,'\CTD\GSWscripts\gsw_matlab_v3_06_16\'])
-
 else
     addpath '/Volumes/leg/work/scientific_work_areas/oceanography/CTD/Code/'
     disk = ['/Volumes/leg/work/scientific_work_areas/oceanography/'];
@@ -37,11 +46,8 @@ cruises={'SD063','SK2514','SD041'};
 % load([ctddata_old,cruise,'_ctd.mat']);
 
 if strcmp(cruise,'SD063')
-    %if use_tides 
-    %    load([ctddata,cruise,'_tides_ctd.mat']);
-    %else
+
         load([ctddata,cruise,'_ctd.mat']);
-    %end
 elseif strcmp(cruise,'SK2514')
     load([ctddata_old,cruise,'_edited_ctd.mat']);
 elseif strcmp(cruise,'SD041')
@@ -51,25 +57,8 @@ else
 end
 
 %% select the sections 
-%sectionfilename={'quick_comp'};
-%sectionfilename={'deception_trough'};
-%sectionfilename={'repeat_3mmelangetrough'};
-%sectionfilename={'aw_comp'};
-% sectionfilename={'repeat_3mmmouthsectionrepeats'};
-%sectionfilename={'kgtrough-1','kgtrough-2'};
-%sectionfilename={'kangglac_kgtrough'};
-%sectionfilename={'skag_kgtrough-1'};
+sectionfilename={'repeat_3micefrontsouthyoyoonly','repeat_3micefrontnorthyoyoonly','repeat_3msouthtroughyoyoonly','repeat_3mwestsillyoyoonly','repeat_3msillsouthpeakyoyoonly','repeat_3meastsillyoyoonly'};
 
-%sectionfilename={'repeat_3micefront','yoyo_3meastsill','repeat_3moutermouth'};
-
-%sectionfilename={'repeat_3micefront'};%,'repeat_3micefrontsouth'};
-%sectionfilename={'quick_comp'};
-%sectionfilename={'repeat_3micefrontsouthyoyoonly'};
-
-%sectionfilename={'repeat_3moutermouth','repeat_3minnermouth'};
-%sectionfilename={'repeat_3meastsill','repeat_3mwestsillouter','repeat_3minnermouth'};
-
-sectionfilename={'3mdoubletroughrepeats'};
 
 grey  = [0.55 0.55 0.55];
 
@@ -90,23 +79,28 @@ P = sdaSectionParams(sectionfilename{m}); % function that needs to be in the sam
 %end
 ncasts = length(P.sectionlist);
 stns=P.sectionlist;
+
+%play around with colorbars as you wish...
+
 blueScale = abyss(ncasts); 
 orangeScale = autumn(ncasts);
 greenScale = summer(ncasts);
 phaseScale=hsv(ncasts);
+
 RosieScale =[
     0.00 0.35 0.75   % blue
     0.00 0.60 0.30   % green
     0.00 0.75 0.75   % turquoise
-    0.00 0.00 0.00   % black
-    0.90 0.45 0.05    % pink
+    % 0.00 0.00 0.00   % black
     0.85 0.05 0.05   % red
-];
+    0.90 0.45 0.05    % orange
+    0.00 0.00 0.00   % black
+    ];
+
 
 % Make lighter versions for the repeats
 phaseScale_light = 0.5 + 0.5*phaseScale;
 RosieScale_light = 0.5 + 0.5*RosieScale;
-
 
 % Cyclic rainbow colormap
 ncol = 256;
@@ -151,20 +145,20 @@ ctds_plot=ctds(ind);
 %% loop the sections 
 for ii=1:ncasts
  %   for ii=4
-    if m==1
+  %  if m==1
       %  if ii<6
             %cols=RosieScale(m,:);  
 %            cols=cmap_tides(ii,:);
        % end
-        cols=RosieScale(ii,:);
+        cols=RosieScale(m,:);
         line_style='-';
-    elseif m==2
-             cols=RosieScale(1,:);
-             line_style='-';
-    elseif m==3
-        cols=RosieScale(2,:);
-        line_style='-'
-    end
+   % elseif m==2
+    %         cols=RosieScale(6,:);
+     %        line_style='-';
+    %elseif m==3
+     %   cols=RosieScale(2,:);
+      %  line_style='-'
+   % end
 
     if use_tides 
         col = interp1(linspace(-1,1,ncol), cmap_tides, ctds(ii).tide_phase_fraction);
@@ -177,7 +171,6 @@ for ii=1:ncasts
     ctds_times=[ctds_times ctd_time];
     cast_number=[cast_number P.sectionlist(ii)];
 end
-1;
 
 end
 
@@ -195,6 +188,11 @@ ylim(ax2, [0, P.maxy]);
 lgd=legend([string(ctds_times),(cast_number)],'Location','SouthWest','FontSize',8);
 %,string(ctds_times(3)),string(ctds_times(4)),string(ctds_times(5)),string(ctds_times(6)),string(ctds_times(7)),'Location','SouthWest','FontSize',8)
 lgd.ItemTokenSize = [12 10];
+
+subplot(1,4,2)
+legend('off');
+subplot(1,4,3:4)
+legend('off');
 
 name = sprintf('_ctd_casts_%s.png', sectionfilename{1});
 exportgraphics(gcf, fullfile('Figures', [cruise name]), 'Resolution', 300)
