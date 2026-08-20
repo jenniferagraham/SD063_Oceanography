@@ -11,7 +11,11 @@ function P = sdaSectionParams(sectionName)
 % P.mLON, mLAT : axes limits for map
 %
 % Created by JGraham
+% Edited by Paul Holland, Rosie Williams, Laura Castro 
 % 2025-07-28
+
+%%%% Please note: some are sections and some are repeat stations, denoted
+%%%% "repeat_XXX". 
 
 % Defaults
 P.maxy   = 1000;
@@ -299,6 +303,19 @@ switch lower(sectionName)
         P.mLON   = [-33.4 -30];
         P.mLAT   = [66.8 69];
 
+    case '3mtransect' % along fjord transect
+        P.fjord = 1;
+        P.sectionlist = [43,42,49,36,85:1:90,50,64,69,29,28,112];
+        %    P.sectionlist = [43,42,49,35,51,50,29,28];
+        P.msslist = [];
+        P.sectionname = '3-M Transect';
+        P.maxy   = 500;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
     case '3mtransect-1' % along fjord transect
         P.fjord = 1;
         P.sectionlist = [43,42,49,36,85:1:90,50,64,69,29,28]; % 112
@@ -317,6 +334,18 @@ switch lower(sectionName)
         P.sectionlist = [174 178:183 184 185];
         P.msslist = [];
         P.sectionname = '3-M Transect 2';
+        P.maxy   = 500;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case '3mtransect-3' % along fjord transect
+        P.fjord = 1;
+        P.sectionlist = [248, 249 251:256 258]; % 254,255,256
+        P.msslist = [];
+        P.sectionname = '3-M Transect 3';
         P.maxy   = 500;
         P.vcaxis = [-0.3 0.3];
         P.tcaxis = [-2 1.5];
@@ -690,7 +719,22 @@ switch lower(sectionName)
         P.fjord = 1;
         P.sectionlist = [177 176 175 174 172 171];
         P.msslist = [];
-        P.sectionname = '3-M ice front repeats';
+        P.sectionname = '3-M ice front section 2';
+        P.maxy   = 300;
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1];
+        P.scaxis = [30 35.0];
+        % P.scaxis = [26.5 34.5]; % match SDA 041 erebus deployment
+        % P.tcaxis = [-2 1]; % to match SDA 041 erebus deployment
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+ 
+    case '3micefront_section-3'
+        P.fjord = 1;
+        P.sectionlist = [246,247,249,250];
+        P.msslist = [];
+        P.sectionname = '3-M ice front section 3';
         P.maxy   = 300;
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
@@ -1153,6 +1197,158 @@ switch lower(sectionName)
         P.sectionlist = [north_idx];
         P.msslist = [];
         P.sectionname = '3-M ice front north stations';
+        P.maxy   = 600;
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'repeat_3msouthtroughall'
+
+        if ispc
+            addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
+            disk = ['L:\work\scientific_work_areas\'];
+            ctddata = [disk,'oceanography\CTD\BASproc\'];
+        else
+            addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
+            disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+            ctddata = [disk,'CTD/BASproc/'];
+        end
+
+        %% load CTD structure data
+        cruise='SD063';
+        load([ctddata,cruise,'_ctd.mat']);
+
+        stns=[ctds.station];
+
+        %  box limits
+        select_lon = [-30.742 -30.733];
+        select_lat = [68.26 68.265];
+
+        % Find indices of points inside SOUTH box
+        select_idx = find([ctds.lon] >= select_lon(1) & [ctds.lon] <= select_lon(2) & ...
+            [ctds.lat] >= select_lat(1) & [ctds.lat] <= select_lat(2));
+
+        P.fjord = 1;
+        P.sectionlist = [select_idx];
+        P.msslist = [];
+        P.sectionname = '3-M ice front select stations';
+        P.maxy   = 600;
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'repeat_3mwestsillall'
+
+        if ispc
+            addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
+            disk = ['L:\work\scientific_work_areas\'];
+            ctddata = [disk,'oceanography\CTD\BASproc\'];
+        else
+            addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
+            disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+            ctddata = [disk,'CTD/BASproc/'];
+        end
+
+        %% load CTD structure data
+        cruise='SD063';
+        load([ctddata,cruise,'_ctd.mat']);
+
+        stns=[ctds.station];
+
+        %  box limits
+        select_lon = [-30.652 -30.648];
+        select_lat = [68.258 68.262];
+
+        % Find indices of points inside SOUTH box
+        select_idx = find([ctds.lon] >= select_lon(1) & [ctds.lon] <= select_lon(2) & ...
+            [ctds.lat] >= select_lat(1) & [ctds.lat] <= select_lat(2));
+
+        P.fjord = 1;
+        P.sectionlist = [select_idx];
+        P.msslist = [];
+        P.sectionname = '3-M ice front select stations';
+        P.maxy   = 600;
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'repeat_3meastsillall'
+
+        if ispc
+            addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
+            disk = ['L:\work\scientific_work_areas\'];
+            ctddata = [disk,'oceanography\CTD\BASproc\'];
+        else
+            addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
+            disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+            ctddata = [disk,'CTD/BASproc/'];
+        end
+
+        %% load CTD structure data
+        cruise='SD063';
+        load([ctddata,cruise,'_ctd.mat']);
+
+        stns=[ctds.station];
+
+        %  box limits
+        select_lon = [-30.545 -30.525];
+        select_lat = [68.228 68.238];
+
+        % Find indices of points inside SOUTH box
+        select_idx = find([ctds.lon] >= select_lon(1) & [ctds.lon] <= select_lon(2) & ...
+            [ctds.lat] >= select_lat(1) & [ctds.lat] <= select_lat(2));
+
+        P.fjord = 1;
+        P.sectionlist = [select_idx];
+        P.msslist = [];
+        P.sectionname = '3-M ice front select stations';
+        P.maxy   = 600;
+        P.fjord  = 1;
+        P.vcaxis = [-0.3 0.3];
+        P.tcaxis = [-2 1.5];
+        P.scaxis = [30 35.0];
+        P.mLON   = [-31 -30];
+        P.mLAT   = [68 68.5];
+
+    case 'repeat_3msillsouthpeakall'
+
+        if ispc
+            addpath 'L:\work\scientific_work_areas\oceanography\CTD\Code'
+            disk = ['L:\work\scientific_work_areas\'];
+            ctddata = [disk,'oceanography\CTD\BASproc\'];
+        else
+            addpath '/Volumes/legwork/scientific_work_areas/oceanography/CTD/Code/'
+            disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+            ctddata = [disk,'CTD/BASproc/'];
+        end
+
+        %% load CTD structure data
+        cruise='SD063';
+        load([ctddata,cruise,'_ctd.mat']);
+
+        stns=[ctds.station];
+
+        %  box limits
+        select_lon = [-30.612 -30.6];
+        select_lat = [68.224 68.23];
+
+        % Find indices of points inside SOUTH box
+        select_idx = find([ctds.lon] >= select_lon(1) & [ctds.lon] <= select_lon(2) & ...
+            [ctds.lat] >= select_lat(1) & [ctds.lat] <= select_lat(2));
+
+        P.fjord = 1;
+        P.sectionlist = [select_idx];
+        P.msslist = [];
+        P.sectionname = '3-M ice front select stations';
         P.maxy   = 600;
         P.fjord  = 1;
         P.vcaxis = [-0.3 0.3];
