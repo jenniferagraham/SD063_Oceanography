@@ -41,7 +41,6 @@ inEvents.Properties.VariableNames{'Longitude_dd__sd_gnss_kongsberg_seapath_320_p
 inEvents.Properties.VariableNames{'PrimaryPurpose_BuiltIn_String_'} = 'Purpose';
 inEvents.Properties.VariableNames{'CTDCastNumber_BuiltIn_String_'} = 'CastNumber';
 inEvents.Properties.VariableNames{'EventNumber_BuiltIn_String_'} = 'EventNumber';
-inEvents.Properties.VariableNames{'EventNumber_BuiltIn_String_'} = 'EventNumber';
 
 %% Sort by region? 
 
@@ -57,17 +56,13 @@ for ii=1:height(inEvents)
             inEvents.Region(ii) = '3-M Ice Front';
         end
 
-    elseif event.Longitude < -30.6 &&  event.Latitude > 68.26
+    elseif event.Longitude < -30.66 &&  event.Latitude > 68.2
         inEvents.Region(ii) = '3-M Inner';
 
     % sill
-    elseif event.Longitude > -30.6 && event.Longitude > -30.53 ...
+    elseif event.Longitude > -30.66 && event.Longitude < -30.53 ...
             &&  event.Latitude > 68.16 
-        if event.CastNumber == 51 || event.CastNumber == 91
-            inEvents.Region(ii) = '3-M Outer';
-        else
-            inEvents.Region(ii) = '3-M Sill';
-        end
+        inEvents.Region(ii) = '3-M Sill';
 
     % offshore of sill
     elseif event.Longitude > -30.607 &&  event.Latitude > 68.106 ...
@@ -105,7 +100,7 @@ end
 %%
 writetimetable(inEvents,reportout);
 
-% Columns wanted: CTD cast | Event | Latitude | Longitude | Depth | Region | Sampled 
-% Region = Inner fjord | Outer fjord | Sill | Melange | 3M Shelf | KG Trough | Other?
-% 
+% NB. Output will contain more columns than needed. Will need to subset,
+% e.g.
+% Columns wanted: CTD cast | Event | Latitude | Longitude | Depth | Region | Sampled (Y/N) 
 
