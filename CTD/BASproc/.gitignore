@@ -6,3 +6,12 @@ plots
 *.var
 *.dn
 *.up
+*.clb
+*.all
+*.cal
+*.oxy
+*.sal
+*.sb35
+*.tcl
+*.1st
+
