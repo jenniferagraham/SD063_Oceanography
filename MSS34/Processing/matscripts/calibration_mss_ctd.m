@@ -9,7 +9,11 @@ scatterplot=1;
 diffProfile=0;
 TSplot=1;
 mac=1;
+FZ=12;
 %% define the paths
+
+
+set(0, 'DefaultAxesFontSize', FZ);
 
 % paths
 if mac==0
@@ -18,11 +22,11 @@ if mac==0
     %CTDdataP = '';
         mssdataP = [disk,'MSS34\DATA\fasteps\'];
 else
-    disk = ['/Volumes/legwork/scientific_work_areas/oceanography/'];
+    disk = ['/Volumes/leg/work/scientific_work_areas/oceanography/'];
     MSSdataP = [disk,'MSS34/DATA/fasteps/'];
     CTDdataP = [disk,'CTD/BASproc/'];
     mssdataP = [disk,'MSS34/DATA/fasteps/'];
-
+    figpath =[disk,'MSS34/Processing/Figures/'];
 end    
 
 
@@ -79,7 +83,7 @@ for r = 1:(maxdepth*2) % iterate over all rows in variable arrays
     sMean(r,:) = nanmean(myS(r,:));
 end
 %%
-
+figsize=[440 363 369 335];
 %% Retrieve CTD
 load(fullfile(CTDdataP,sprintf('SD063_ctd_%03d_struct.mat',CTDfile)));
 
@@ -89,7 +93,7 @@ ctdS = ctd.salin;
 %% profile plots
 
 if profile==1
-    figure
+    f=figure;
 %hold on
 % Temp plot
 % Does this need to be converted to theta?
@@ -99,9 +103,9 @@ plot(tMean,pressMean,'--r','linewidth',2)
 
 hold on
 % plot casts
-plot(clean1(:,2),clean1(:,1),'-m') % col 2 is T, col 1 is Press
-plot(clean2(:,2),clean2(:,1),'-g')
-plot(clean3(:,2),clean3(:,1),'-b')
+plot(clean1(:,2),clean1(:,1),'-m','LineWidth',1.5) % col 2 is T, col 1 is Press
+plot(clean2(:,2),clean2(:,1),'-g','LineWidth',1.5)
+plot(clean3(:,2),clean3(:,1),'-b','LineWidth',1.5)
 
 xlabel('Temperature (°C)')
 ylabel('Pressure (dbar)')
@@ -111,7 +115,7 @@ ax.YDir = 'reverse'; % Invert the y-axis
 box on
 % Invert the Y-axis
 set(gca, 'YDir', 'reverse');
-legend({"CTD042","MSS004-006 mean","MSS004","MSS005","MSS006"})
+%legend({"CTD042","MSS004-006 mean","MSS004","MSS005","MSS006"})
 
 % Salinity plot
 subplot(1,2,2); hold on
@@ -131,9 +135,11 @@ box on
 % Invert the Y-axis
 set(gca, 'YDir', 'reverse');
 % Legend
-legend({"CTD042","MSS004-006 mean","MSS004","MSS005","MSS006"})
+legend({"CTD042","MSS004-006 mean","MSS004","MSS005","MSS006"},'Location','Best')
 
 sgtitle('MSS-CTD cross-calibration - mean cast'); 
+set(f,'Position',figsize)
+exportgraphics(gcf,[figpath,'MSS-CTD-cross-calibration_allcasts.png'],'Resolution',300)
 
 end
 %% Downsample the MSS data to match resolution of CTD
@@ -179,15 +185,15 @@ RMSE = sqrt(nanmean((ctdS-mssInterall).^2));
 
 %% profile diff plots
 if diffProfile==1
-figure
+f=figure;
 
 %hold on
 % Temp plot
 % Does this need to be converted to theta?
 subplot(1,2,1); hold on
-plot(Tdiff1,ctdPress,color="r") % col 2 is T, col 1 is Press
-plot(Tdiff2,ctdPress,color="g")
-plot(Tdiff3,ctdPress,color="b")
+plot(Tdiff1,ctdPress,color="r",LineWidth=1.5) % col 2 is T, col 1 is Press
+plot(Tdiff2,ctdPress,color="g",LineWidth=1.5)
+plot(Tdiff3,ctdPress,color="b",LineWidth=1.5)
 xlabel('Temperature difference (°C)')
 ylabel('Pressure (dbar)')
 % Vertical dashed line at zero diff
@@ -204,9 +210,9 @@ legend({"MSS004","MSS005","MSS006"})
 
 % Salinity plot
 subplot(1,2,2); hold on
-plot(Sdiff1,ctdPress,color="r") % col 3 is S, col 1 is Press
-plot(Sdiff2,ctdPress,color="g")
-plot(Sdiff3,ctdPress,color="b")
+plot(Sdiff1,ctdPress,'-r','LineWidth',1.5) % col 3 is S, col 1 is Press
+plot(Sdiff2,ctdPress,'-g','LineWidth',1.5)
+plot(Sdiff3,ctdPress,'-b','LineWidth',1.5)
 xlabel('Salinity difference (psu)')
 ylabel('Pressure (dbar)')
 % Vertical dashed line at zero diff
@@ -220,31 +226,40 @@ box on
 set(gca, 'YDir', 'reverse');
 % Legend
 legend({"MSS004","MSS005","MSS006"})
-
+set(f,"Position",figsize)
 sgtitle('MSS-CTD cross-calibration - difference plot'); 
+exportgraphics(gcf,[figpath,'MSS-CTD-cross-calibration_difference.png'],'Resolution',300)
+
 end
 %% TS plot 
 if TSplot==1
-figure
+f=figure;
 plot(ctdS,ctdT,'-k','LineWidth',2)
 hold on 
 % mss raw data 
-plot(clean1(:,3),clean1(:,2),'-g')
-plot(clean2(:,3),clean2(:,2),'-g')
-plot(clean3(:,3),clean3(:,2),'-g')
+plot(clean1(:,3),clean1(:,2),'-g','LineWidth',1.5)
+plot(clean2(:,3),clean2(:,2),'-g','LineWidth',1.5)
+plot(clean3(:,3),clean3(:,2),'-g','LineWidth',1.5)
 
 % mss Add corrected values 
 hold on 
 % corrected mss (using the offsetor bias) 
-plot(clean1(:,3)+bias,clean1(:,2),'-b')
-plot(clean2(:,3)+bias,clean2(:,2),'-b')
-plot(clean3(:,3)+bias,clean3(:,2),'-b')
+plot(clean1(:,3)+bias,clean1(:,2),'-b','LineWidth',1.5)
+plot(clean2(:,3)+bias,clean2(:,2),'-b','LineWidth',1.5)
+plot(clean3(:,3)+bias,clean3(:,2),'-b','LineWidth',1.5)
 
-legend('CTD42','MSS004','MSS005', 'MSS006','corrMSS004','corrMSS005', 'corrMSS006')
+legend('CTD42','MSS004','MSS005', 'MSS006','corrMSS004','corrMSS005', 'corrMSS006','Location','best')
+set(f,"Position",figsize)
+xlim([32.3 35]) % zoom into the region 
+ylim([-1.5 1 ])% zoom into the region 
+ylabel('Temperature ^\circC')
+xlabel('Salinity')
+exportgraphics(gcf,[figpath,'MSS-CTD-cross-calibration_TSplot.png'],'Resolution',300)
+
 end
 %% Scatter plot 
 if scatterplot==1
-figure
+f=figure;
 % Temp scatter plot
 subplot(1,2,1); hold on
 
@@ -278,7 +293,8 @@ plot(ctdS,ctdS,color="k")
 % Legend
 legend({"MSS004","MSS005","MSS006"})
 
-sgtitle('MSS-CTD cross-calibration - correlation plot'); 
+sgtitle('MSS-CTD cross-calibration - correlation plot');
+
 end
 %% calibration thoughts
 % if slope is close to 1 an offset is sufficient, but if slope is greater
