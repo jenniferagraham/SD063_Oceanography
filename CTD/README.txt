@@ -1,4 +1,8 @@
-Documents relating to processing of CTD data, including scripts and relevant datasets. 
+Documents relating to processing of CTD data, including scripts and relevant datasets for SD063.
+
+All raw data retrieved from CTD casts are contained in:
+
+leg\system\ctd_seabird_sbe911plus\acquisition\data\SD063
 
 Relevant locations to be aware of are: 
 
@@ -7,7 +11,7 @@ Relevant locations to be aware of are:
 * BASproc: Contains data from further post-processing, in .mat format. 
 * ncfiles: conversion of .mat into netCDF format. 
 
-* GSWscripts: gsw toolbox, used in postprocessing and analysis. 
+* GSWscripts: gsw toolbox, used in postprocessing and analysis. [NB. not archived in GitHub] 
 
 Additional locations contain scripts used for planning and initial analysis during SD063: 
 
