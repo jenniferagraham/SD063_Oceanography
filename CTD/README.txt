@@ -13,6 +13,7 @@ Additional locations contain scripts used for planning and initial analysis duri
 
 * plot_transects: contains majority of plotting scripts from cruise. 
 * plot_maps: scripts to plot tidal analysis on maps of fjord. 
+* Tide_analysis_output: csv and figures produced from tidal model analysis, e.g., plot_tide_simple.m
 * plot_calibrations: analysis of calibration processing
 
 NB. Some data and processing relating to calibration is also contained in Salinometer directories.
