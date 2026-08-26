@@ -1,4 +1,4 @@
-close all; clear all;
+%close all; clear all;
 
 
 if ispc % ellie you should be able to run it using mac=0 you may need to adjust some of the paths
@@ -54,15 +54,15 @@ station_labels=false;
 mssparams = sdaSectionParamsMSS('3minner');
 nMSS = 1:length(mssparams.castlist); % array with station IDs
 
-%% load mss eventlog (Laura's version)
-mssLog = importMSSlogbook4matlab(msslogbook); % use =1 means event action 'inWater'
-%VariableNames = ['Time', 'Latitude_dd', 'Longitude_dd', 'DepthEA640_m', 'MSSstation', 'EventNumber', 'MSScast', 'TargetDepth_m', 'Comment', 'Use'];
-indxRow = find(mssLog.Use==1); % inWater rows only
-% create work table
-msslogLon = mssLog.Longitude_dd(indxRow);
-msslogLat = mssLog.Latitude_dd(indxRow);
-mssLogMSScast = mssLog.MSScast(indxRow);
-
+% %% load mss eventlog (Laura's version)
+% mssLog = importMSSlogbook4matlab(msslogbook); % use =1 means event action 'inWater'
+% %VariableNames = ['Time', 'Latitude_dd', 'Longitude_dd', 'DepthEA640_m', 'MSSstation', 'EventNumber', 'MSScast', 'TargetDepth_m', 'Comment', 'Use'];
+% indxRow = find(mssLog.Use==1); % inWater rows only
+% % create work table
+% msslogLon = mssLog.Longitude_dd(indxRow);
+% msslogLat = mssLog.Latitude_dd(indxRow);
+% mssLogMSScast = mssLog.MSScast(indxRow);
+% 
 %% Adapt plot_sk_ctd_section() function in CTD code to plot map
 
 % preallocate size of arrays for each variable
@@ -74,8 +74,8 @@ section.lon   = temparray;
 for ii=1:length(nMSS)
     cast = mssparams.castlist(ii);
 
-    section.lat(ii) = msslogLat(find(mssLogMSScast == cast));
-    section.lon(ii) = msslogLon(find(mssLogMSScast == cast));
+    section.lat(ii) = mss.lat; %logLat(find(mssLogMSScast == cast));
+    section.lon(ii) = mss.lon; %logLon(find(mssLogMSScast == cast));
 end
 
 %% Import datasets for map visualisation
