@@ -1,3 +1,12 @@
+% Script to produce master csv table for use in cruise report. 
+%
+% Makes use of CTD_deployments_latest.csv
+%    - downloaded from SDA CTD event log (Download as CSV)
+%
+% Assign each event to region, based on lat/lon. 
+%
+% Created by JGraham on SD063
+
 close all
 clear all
 
