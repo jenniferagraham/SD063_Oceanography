@@ -7,12 +7,15 @@ clear all
 clc
 close all
 layer ='top'; %top =  0 to 75m ; bottom 100 m -
+alpha=0.6;
 mmap=1; % plot the image using m_map, mmap=0; plots using matlab geospatial function 
 type='sill'; %sill=0; zoom the map out to get the sill, sill=1; zooms the map on the ice front
 anomalies=1; 
 isinset=1; % isinset=1 plots one an inset map with a zoom on the glacier front on the same plot as the sill 
 figname = ['map_virtualmooring_icefront_',type,'_', layer];
 sentinatlname = ['2026-08-14-00_00_2026-08-14-23_59_Sentinel-2_L2A_True_color.TIFF'];
+jennycmap = flipud(cmocean('phase',100)); % Jenny's choice of colormap 
+
 %% path and inputs
 if ispc
     disk = ['L:\work\scientific_work_areas\'];
@@ -83,21 +86,16 @@ else
     lattiff = lat_tiff(:,1);
     lontiff = lon_tiff(1,:);
 
-    if ~isa(A,'uint8'); A = uint8(255 * mat2gray(A)); end
-    
+    if ~isa(A,'uint8'); A = uint8(255 * mat2gray(A)); end   
     m_proj('mercator','lon', xxmap,'lat',yymap);
-
     % Plot the TIFF
     m_image(lontiff, lattiff, A);
-
     % Keep image underneath other map layers
     hold on
-
     % Coastline
     m_coast('patch',[0.7 0.7 0.7],'edgecolor','k');
     % Grid
     m_grid('box','fancy','tickdir','in');
-
    % vector legend 
     m_vec(vecsize,lon_vecref, lat_vecref+0.002, 0.1,0,'k','key','10 cm/s','shaftwidth', 0.9, 'headlength', 5, 'headwidth', 5,'facecolor','k','edgecolor','k')
 
@@ -113,7 +111,7 @@ for ii=1:length(yoyolist)
     u = [virtualmooring.utop']; % eastward velocity
     v = [virtualmooring.vtop']; % northward velocity
     tidephase =[virtualmooring.tidephase];
-    rgbtriplet = [virtualmooring.cmaptriplet];
+    rgbtriplet = [virtualmooring.tidephasecmaptriplet];
     %all vectors to originate from the same point
     arrowu=lon*ones(size(u));
     arrowv =lat*ones(size(v));
@@ -126,7 +124,7 @@ for ii=1:length(yoyolist)
     % multiple colours for the arrows
     for in = 1:size(u,2)
         %m_quiver(lon, lat, u(in), v(in), vecsize, 'faceColor', rgbtriplet(in,:),'LineWidth', 1.5,'MaxHeadSize', 0.8);
-        m_vec(vecsize,lon, lat, u(in), v(in), 'faceColor', rgbtriplet(in,:),'edgecolor','none');
+        m_vec(vecsize,lon, lat, u(in), v(in), 'faceColor', rgbtriplet(in,:),'FaceAlpha',alpha,'edgecolor','none');
     end
 end
 %% colorbar 
@@ -178,7 +176,7 @@ for ii=1:length(yoyolist)
     u = [virtualmooring.utop']; % eastward velocity
     v = [virtualmooring.vtop']; % northward velocity
     tidephase =[virtualmooring.tidephase];
-    rgbtriplet = [virtualmooring.cmaptriplet];
+    rgbtriplet = [virtualmooring.tidephasecmaptriplet];
     %all vectors to originate from the same point
     arrowu=lon*ones(size(u));
     arrowv =lat*ones(size(v));
@@ -191,7 +189,7 @@ for ii=1:length(yoyolist)
     % multiple colours for the arrows
     for in = 1:size(u,2)
         %m_quiver(lon, lat, u(in), v(in), vecsize, 'faceColor', rgbtriplet(in,:),'LineWidth', 1.5,'MaxHeadSize', 0.8);
-        m_vec(vecsize,lon, lat, u(in), v(in), 'faceColor', rgbtriplet(in,:),'edgecolor','none');
+        m_vec(vecsize,lon, lat, u(in), v(in), 'faceColor', rgbtriplet(in,:),'FaceAlpha',alpha,'edgecolor','none');
     end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
