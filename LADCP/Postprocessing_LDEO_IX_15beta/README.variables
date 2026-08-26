@@ -1,0 +1,43 @@
+======================================================================
+                    R E A D M E . V A R I A B L E S 
+                    doc: Tue Apr 13 10:51:01 2010
+                    dlm: Mon Jun  3 12:35:43 2013
+                    (c) 2010 A.M. Thurnherr
+                    uE-Info: 30 22 NIL 0 0 72 3 2 4 NIL ofnI
+======================================================================
+
+----------------------------------------------------------------------
+d-STRUCTURE FIELDS
+----------------------------------------------------------------------
+
+d.ts(combo_bin,ensemble)
+	- target strength
+	- set in [loardri.m]
+	- combo_bin is bin number in combined up-/downlooker data
+	- look-up combo_bin using d.izd(bin) and d.izu(bin)
+
+d.tg(combo_bin,ensemble)
+	- target strength corrected for attenuation and beam spreading
+	- calculated in targ() in [getbtrack.m]
+	- same format as d.tg
+
+d.izd(bin), d.izu(bin)
+	- set in [loadrdi.m]
+	- d.izd(1) is first bin of downlooker
+	- d.izu(end) is last bin of uplooker
+
+d.z(ensemble)
+	- instrument depth
+
+d.izm(combo_bin,ensemble)
+	- depth of each measurement
+
+----------------------------------------------------------------------
+OUTPUT FIELDS
+----------------------------------------------------------------------
+
+dr.ts, dr.ts_out
+	- target strength of 2nd & last downlooker bin, respectively
+	- scaled to dB using RDI scale factor of 0.45 [loadrdi.m] #1138
+	- median of all 4 beams [loadrdi.m] #718
+	- super-ensemble average [prepinv.m] #584
