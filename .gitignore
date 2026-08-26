@@ -1,1 +1,6 @@
-CTD/GSWscripts
+CTD/GSWscripts/
+
+*.nc
+*.mat
+
+*.png
