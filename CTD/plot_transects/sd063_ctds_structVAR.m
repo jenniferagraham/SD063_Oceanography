@@ -75,8 +75,8 @@ for ii = 1:length(stationlist)
         ctd.ladcp_v = imag(vel2db);
     else
         fprintf('WARNING: LADCP missing for %s\n', stnid)
-        ctd.ladcp_u = nan;
-        ctd.ladcp_v = nan;
+        ctd.ladcp_u = ctd.press*nan;
+        ctd.ladcp_v = ctd.press*nan;
 
     end
 
