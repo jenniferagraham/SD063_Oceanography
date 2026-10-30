@@ -42,7 +42,7 @@ startSTN = min(stationnumber);
 endSTN   = max(stationnumber); 
 
 % file name 
-ncfile = [ncrilepath,'SD063_ctds.nc'];
+ncfile = [ncrilepath,'SD063_ctd.nc'];
 
 % Delete old file if it already exists
 if isfile(ncfile)
