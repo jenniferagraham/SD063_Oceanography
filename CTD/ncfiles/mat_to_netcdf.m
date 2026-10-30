@@ -42,7 +42,7 @@ startSTN = min(stationnumber);
 endSTN   = max(stationnumber); 
 
 % file name 
-ncfile = [ncrilepath,'SD063_ctds.nc'];
+ncfile = [ncrilepath,'SD063_ctd.nc'];
 
 % Delete old file if it already exists
 if isfile(ncfile)
@@ -235,8 +235,8 @@ nccreate(ncfile,'station', ...
     'Dimensions',{'station',nstation}, ...
     'Datatype','int32');
 
-nccreate(ncfile,'press', ...
-    'Dimensions',{'press',nsample}, ...
+nccreate(ncfile,'sample', ...
+    'Dimensions',{'sample',nsample}, ...
     'Datatype','int32');
 
 % Write dimensions
@@ -245,7 +245,7 @@ ncwrite(ncfile,'station',1:nstation);
 ncwrite(ncfile,'press',1:nsample);
 
 ncwriteatt(ncfile,'station','long_name','CTD station number');
-ncwriteatt(ncfile,'press','long_name','Pressure bins within CTD cast');
+ncwriteatt(ncfile,'sample','long_name','Sample index within cast');
 
 
 %% ============================================================
